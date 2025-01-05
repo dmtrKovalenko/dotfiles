@@ -1,0 +1,55 @@
+{
+  "tonicmethod": {
+    "prefix": "tonicmethod",
+    "body": [
+      "async fn $1 (&self, request: Request<proto::$2Request>) -> GrpcResult<Response<proto::$2Response>> {",
+      "    let proto::$2Request {$3} = request.into_inner();",
+      "    ",
+      "    Ok(Response::new(proto::$2Response {}))",
+      "}"
+    ]
+  },
+  "Derive debug": {
+    "prefix": "drdb",
+    "body": [
+      "#[derive(Debug$1)]"
+    ]
+  },
+  "Derive clone & debug": {
+    "prefix": "drcdb",
+    "body": [
+      "#[derive(Debug, Clone$1)]"
+    ]
+  },
+  "Collect": {
+    "prefix": "col",
+    "body": [
+      ".collect::<$1<_>>();"
+    ]
+  },
+  "Juniper mutation": {
+    "prefix": "junipermutation",
+    "body": [
+      "#[derive(GraphQLInputObject, Debug)]",
+      "#[graphql(context = Context)]",
+      "pub struct $1Input {",
+      "    $3",
+      "    client_mutation_id: Option<ClientMutationId>,",
+      "}",
+      "",
+      "#[derive(GraphQLObject, Debug)]",
+      "#[graphql(context = Context)]",
+      "pub struct $1Payload {",
+      "    pub client_mutation_id: Option<ClientMutationId>,",
+      "}",
+      "",
+      "#[tracing::instrument(skip(context))]",
+      "pub(crate) async fn $2(",
+      "    context: &Context,",
+      "    input: $1Input,",
+      ") -> Result<$1Payload> {",
+      "    $4",
+      "}"
+    ]
+  }
+}
