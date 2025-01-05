@@ -1,0 +1,70 @@
+# This file contains fish universal variable definitions.
+# VERSION: 3.0
+SETUVAR --export ANTHROPIC_API_KEY:sk\x2dant\x2dapi03\x2duOZgqSEnGijwV8wgU3otoE0BpgSWQEbJK85JK58co4F4AqQT_LT0gX3exoENF5OlT8Izm6FrQg0AW0nUj7sEHg\x2diJIsYgAA
+SETUVAR --export AWS_ACCESS_KEY_ID:ASIAUFBYGHAIVIGXC27X
+SETUVAR --export AWS_SECRET_ACCESS_KEY:1nGe9PNVkeQgF\x2bHrWxaCGM6nV03NFfgrJtXkZOQU
+SETUVAR --export AWS_SESSION_TOKEN:IQoJb3JpZ2luX2VjEGsaCXVzLXdlc3QtMiJHMEUCIQD66rqo1KuXmQC/PuudXy2RekUCvSYzk7xEcCmpOVCSAQIgGYOBOAy/ouQxKSrqgVsfT2bS\x2b2n\x2bHAMEfSNw6ogqGC8q\x2bAEI8///////////ARABGgwyODU3MzMxNzMyNjUiDFBd0qll58dF9vnliSrMAQggb\x2bmVHPuiEZkxpGMJlaq7i6f3S7Q3AeMJEQcrvpimCrzBZ68i35B8hTmnlpAKSDYMaCYDYBC9Gbwm6XP8k3818UFhdUeR3ZE9CW04pniMc/mvxaGsZ/ZlmmtRn2Uy0nZJim6e8XCXYJjCUVubi5vJtzwUD0l9GF\x2bSEPYMaMAd9Z3z4RyE\x2bz4JXFUri\x2baMo3/v\x2b/O85Up0CCtCn7mGJPOYU7rcmaIPNgLGE10orKyjVgnnwCFi0JIb9xT/I\x2bZ9oLyE4SUuJv5deBThDzCVv5KSBjqYARVKRIrvvb7XhxiUi2O/qTpeFisiNYfYfhqFJQjgkUFd01sTu39NjHp0ZEW1uo8\x2bO/8CAjOlTZ8/E0h\x2b1j16mPsSe5tUEgnlrJ1JEMWN7GmJs0Mnq31s0jtt8eS\x2bzn5Cd0hrHFr2erCI6RPGJ5vP38SjJUlslYUxvL8dzl6mDGymfngDrfSmM/eENKDMFq3U5GB1EYZGM7NP\u23ce
+SETUVAR --export BAT_THEME:Catppuccin\x2dfrappe
+SETUVAR --export CO2_COMPILATIONDB_INCLUDE_TOOLCHAIN:True
+SETUVAR --export --path CO2_COMPILATIONDB_PATH:/Users/dmtrkovalenko/dev/co2cicka/core
+SETUVAR --export --path CPATH:/opt/homebrew/include
+SETUVAR EDITOR:nvim
+SETUVAR --export FZF_DEFAULT_OPTS:\x2d\x2dcycle\x20\x2d\x2dpreview\x2dwindow\x20\x27right\x3a57\x25\x2cwrap\x27\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x2d\x2dpreview\x20\x27set\x20file_path\x20\x28string\x20escape\x20\x2d\x2d\x20\x7b\x7d\x29\x3b\x20if\x20test\x20\x2df\x20\x24file_path\x3b\x20bat\x20\x2d\x2dstyle\x3dnumbers\x20\x2d\x2dcolor\x3dalways\x20\x2d\x2dline\x2drange\x20\x3a300\x20\x24file_path\x3b\x20else\x3b\x20echo\x20\x7b\x7d\x20\x7c\x20bat\x20\x2d\x2dlanguage\x20bash\x20\x2d\x2dcolor\x20always\x20\x2d\x2dwrap\x20character\x20\x2d\x2dstyle\x20plain\x3b\x20end\x27\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x2d\x2dbind\x20\x27ctrl\x2du\x3apreview\x2dpage\x2dup\x2cctrl\x2dd\x3apreview\x2dpage\x2ddown\x2ck\x3aup\x2cj\x3adown\x2cctrl\x2dj\x3ahalf\x2dpage\x2ddown\x2cctrl\x2dk\x3ahalf\x2dpage\x2dup\x27
+SETUVAR --export FZF_DEFAUL_OPTIONS:\x2d\x2dcycle
+SETUVAR --export FZF_DEFAUL_OPTS:\x2d\x2dcycle
+SETUVAR --export LDFLAGS:\x2dL/opt/llvm/lib/c\x2b\x2b\x20\x2dWl\x2c\x2drpath\x2c/opt/llvm/lib/c
+SETUVAR --export --path LIBRARY_PATH:/opt/homebrew/lib/
+SETUVAR --export LIGHTSORUCE_DB_TESTS_DOCKER:local
+SETUVAR --export LIGHTSOURCE_DB_TESTS_DOCKER:local
+SETUVAR --export LIGHTSOURCE_ROOT:/Users/dmtrkovalenko/dev/lightsource
+SETUVAR --export MANPAGER:nvim\x20\x2b\x27let\x20g\x3aunception_disable\x3d1\x27\x20\x2bMan\x21
+SETUVAR --export PF:ff2
+SETUVAR --export --path PKG_CONFIG_PATH:/opt/homebrew/lib/pkgconfig
+SETUVAR --export --path RIPGREP_CONFIG_PATH:/Users/dmtrkovalenko/\x2eripgreprc
+SETUVAR SPICEDB_DATASTORE_CONN_URI:postgresql\x3a//postgres\x40127\x2e0\x2e0\x2e1/lightsource_spicedb
+SETUVAR SPICEDB_GRPC_PRESHARED_KEY:1a1439c581f1a71f900cd85d4c98e975
+SETUVAR --export TERM:xterm\x2dcolor
+SETUVAR --export VCPKG_ROOT:/Users/dmtrkovalenko/dev/vcpkg
+SETUVAR __done_exclude:\x5egit\x20\x28\x3f\x21push\x7cpull\x7cfetch\x29\x1evim
+SETUVAR __fish_initialized:3400
+SETUVAR _fisher_PatrickF1_2F_fzf_2E_fish_files:/Users/dmtrkovalenko/\x2econfig/fish/functions/_fzf_configure_bindings_help\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_fzf_extract_var_info\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_fzf_preview_changed_file\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_fzf_preview_file\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_fzf_report_diff_type\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_fzf_report_file_type\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_fzf_search_directory\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_fzf_search_git_log\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_fzf_search_git_status\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_fzf_search_history\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_fzf_search_processes\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_fzf_search_variables\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_fzf_wrapper\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/fzf_configure_bindings\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/conf\x2ed/fzf\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/completions/fzf_configure_bindings\x2efish
+SETUVAR _fisher_franciscolourenco_2F_done_files:/Users/dmtrkovalenko/\x2econfig/fish/conf\x2ed/done\x2efish
+SETUVAR _fisher_joehillen_2F_ev_2D_fish_files:/Users/dmtrkovalenko/\x2econfig/fish/functions/ev\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/completions/ev\x2efish
+SETUVAR _fisher_jorgebucaran_2F_autopair_2E_fish_files:/Users/dmtrkovalenko/\x2econfig/fish/functions/_autopair_backspace\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_autopair_insert_left\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_autopair_insert_right\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_autopair_insert_same\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_autopair_tab\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/conf\x2ed/autopair\x2efish
+SETUVAR _fisher_jorgebucaran_2F_fisher_files:/Users/dmtrkovalenko/\x2econfig/fish/functions/fisher\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/completions/fisher\x2efish
+SETUVAR _fisher_jorgebucaran_2F_nvm_2E_fish_files:/Users/dmtrkovalenko/\x2econfig/fish/functions/_nvm_index_update\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_nvm_list\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_nvm_version_activate\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/_nvm_version_deactivate\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/functions/nvm\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/conf\x2ed/nvm\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/completions/nvm\x2efish
+SETUVAR _fisher_jorgebucaran_2F_replay_2E_fish_files:/Users/dmtrkovalenko/\x2econfig/fish/functions/replay\x2efish\x1e/Users/dmtrkovalenko/\x2econfig/fish/completions/replay\x2efish
+SETUVAR _fisher_plugins:jorgebucaran/fisher\x1ejoehillen/ev\x2dfish\x1ejorgebucaran/autopair\x2efish\x1ePatrickF1/fzf\x2efish\x1ejorgebucaran/replay\x2efish\x1efranciscolourenco/done\x1ejorgebucaran/nvm\x2efish
+SETUVAR fish_color_autosuggestion:555\x1ebrblack
+SETUVAR fish_color_cancel:\x2dr
+SETUVAR fish_color_command:005fd7
+SETUVAR fish_color_comment:990000
+SETUVAR fish_color_cwd:green
+SETUVAR fish_color_cwd_root:red
+SETUVAR fish_color_end:009900
+SETUVAR fish_color_error:ff0000
+SETUVAR fish_color_escape:00a6b2
+SETUVAR fish_color_history_current:\x2d\x2dbold
+SETUVAR fish_color_host:normal
+SETUVAR fish_color_host_remote:yellow
+SETUVAR fish_color_normal:normal
+SETUVAR fish_color_operator:00a6b2
+SETUVAR fish_color_param:00afff
+SETUVAR fish_color_quote:999900
+SETUVAR fish_color_redirection:00afff
+SETUVAR fish_color_search_match:white\x1e\x2d\x2dbackground\x3dbrblack
+SETUVAR fish_color_selection:white\x1e\x2d\x2dbold\x1e\x2d\x2dbackground\x3dbrblack
+SETUVAR fish_color_status:red
+SETUVAR fish_color_user:brgreen
+SETUVAR fish_color_valid_path:\x2d\x2dunderline
+SETUVAR fish_cursor_default:line
+SETUVAR fish_cursor_insert:line
+SETUVAR fish_key_bindings:fish_default_key_bindings
+SETUVAR fish_pager_color_completion:\x1d
+SETUVAR fish_pager_color_description:B3A06D\x1eyellow
+SETUVAR fish_pager_color_prefix:normal\x1e\x2d\x2dbold\x1e\x2d\x2dunderline
+SETUVAR fish_pager_color_progress:brwhite\x1e\x2d\x2dbackground\x3dcyan
+SETUVAR fish_pager_color_selected_background:\x2dr
+SETUVAR fish_title:Your\x20Title\x20Here
+SETUVAR fish_user_paths:/opt/homebrew/opt/gnu\x2dsed/libexec/gnubin\x1e/Users/dmtrkovalenko/\x2erustup/toolchains/esp/xtensa\x2desp\x2delf/esp\x2d13\x2e2\x2e0_20230928/xtensa\x2desp\x2delf/bin\x1e/Users/dmtrkovalenko/\x2eopam/default/bin\x1e/Users/dmtrkovalenko/\x2elocal/share/nvim/mason/bin\x1e/usr/local/bin\x1e/System/Cryptexes/App/usr/bin\x1e/usr/bin\x1e/bin\x1e/usr/sbin\x1e/sbin\x1e/Applications/kitty\x2eapp/Contents/MacOS\x1e/opt/homebrew/opt/llvm/bin\x1e/opt/homebrew/sbin\x1e/Users/dmtrkovalenko/dev/nvim\x2dmacos/bin\x1e/Users/dmtrkovalenko/\x2elocal/bin\x1e/opt/homebrew/opt/icu4c/sbin\x1e/opt/homebrew/opt/icu4c/bin\x1e/opt/homebrew/opt/libpq/bin\x1e/opt/homebrew/opt/openssl\x403/bin\x1e/opt/homebrew/opt/ffmpeg\x404/bin\x1e/opt/homebrew/opt/openjdk/bin\x1e/Users/dmtrkovalenko/\x2ecargo/bin\x1e/opt/homebrew/bin
+SETUVAR nvm_default_version:v23\x2e3\x2e0

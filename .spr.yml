@@ -1,0 +1,8 @@
+showPRLink: true
+logGitCommands: true
+logGitHubCalls: true
+statusBitsHeader: true
+statusBitsEmojis: true
+createDraftPRs: false
+preserveTitleAndBody: false
+noRebase: false

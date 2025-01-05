@@ -1,0 +1,39 @@
+[core]
+	editor = nvim --cmd 'let g:unception_block_while_host_edits=1'
+[user]
+	name = Dmitriy Kovalenko
+	email = dmtr.kovalenko@outlook.com
+[init]
+	defaultBranch = main
+[rerere]
+	enabled = true
+
+[merge]
+	tool = "nvim"
+
+[mergetool]
+	keepBackup = false
+	prompt = false
+
+[mergetool "nvim"]
+	cmd = "nvim -d -c \"wincmd l\" -c \"norm ]c\" \"$LOCAL\" \"$MERGED\" \"$REMOTE\""
+
+[difftool]
+        prompt = false
+
+[difftool "difftastic"]
+        cmd = difft "$LOCAL" "$REMOTE"
+
+[pager]
+        difftool = true
+
+[push]
+	autoSetupRemote = true
+	default = simple
+[pull]
+	rebase = true
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

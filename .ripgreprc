@@ -1,0 +1,4 @@
+--no-require-git
+--glob=!.git/*
+--hidden
+
