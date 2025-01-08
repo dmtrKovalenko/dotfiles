@@ -1,5 +1,4 @@
 just --completions fish | source
-jump shell fish | source
 zoxide init fish | source
 opam config env	| source
 fzf --fish | source
