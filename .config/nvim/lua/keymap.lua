@@ -86,6 +86,8 @@ vim.keymap.set("x", "P", "p", {})
 
 -- Exit terminal mode with Esc
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { nowait = true })
+-- Exit insert mode with jj when using normal keyboard
+vim.keymap.set("i", "jj", "<Esc>", { nowait = true })
 
 -- A bunch of useful shortcuts for one-time small actions bound on leader
 vim.keymap.set("n", "<leader>n", "<cmd>nohlsearch<CR>", { silent = true })

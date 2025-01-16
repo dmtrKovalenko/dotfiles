@@ -680,7 +680,6 @@ return {
     opts = {},
     dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons
   },
-
   {
     "mbbill/undotree",
     keys = {
@@ -688,6 +687,16 @@ return {
         mode = "n",
         "<leader>u",
         "<cmd>UndotreeToggle<CR>",
+      },
+    },
+    {
+      "mistricky/codesnap.nvim",
+      build = "make build_generator",
+      command = "CodeSnap",
+      opts = {
+        save_path = "~/Pictures",
+        has_breadcrumbs = true,
+        bg_theme = "bamboo",
       },
     },
   },
