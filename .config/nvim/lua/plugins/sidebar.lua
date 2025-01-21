@@ -93,6 +93,7 @@ return {
       close_when_all_hidden = false,
       wo = {
         winhighlight = "",
+        winbar = false
       },
       left = {
         {

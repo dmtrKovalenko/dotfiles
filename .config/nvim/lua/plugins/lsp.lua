@@ -156,6 +156,9 @@ return {
         default_settings = {
           -- rust-analyzer language server configuration
           ["rust-analyzer"] = {
+            cargo = {
+              features = "all",
+            },
             check = {
               allTargets = false,
             },
