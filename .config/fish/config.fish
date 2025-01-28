@@ -10,7 +10,7 @@ opam env | source
 abbr --add 'rm' 'rm -rf'
 abbr --add '-' 'cd -'
 
-# custom typos
+# custom typose
 abbr --add 'jsut' 'just'
 abbr --add 'jtsu' 'just'
 abbr --add 'jstu' 'just'
@@ -34,6 +34,9 @@ abbr --add 'cf' 'cargo fmt --all'
 # Tools
 abbr --add 'y' 'yarn'
 abbr --add 'cat' 'bat'
+abbr --add 'ls' 'eza'
+abbr --add 'j' 'just'
+abbr --add 'm' 'make'
 
 # Git
 abbr --add 'grr' 'git rebase --continue'
