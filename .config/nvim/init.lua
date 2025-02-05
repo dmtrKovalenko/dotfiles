@@ -19,6 +19,8 @@ vim.wo.relativenumber = true
 vim.o.shiftwidth = 4
 vim.o.tabstop = 4
 
+vim.o.tags = "./tags;"
+
 -- Enale mouse mode
 vim.o.mouse = "a"
 vim.o.foldmethod = "manual"
