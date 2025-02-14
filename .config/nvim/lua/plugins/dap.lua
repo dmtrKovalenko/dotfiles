@@ -34,7 +34,7 @@ local function setup_default_configurations()
   local lldb_configuration = {
     {
       name = "Launch",
-      type = "lldb",
+      type = "codelldb",
       request = "launch",
       program = function()
         return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
@@ -105,10 +105,10 @@ return {
       dap.terminate()
     end)
 
-    dap.adapters.lldb = {
+    dap.adapters.codelldb = {
       type = "executable",
-      command = "/opt/homebrew/opt/llvm/bin/lldb-dap", -- adjust as needed, must be absolute path
-      name = "lldb",
+      command = "/Users/neogoose/.local/share/nvim/mason/bin/codelldb", -- adjust as needed, must be absolute path
+      name = "codelldb",
     }
 
     vim.keymap.set("n", "<F5>", function()
