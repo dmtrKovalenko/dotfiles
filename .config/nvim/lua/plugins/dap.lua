@@ -105,9 +105,9 @@ return {
       dap.terminate()
     end)
 
-    dap.adapters.codelldb = {
+    dap.adapters.lldb = {
       type = "executable",
-      command = "/Users/neogoose/.local/share/nvim/mason/bin/codelldb", -- adjust as needed, must be absolute path
+      command = "/Users/neogoose/.local/share/nvim/mason/bin/codelldb",
       name = "codelldb",
     }
 
