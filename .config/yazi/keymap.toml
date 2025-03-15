@@ -32,8 +32,8 @@ keymap = [
 	{ on = [
 		"g",
 		"g",
-	], run = "arrow -99999999", desc = "Move cursor to the top" },
-	{ on = "G", run = "arrow 99999999", desc = "Move cursor to the bottom" },
+	], run = "arrow top", desc = "Move cursor to the top" },
+	{ on = "G", run = "arrow bot", desc = "Move cursor to the bottom" },
 
 	# Navigation
 	{ on = "h", run = "leave", desc = "Go back to the parent directory" },
