@@ -10,7 +10,7 @@ opam env | source
 abbr --add 'rm' 'rm -rf'
 abbr --add '-' 'cd -'
 
-# custom typose
+# custom typos
 abbr --add 'jsut' 'just'
 abbr --add 'jtsu' 'just'
 abbr --add 'jstu' 'just'
@@ -37,6 +37,7 @@ abbr --add 'cat' 'bat'
 abbr --add 'ls' 'eza'
 abbr --add 'j' 'just'
 abbr --add 'm' 'make'
+abbr --add 'rbf' 'RUST_BACKTRACE=full'
 
 # Git
 abbr --add 'grr' 'git rebase --continue'
