@@ -96,10 +96,7 @@ return {
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = {},
   },
-  {
-    "mrcjkb/rustaceanvim",
-    lazy = false,
-  },
+
   { "akinsho/git-conflict.nvim", version = "*", config = true },
   {
     "ruifm/gitlinker.nvim",

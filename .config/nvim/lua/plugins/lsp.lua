@@ -14,6 +14,11 @@ return {
       dependencies = { "nvim-lua/plenary.nvim" },
       opts = {},
     },
+    {
+      "mrcjkb/rustaceanvim",
+      lazy = false,
+      version = "^5",
+    },
   },
   config = function()
     local on_lsp_attach = function(client, bufnr)
@@ -82,10 +87,10 @@ return {
           telemetry = { enable = false },
         },
       },
-      typos_lsp = {
-        single_file_support = false,
-        init_options = { diagnosticSeverity = "WARN" },
-      },
+      -- typos_lsp = {
+      --   single_file_support = false,
+      --   init_options = { diagnosticSeverity = "WARN" },
+      -- },
       bashls = {
         settings = {
           includeAllWorkspaceSymbols = true,
@@ -153,12 +158,10 @@ return {
       -- LSP configuration
       server = {
         on_attach = on_lsp_attach,
+        logfile = "/tmp/rustaceanvim.log",
         default_settings = {
           -- rust-analyzer language server configuration
           ["rust-analyzer"] = {
-            cargo = {
-              features = "all",
-            },
             check = {
               allTargets = false,
             },
