@@ -87,10 +87,10 @@ return {
           telemetry = { enable = false },
         },
       },
-      -- typos_lsp = {
-      --   single_file_support = false,
-      --   init_options = { diagnosticSeverity = "WARN" },
-      -- },
+      typos_lsp = {
+        single_file_support = false,
+        init_options = { diagnosticSeverity = "WARN" },
+      },
       bashls = {
         settings = {
           includeAllWorkspaceSymbols = true,
