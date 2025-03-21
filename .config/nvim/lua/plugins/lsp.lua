@@ -182,16 +182,19 @@ return {
     }
 
     mason_lspconfig.setup_handlers {
+      ["rust_analyzer"] = function() end,
       function(server_name)
-        require("lspconfig")[server_name].setup {
-          capabilities = capabilities,
-          on_attach = on_lsp_attach,
-          settings = servers[server_name],
-          single_file_support = (servers[server_name] or {}).single_file_support,
-          filetypes = (servers[server_name] or {}).filetypes,
-          cmd = (servers[server_name] or {}).cmd,
-          init_options = (servers[server_name] or {}).init_options,
-        }
+        if server_name ~= "rust-analyzer" then
+          require("lspconfig")[server_name].setup {
+            capabilities = capabilities,
+            on_attach = on_lsp_attach,
+            settings = servers[server_name],
+            single_file_support = (servers[server_name] or {}).single_file_support,
+            filetypes = (servers[server_name] or {}).filetypes,
+            cmd = (servers[server_name] or {}).cmd,
+            init_options = (servers[server_name] or {}).init_options,
+          }
+        end
       end,
     }
 
