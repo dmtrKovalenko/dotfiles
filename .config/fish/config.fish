@@ -29,7 +29,7 @@ abbr --add 'cc' 'cargo check'
 abbr --add 'cb' 'cargo build'
 abbr --add 'cr' 'cargo run'
 abbr --add 'ct' 'cargo test'
-abbr --add 'cf' 'cargo fmt --all'
+abbr --add 'cfa' 'cargo fmt --all'
 
 # Tools
 abbr --add 'y' 'yarn'
