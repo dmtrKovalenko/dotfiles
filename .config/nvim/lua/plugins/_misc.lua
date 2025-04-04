@@ -26,6 +26,19 @@ return {
     end,
   },
   { "chentoast/marks.nvim", event = "VeryLazy", opts = {} },
+  {
+    "luckasRanarison/tailwind-tools.nvim",
+    name = "tailwind-tools",
+    build = ":UpdateRemotePlugins",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-telescope/telescope.nvim", -- optional
+      "neovim/nvim-lspconfig", -- optional
+    },
+    opts = {
+      custom_filetypes = "rescript"
+    },
+  },
   { "luckasRanarison/tailwind-tools.nvim", opts = {
     custom_filetypes = {
       "rescript",
