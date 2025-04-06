@@ -36,7 +36,7 @@ return {
       "neovim/nvim-lspconfig", -- optional
     },
     opts = {
-      custom_filetypes = "rescript"
+      custom_filetypes = "rescript",
     },
   },
   { "luckasRanarison/tailwind-tools.nvim", opts = {
@@ -97,7 +97,6 @@ return {
       vim.api.nvim_create_autocmd("User", {
         pattern = "UnceptionEditRequestReceived",
         callback = function()
-          require("nvterm.terminal").hide "horizontal"
         end,
       })
     end,
@@ -128,21 +127,46 @@ return {
   },
   -- Toggle terminal plugin
   {
-    "NvChad/nvterm",
-    event = "BufWinEnter",
-    opts = {
-      terminals = {
-        type_opts = {
-          horizontal = {
-            split_ratio = ((IS_STREAMING or vim.api.nvim_get_option_value("lines", {}) < 60) and 0.5) or 0.35,
-          },
-        },
+    "akinsho/toggleterm.nvim",
+    keys = {
+      {
+        "<D-S-c>",
+        function()
+          require("toggleterm").toggle()
+        end,
+        desc = "Toggle Terminal (Floating)",
       },
     },
-    init = function()
-      vim.keymap.set({ "n", "t" }, "<D-S-c>", function()
-        require("nvterm.terminal").toggle "horizontal"
-      end, {})
+    opts = {
+      open_mapping = [[<D-S-c>]],
+      size = function(term)
+        if term.direction == "float" then
+          return 20 -- Height for floating terminal
+        end
+      end,
+      float_opts = {
+        border = "curved",
+        width = function()
+          return math.floor(vim.o.columns * 0.8)
+        end,
+        height = function()
+          return math.floor(vim.o.lines * 0.8)
+        end,
+        winblend = 3,
+      },
+      direction = "float",
+      shade_terminals = true,
+      start_in_insert = true,
+      insert_mappings = true,
+      terminal_mappings = true,
+    },
+    config = function(_, opts)
+      require("toggleterm").setup(opts)
+
+      -- We don't need this anymore since we defined the function in the keys table
+      -- vim.keymap.set({ "n", "t" }, "<D-S-c>", function()
+      --   require("toggleterm").toggle()
+      -- end, { desc = "Toggle Terminal (Floating)" })
     end,
   },
 
