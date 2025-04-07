@@ -30,6 +30,7 @@ return {
     "luckasRanarison/tailwind-tools.nvim",
     name = "tailwind-tools",
     build = ":UpdateRemotePlugins",
+    event = "BufWinEnter",
     dependencies = {
       "nvim-treesitter/nvim-treesitter",
       "nvim-telescope/telescope.nvim", -- optional
@@ -39,11 +40,6 @@ return {
       custom_filetypes = "rescript",
     },
   },
-  { "luckasRanarison/tailwind-tools.nvim", opts = {
-    custom_filetypes = {
-      "rescript",
-    },
-  } },
 
   -- Detect tabstop and shiftwidth automatically
   "tpope/vim-sleuth",
@@ -89,18 +85,19 @@ return {
   },
 
   -- Allows correctly opening and closing nested nvims in the terminal
-  {
-    "samjwill/nvim-unception",
-    event = "VeryLazy",
-    init = function()
-      vim.g.unception_delete_replaced_buffer = true
-      vim.api.nvim_create_autocmd("User", {
-        pattern = "UnceptionEditRequestReceived",
-        callback = function()
-        end,
-      })
-    end,
-  },
+  -- {
+  --   "samjwill/nvim-unception",
+  --   event = "VeryLazy",
+  --   init = function()
+  --     vim.g.unception_delete_replaced_buffer = true
+  --     vim.api.nvim_create_autocmd("User", {
+  --       pattern = "UnceptionEditRequestReceived",
+  --       callback = function()
+  --         require("toggleterm").toggle_all()
+  --       end,
+  --     })
+  --   end,
+  -- },
   -- Handy rename in a floating method
   {
     "filipdutescu/renamer.nvim",
@@ -125,7 +122,6 @@ return {
       )
     end,
   },
-  -- Toggle terminal plugin
   {
     "akinsho/toggleterm.nvim",
     keys = {
@@ -162,11 +158,6 @@ return {
     },
     config = function(_, opts)
       require("toggleterm").setup(opts)
-
-      -- We don't need this anymore since we defined the function in the keys table
-      -- vim.keymap.set({ "n", "t" }, "<D-S-c>", function()
-      --   require("toggleterm").toggle()
-      -- end, { desc = "Toggle Terminal (Floating)" })
     end,
   },
 
