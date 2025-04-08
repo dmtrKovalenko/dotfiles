@@ -38,7 +38,7 @@ return {
       -- end
       lsp_map("<D-.>", require("actions-preview").code_actions, "[C]ode [A]ction")
 
-      lsp_map("<D-r>", require("renamer").rename, "[R]e[n]ame")
+      lsp_map("<D-r>", vim.lsp.buf.rename, "[R]e[n]ame")
 
       lsp_map("gD", vim.lsp.buf.definition, "[G]oto [D]eclaration")
       lsp_map("gi", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
