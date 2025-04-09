@@ -1,30 +1,19 @@
 return {
-  "github/copilot.vim",
   -- Git management
   "tpope/vim-fugitive",
   -- Allows cursor locations in the :e
   "lewis6991/fileline.nvim",
-  -- Code actions preview using telescope
-  "aznhe21/actions-preview.nvim",
   --  Automatically jump to the last cursor position
   "farmergreg/vim-lastplace",
   -- Turn off some of the feature on big buffers
   "LunarVim/bigfile.nvim",
+  -- Respects .editorconfig file
   "gpanders/editorconfig.nvim",
+  -- Syntax highlighting for at&t assembly
   "HealsCodes/vim-gas",
-  {
-    -- A better code actions menu
-    "weilbith/nvim-code-action-menu",
-    event = "BufWinEnter",
-    config = function()
-      require("actions-preview").setup {
-        diff = {
-          algorithm = "minimal",
-          ignore_whitespace = true,
-        },
-      }
-    end,
-  },
+  -- Detect tabstop and shiftwidth automatically
+  "tpope/vim-sleuth",
+  "github/copilot.vim",
   {
     "mbbill/undotree",
     keys = {
@@ -50,17 +39,6 @@ return {
       custom_filetypes = "rescript",
     },
   },
-
-  -- Detect tabstop and shiftwidth automatically
-  "tpope/vim-sleuth",
-  -- Camel case motion plugin
-  -- {
-  --   "bkad/CamelCaseMotion",
-  --   event = "VeryLazy",
-  --   init = function()
-  --     vim.g.camelcasemotion_key = "q"
-  --   end,
-  -- },
   {
     "chrisgrieser/nvim-spider",
     keys = {
@@ -73,7 +51,6 @@ return {
       subwordMovement = true,
     },
   },
-
   {
     "chrisgrieser/nvim-various-textobjs",
     config = function()
@@ -93,7 +70,6 @@ return {
       end)
     end,
   },
-
   { "akinsho/git-conflict.nvim", version = "*", config = true },
   {
     "ruifm/gitlinker.nvim",
@@ -160,11 +136,7 @@ return {
       insert_mappings = true,
       terminal_mappings = true,
     },
-    config = function(_, opts)
-      require("toggleterm").setup(opts)
-    end,
   },
-
   {
     "lewis6991/gitsigns.nvim",
     event = "BufRead",
@@ -222,14 +194,12 @@ return {
     },
   },
 
-  -- Surround text objects with quotes, brackets, etc
   {
     "kylechui/nvim-surround",
     version = "*", -- Use for stability; omit to use `main` branch for the latest features
     opts = {},
   },
 
-  -- Automatically fill/change/remove xml-like tags
   {
     "windwp/nvim-ts-autotag",
     event = "InsertEnter",
@@ -243,7 +213,6 @@ return {
     },
   },
 
-  -- Project specific marks for most editable files
   {
     "ThePrimeagen/harpoon",
     branch = "harpoon2",
@@ -299,7 +268,6 @@ return {
   },
 
   {
-    -- Highlight, edit, and navigate code
     "nvim-treesitter/nvim-treesitter",
     dependencies = {
       "nvim-treesitter/nvim-treesitter-textobjects",
@@ -316,8 +284,6 @@ return {
     },
     build = ":TSUpdate",
     config = function()
-      -- [[ Configure Treesitter ]]
-      -- See `:help nvim-treesitter`
       require("nvim-treesitter.configs").setup {
         -- Add languages to be installed here that you want installed for treesitter
         ensure_installed = {
@@ -527,7 +493,6 @@ return {
       },
     },
   },
-
   {
     "folke/which-key.nvim",
     event = "VeryLazy",
@@ -535,7 +500,6 @@ return {
       preset = "modern",
     },
   },
-
   {
     "dmtrkovalenko/project.nvim",
     config = function()
@@ -548,7 +512,6 @@ return {
       }
     end,
   },
-
   {
     "rmagatti/auto-session",
     opts = {
@@ -563,13 +526,11 @@ return {
       vim.api.nvim_create_user_command("CloseFloats", close_floating_wins, {})
     end,
   },
-
   {
     "folke/ts-comments.nvim",
     event = "VeryLazy",
     opts = {},
   },
-
   {
     "dmtrKovalenko/caps-word.nvim",
     -- dir = "~/dev/caps-word.nvim",
@@ -593,9 +554,8 @@ return {
   {
     "MeanderingProgrammer/render-markdown.nvim",
     opts = {},
-    dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons
+    dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
   },
-
   {
     "dmtrkovalenko/codesnap.nvim",
     build = "make build_generator",
