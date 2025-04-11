@@ -120,6 +120,14 @@ return {
           return 20 -- Height for floating terminal
         end
       end,
+      highlights = {
+        NormalFloat = {
+          guibg = "#16181a",
+        },
+        FloatBorder = {
+          guibg = "#16181a",
+        },
+      },
       float_opts = {
         border = "curved",
         width = function()
