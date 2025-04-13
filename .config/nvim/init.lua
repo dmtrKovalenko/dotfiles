@@ -169,5 +169,16 @@ for _, key in pairs(keys) do
   end, { noremap = true, expr = true, desc = "Smart delete" })
 end
 
+-- very simple yank ring 
+vim.cmd [[
+function! YankShift()
+  for i in range(9, 1, -1)
+    call setreg(i, getreg(i - 1))
+  endfor
+endfunction
+
+au TextYankPost * if v:event.operator == 'y' | call YankShift() | endif
+]]
+
 require "keymap"
 require("language-specific-macro").setupMacro()
