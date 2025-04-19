@@ -264,5 +264,5 @@ return {
         settings = {},
       }
     end,
-  }
+  },
 }
