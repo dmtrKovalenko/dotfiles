@@ -28,7 +28,6 @@ end
 return {
   {
     "uga-rosa/ccc.nvim",
-    lazy = false,
     keys = {
       { mode = "n", "<leader>cc", "<cmd>CccPick<cr>" },
     },

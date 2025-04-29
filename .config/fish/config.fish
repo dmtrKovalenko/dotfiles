@@ -2,7 +2,6 @@ just --completions fish | source
 zoxide init fish | source
 opam config env	| source
 fzf --fish | source
-git-town completions fish | source
 
 opam env | source
 
