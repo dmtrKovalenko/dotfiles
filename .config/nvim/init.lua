@@ -89,7 +89,6 @@ vim.opt.rtp:prepend(lazypath)
 
 function _G.close_floating_wins()
   require("edgy").close()
-  require("nvterm.terminal").close_all_terms()
 end
 
 require("lazy").setup("plugins", {})
