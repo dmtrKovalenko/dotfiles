@@ -120,8 +120,8 @@ return {
         end, "Lsp toggle inlay [h]ints")
       end
 
-      vim.diagnostic.config { virtual_lines = true }
-      -- vim.diagnostic.config { virtual_text = true }
+      -- vim.diagnostic.config { virtual_lines = true }
+      vim.diagnostic.config { virtual_text = true }
 
       -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
       local capabilities = vim.lsp.protocol.make_client_capabilities()

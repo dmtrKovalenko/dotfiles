@@ -62,8 +62,8 @@ vim.keymap.set("n", "<D-C-Up>", "Vy`>p`<", { silent = true })
 vim.keymap.set("v", "<D-C-Down>", "y`<kp`>", { silent = true })
 vim.keymap.set("n", "<D-C-Down>", "Vy`<p`>", { silent = true })
 
-vim.keymap.set("n", "<C-v>", "<cmd>rightbelow vsplit<cr>", { silent = true })
-vim.keymap.set("n", "<C-s>", "<cmd>rightbelow split<cr>", { silent = true })
+vim.keymap.set("n", "<C-s>", "<cmd>rightbelow vsplit<cr>", { silent = true })
+vim.keymap.set("n", "<leader>ss", "<cmd>rightbelow split<cr>", { silent = true })
 
 vim.keymap.set("n", "J", "mzJ`z")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
