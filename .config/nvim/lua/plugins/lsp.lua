@@ -46,8 +46,17 @@ return {
       -- Automatically install LSPs to stdpath for neovim
       { "williamboman/mason.nvim", config = true },
       "mason-org/mason-lspconfig.nvim", -- Updated repo URL
-      -- Additional lua configuration, makes nvim stuff amazing!
-      "folke/neodev.nvim",
+      {
+        "folke/lazydev.nvim",
+        ft = "lua", -- only load on lua files
+        opts = {
+          library = {
+            -- See the configuration section for more details
+            -- Load luvit types when the `vim.uv` word is found
+            { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+          },
+        },
+      },
       "ocaml-mlx/ocaml_mlx.nvim",
       {
         "pmizio/typescript-tools.nvim",
@@ -179,8 +188,6 @@ return {
         opts.border = opts.border or border
         return orig_util_open_floating_preview(contents, syntax, opts, ...)
       end
-
-      require("neodev").setup()
 
       vim.lsp.config("clangd", {
         filetypes = { "c", "cpp", "proto" },
