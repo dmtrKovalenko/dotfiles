@@ -46,6 +46,7 @@ return {
       -- Automatically install LSPs to stdpath for neovim
       { "williamboman/mason.nvim", config = true },
       "mason-org/mason-lspconfig.nvim", -- Updated repo URL
+      -- Additional lua configuration, makes nvim stuff amazing!
       {
         "folke/lazydev.nvim",
         ft = "lua", -- only load on lua files

@@ -1,3 +1,3 @@
-function github --wraps='open -a "Google Chrome" https://github.com' --description 'alias github=open -a "Google Chrome" https://github.com'
-  open -a "Google Chrome" https://github.com $argv; 
+function github --wraps='open -a "Brave Browser" https://github.com' --description 'alias github=open -a "Brave Browser" https://github.com'
+  open -a "Brave Browser" https://github.com $argv; 
 end
