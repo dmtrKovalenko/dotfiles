@@ -108,7 +108,6 @@ return {
         lsp_map("gD", vim.lsp.buf.definition, "[G]oto [D]eclaration")
         lsp_map("gi", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
         lsp_map("<D-g>", "<C-]>", "[G]oto [D]efinition")
-        lsp_map("<D-A-g>", vim.lsp.buf.type_definition, "Type [D]efinition")
         lsp_map("<D-i>", vim.lsp.buf.hover, "Hover Documentation")
         lsp_map("<D-u>", vim.lsp.buf.signature_help, "Signature Documentation")
 
