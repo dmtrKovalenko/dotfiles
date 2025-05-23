@@ -19,6 +19,8 @@
 [mergetool "nvim"]
 	cmd = "nvim -d -c \"wincmd l\" -c \"norm ]c\" \"$LOCAL\" \"$MERGED\" \"$REMOTE\""
 
+[diff]
+	renames = copy
 [difftool]
         prompt = false
 
@@ -42,3 +44,10 @@
 [alias]
         hack = !sh -c 'git fetch && git checkout @{upstream} -t -b \"$@\"' _
 
+[sendemail]
+    smtpserver = smtp.office365.com
+    smtpuser = dmtr.kovalenko@outlook.com
+    smtpencryption = tls
+    smtpserverport = 587
+    smtpauth = LOGIN
+    smtpPass = kongzhtxxkjigxcg
