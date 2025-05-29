@@ -44,10 +44,11 @@
 [alias]
         hack = !sh -c 'git fetch && git checkout @{upstream} -t -b \"$@\"' _
 
+[credential "smtp://smtp.office365.com:587"]
+    helper = outlook
 [sendemail]
     smtpserver = smtp.office365.com
     smtpuser = dmtr.kovalenko@outlook.com
     smtpencryption = tls
     smtpserverport = 587
-    smtpauth = LOGIN
-    smtpPass = kongzhtxxkjigxcg
+    smtpauth = XOAUTH2
