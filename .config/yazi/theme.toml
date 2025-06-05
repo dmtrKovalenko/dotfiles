@@ -1,4 +1,4 @@
-[manager]
+[mgr]
 # tmTheme files can be found here: https://github.com/scottmckendry/cyberdream.nvim/tree/main/extras/textmate 
 syntect_theme = "../bat/themes/cyberdream.tmTheme"
 border_style = { fg = "#3c4048" }
