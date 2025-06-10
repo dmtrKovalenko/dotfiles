@@ -371,7 +371,7 @@ return {
     },
     keys = {
       {
-        mode = { "i", "n" },
+        mode = { "i" },
         "<C-s>",
         "<cmd>lua require('caps-word').toggle()<CR>",
       },
