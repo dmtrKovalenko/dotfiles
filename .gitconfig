@@ -42,7 +42,7 @@
 	required = true
 	
 [alias]
-        hack = !sh -c 'git fetch && git checkout @{upstream} -t -b \"$@\"' _
+        hack = !sh -c 'git fetch --all && git checkout @{upstream} -t -b \"$@\"' _
 
 [credential "smtp://smtp.office365.com:587"]
     helper = outlook
