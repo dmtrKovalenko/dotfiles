@@ -339,19 +339,26 @@ return {
     },
   },
   {
-    "rmagatti/auto-session",
+    "folke/persistence.nvim",
+    event = "BufReadPre", -- this will only start session saving when an actual file was opened
     opts = {
-      log_level = "error",
-      suppressed_dirs = { "~/", "~/Downloads", "/" },
-      bypass_save_filetypes = { "help", "alpha", "telescope", "trouble" },
-      pre_save_cmds = { _G.close_floating_wins },
+      need = 0
     },
-    init = function()
-      vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
-
-      vim.api.nvim_create_user_command("CloseFloats", close_floating_wins, {})
-    end,
   },
+  -- {
+  --   "rmagatti/auto-session",
+  --   opts = {
+  --     log_level = "error",
+  --     suppressed_dirs = { "~/", "~/Downloads", "/" },
+  --     bypass_save_filetypes = { "help", "alpha", "telescope", "trouble" },
+  --     pre_save_cmds = { _G.close_floating_wins },
+  --   },
+  --   init = function()
+  --     vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
+  --
+  --     vim.api.nvim_create_user_command("CloseFloats", close_floating_wins, {})
+  --   end,
+  -- },
   {
     "folke/ts-comments.nvim",
     event = "VeryLazy",
