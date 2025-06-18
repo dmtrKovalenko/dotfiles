@@ -90,11 +90,15 @@ return {
       animate = {
         enabled = false,
       },
-      exit_when_last = true,
-      close_when_all_hidden = true,
+      exit_when_last = false,
+      close_when_all_hidden = false,
       wo = {
         winhighlight = "",
         winbar = false,
+      },
+      highlights = {
+        normal = { guibg = "none", ctermbg = "none" },
+        normal_nc = { guibg = "none", ctermbg = "none" },
       },
       left = {
         {

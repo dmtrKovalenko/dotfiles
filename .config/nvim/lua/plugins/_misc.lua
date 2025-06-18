@@ -17,6 +17,19 @@ return {
       vim.g.copilot_settings = { selectedCompletionModel = "gpt-4o-copilot" }
     end,
   },
+  -- {
+  --   "copilotlsp-nvim/copilot-lsp",
+  --   init = function()
+  --     vim.g.copilot_nes_debounce = 500
+  --     vim.lsp.enable "copilot_ls"
+  --     vim.keymap.set("n", "<tab>", function()
+  --       -- Try to jump to the start of the suggestion edit.
+  --       -- If already at the start, then apply the pending suggestion and jump to the end of the edit.
+  --       local _ = require("copilot-lsp.nes").walk_cursor_start_edit()
+  --         or (require("copilot-lsp.nes").apply_pending_nes() and require("copilot-lsp.nes").walk_cursor_end_edit())
+  --     end)
+  --   end,
+  -- },
   {
     "dmtrkovalenko/project.nvim",
     config = function()
@@ -339,26 +352,19 @@ return {
     },
   },
   {
-    "folke/persistence.nvim",
-    event = "BufReadPre", -- this will only start session saving when an actual file was opened
+    "rmagatti/auto-session",
     opts = {
-      need = 0
+      log_level = "error",
+      suppressed_dirs = { "~/", "~/Downloads", "/" },
+      bypass_save_filetypes = { "help", "alpha", "telescope", "trouble" },
+      pre_save_cmds = { _G.close_floating_wins },
     },
+    init = function()
+      vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
+
+      vim.api.nvim_create_user_command("CloseFloats", close_floating_wins, {})
+    end,
   },
-  -- {
-  --   "rmagatti/auto-session",
-  --   opts = {
-  --     log_level = "error",
-  --     suppressed_dirs = { "~/", "~/Downloads", "/" },
-  --     bypass_save_filetypes = { "help", "alpha", "telescope", "trouble" },
-  --     pre_save_cmds = { _G.close_floating_wins },
-  --   },
-  --   init = function()
-  --     vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
-  --
-  --     vim.api.nvim_create_user_command("CloseFloats", close_floating_wins, {})
-  --   end,
-  -- },
   {
     "folke/ts-comments.nvim",
     event = "VeryLazy",
