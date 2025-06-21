@@ -88,7 +88,8 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 function _G.close_floating_wins()
-  require("edgy").close()
+  -- require("edgy").close()
+  vim.cmd "OutlineClose"
 end
 
 require("lazy").setup("plugins", {})

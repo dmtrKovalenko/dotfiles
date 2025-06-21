@@ -252,9 +252,6 @@ return {
       vim.keymap.set("n", "<leader>r", function()
         harpoon:list():select(4)
       end, { desc = "Harpoon #4" })
-      vim.keymap.set("n", "<leader>t", function()
-        harpoon:list():select(5)
-      end, { desc = "Harpoon #5" })
     end,
   },
 
