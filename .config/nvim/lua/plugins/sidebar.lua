@@ -1,6 +1,8 @@
 return {
   {
     "hedyhli/outline.nvim",
+    dev = true,
+    dir = "~/dev/outline.nvim",
     lazy = true,
     cmd = { "Outline", "OutlineOpen" },
     keys = {
@@ -12,7 +14,8 @@ return {
         width = 35,
         auto_close = false,
         focus_on_open = false,
-        relative_width = false
+        relative_width = false,
+        no_provider_message = "",
       },
     },
   },
