@@ -180,8 +180,7 @@ end
 local function yank_shift()
   for i = 9, 1, -1 do
     vim.fn.setreg(tostring(i), vim.fn.getreg(tostring(i - 1)))
-  end
-end
+  end end
 
 -- Create autocmd for TextYankPost event
 vim.api.nvim_create_autocmd("TextYankPost", {
