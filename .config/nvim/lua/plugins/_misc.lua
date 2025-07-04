@@ -25,7 +25,9 @@ return {
       },
     },
     opts = {
-      split_ratio = 0.4,
+      window = {
+        split_ratio = 0.4,
+      },
     },
   },
   {

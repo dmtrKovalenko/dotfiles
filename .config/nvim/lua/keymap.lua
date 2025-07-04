@@ -141,3 +141,12 @@ vim.keymap.set("n", "gd", function()
     vim.notify(string.format("Pattern '%s' not found", word), "warn", { title = "Search Failed" })
   end
 end, { remap = true, desc = "Naive file local jump to definition attempt" })
+
+-- Show relative path and copy to clipboard (replacement for <C-g>)
+vim.keymap.set("n", "<C-g>", function()
+  local relative_path = vim.fn.expand "%:."
+  if relative_path ~= "" then
+    vim.fn.setreg("+", relative_path)
+    vim.notify(relative_path, 0)
+  end
+end, { silent = true, remap = true, desc = "Show and copy relative file path" })
