@@ -318,6 +318,11 @@ return {
     event = "VeryLazy",
     dependencies = { "MunifTanjim/nui.nvim" },
     opts = {
+      views = {
+        cmdline_popup = {
+          position = { row = 23 },
+        },
+      },
       presets = {
         lsp_doc_border = true,
       },
