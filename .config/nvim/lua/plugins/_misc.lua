@@ -155,10 +155,10 @@ return {
           vim.keymap.set(mode, l, r, opts)
         end
 
-        gsmap("n", "[g", function()
+        gsmap("n", "[c", function()
           gitsigns.nav_hunk "prev"
         end, { desc = "[G]o to [P]revious Hunk" })
-        gsmap("n", "]g", function()
+        gsmap("n", "]", function()
           gitsigns.nav_hunk "next"
         end, { desc = "[G]it go to [N]ext Hunk" })
         gsmap("n", "<leader>gd", gitsigns.preview_hunk, { desc = "[G]it [D]iff Hunk" })
