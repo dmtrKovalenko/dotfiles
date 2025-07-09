@@ -46,7 +46,7 @@ abbr --add 'gaap' 'git add --all && git commit --amend --no-edit && git push --f
 abbr --add 'gtsnap' 'git diff --name-only | imfzf -m -q .png | xargs git checkout'
 abbr --add 'grim' 'git fetch && git rebase -i origin/(__git.default_branch)'
 abbr --add 'grac' 'git add --all && git rebase --continue' 
-abbr --add --position anywhere --set-cursor 'gcoc' 'git branch --contains % | xargs git checkout'
+abbr --add --position anywhere --set-cursor 'gbc' 'git branch --contains % | xargs git checkout'
 
 # Git spr
 abbr --add 'sap' 'git commit --amend --no-edit && git spr update' 
