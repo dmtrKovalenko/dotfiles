@@ -37,6 +37,7 @@ abbr --add 'ls' 'eza'
 abbr --add 'j' 'just'
 abbr --add 'm' 'make'
 abbr --add 'rbf' 'RUST_BACKTRACE=full'
+abbr --add 'awslogin' 'aws sso login --profile dev && eval "$(aws configure export-credentials --profile dev --format env)"'
 
 # Git
 abbr --add 'grr' 'git rebase --continue'
