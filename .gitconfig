@@ -35,12 +35,6 @@
 	default = current
 [pull]
 	rebase = true
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
-	
 [alias]
         hack = !sh -c 'git fetch --all && git checkout @{upstream} -t -b \"$@\"' _
 
