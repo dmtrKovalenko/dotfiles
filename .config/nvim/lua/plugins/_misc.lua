@@ -15,7 +15,7 @@ return {
     "dmtrkovalenko/fold-imports.nvim",
     -- dir = "~/dev/fold-imports.nvim",
     opts = {},
-    event = "BufRead"
+    event = "BufRead",
   },
   {
     "greggh/claude-code.nvim",
@@ -51,7 +51,7 @@ return {
         detection_methods = { "pattern" },
         patterns = { ".git", ".sl" },
         after_project_selection_callback = function()
-          vim.notify "SessionRestore"
+          require("persistence").load()
         end,
       }
     end,
@@ -373,17 +373,14 @@ return {
     },
   },
   {
-    "rmagatti/auto-session",
+    "folke/persistence.nvim",
+    event = "BufReadPre",
     opts = {
-      log_level = "error",
-      suppressed_dirs = { "~/", "~/Downloads", "/" },
-      bypass_save_filetypes = { "help", "alpha", "telescope", "trouble" },
-      pre_save_cmds = { _G.close_floating_wins },
+      need = 1,
+      branch = false,
     },
     init = function()
-      vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
-
-      vim.api.nvim_create_user_command("CloseFloats", close_floating_wins, {})
+      vim.opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }
     end,
   },
   {
