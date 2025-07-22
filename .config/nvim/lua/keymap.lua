@@ -148,6 +148,15 @@ vim.keymap.set("n", "<C-g>", function()
 end, { silent = true, noremap = true, desc = "Show and copy relative file path" })
 
 vim.keymap.set("n", "<C-q>", function()
+  local current_win = vim.api.nvim_get_current_win()
+  local current_config = vim.api.nvim_win_get_config(current_win)
+
+  -- If current window is floating, close it
+  if current_config.relative ~= "" then
+    vim.api.nvim_win_close(current_win, false)
+    return
+  end
+
   local normal_windows = {}
   local has_outline = false
 

@@ -15,7 +15,7 @@ return {
     "dmtrkovalenko/fold-imports.nvim",
     -- dir = "~/dev/fold-imports.nvim",
     opts = {},
-    event = "BufRead",
+    event = "BufReadPre",
   },
   {
     "greggh/claude-code.nvim",
@@ -31,10 +31,11 @@ return {
       },
     },
     opts = {
-      command = 'aws sso login --profile dev && eval "$(aws configure export-credentials --profile dev --format env)" && DISABLE_TELEMETRY=1 AWS_REGION=us-west-2 CLAUDE_CODE_USE_BEDROCK=1 claude --model us.anthropic.claude-sonnet-4-20250514-v1:0',
+      command = "awsclaude",
       window = {
         split_ratio = 0.4,
-        position = "rightbelow"
+        enter_insert = false,
+        position = "rightbelow",
       },
     },
   },
