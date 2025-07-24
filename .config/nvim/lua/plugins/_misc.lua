@@ -12,8 +12,12 @@ return {
   -- Detect tabstop and shiftwidth automatically
   "tpope/vim-sleuth",
   {
+    "lewis6991/foldsigns.nvim",
+    opts = {},
+  },
+  {
     "dmtrkovalenko/fold-imports.nvim",
-    -- dir = "~/dev/fold-imports.nvim",
+    dir = "~/dev/fold-imports.nvim",
     opts = {},
     event = "BufReadPre",
   },
