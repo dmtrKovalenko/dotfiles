@@ -15,6 +15,49 @@ return {
     "lewis6991/foldsigns.nvim",
     opts = {},
   },
+
+  {
+    dir = "/Users/neogoose/dev/blink.cmp", -- Change this to your path
+    name = "fff.nvim",
+    build = "cargo build --release",
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "nvim-tree/nvim-web-devicons", -- Optional
+    },
+    config = function()
+      require("fff.main").setup {}
+    end,
+    keys = {
+      {
+        "<leader>ff",
+        function()
+          require("fff.main").find_files()
+        end,
+        desc = "Find files",
+      },
+      {
+        "<leader>fg",
+        function()
+          require("fff.main").find_in_git_root()
+        end,
+        desc = "Find files in git root",
+      },
+      {
+        "<leader>fr",
+        function()
+          require("fff.main").find_recent()
+        end,
+        desc = "Find recent files",
+      },
+      {
+        "<leader>ft",
+        function()
+          require("fff.main").toggle()
+        end,
+        desc = "Toggle FFF",
+      },
+    },
+  },
   {
     "dmtrkovalenko/fold-imports.nvim",
     dir = "~/dev/fold-imports.nvim",
