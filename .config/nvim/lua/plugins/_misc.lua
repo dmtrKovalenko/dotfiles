@@ -25,11 +25,16 @@ return {
       "nvim-tree/nvim-web-devicons", -- Optional
     },
     config = function()
-      require("fff.main").setup {}
+      require("fff.main").setup {
+        debug = {
+          enabled = false,
+          show_scores = true,
+        },
+      }
     end,
     keys = {
       {
-        "<leader>ff",
+        "ff",
         function()
           require("fff.main").find_files()
         end,
