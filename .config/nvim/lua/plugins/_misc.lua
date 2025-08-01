@@ -31,8 +31,8 @@ return {
     config = function()
       require("fff.main").setup {
         debug = {
-          enabled = true,
-          show_scores = true,
+          enabled = false,
+          show_scores = false,
         },
       }
     end,
