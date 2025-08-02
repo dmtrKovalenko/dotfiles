@@ -21,8 +21,7 @@ return {
     dependencies = { "nvim-lua/plenary.nvim" },
   },
   {
-    dir = "/Users/neogoose/dev/blink.cmp", -- Change this to your path
-    name = "fff.nvim",
+    "dmtrkovalenko/fff.nvim",
     build = "cargo build --release",
     dependencies = {
       "MunifTanjim/nui.nvim",
@@ -31,8 +30,12 @@ return {
     config = function()
       require("fff.main").setup {
         debug = {
-          enabled = false,
-          show_scores = false,
+          enabled = true,
+          show_scores = true,
+        },
+        logging = {
+          enabled = true,
+          level = "debug",
         },
       }
     end,
