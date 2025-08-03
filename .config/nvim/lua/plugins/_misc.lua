@@ -22,6 +22,7 @@ return {
   },
   {
     "dmtrkovalenko/fff.nvim",
+    dir = "~/dev/fff.nvim",
     build = "cargo build --release",
     dependencies = {
       "MunifTanjim/nui.nvim",
