@@ -34,9 +34,6 @@ return {
           enabled = true,
           show_scores = true,
         },
-        preview = {
-          enabled = false,
-        },
         logging = {
           enabled = true,
           log_level = "debug",
