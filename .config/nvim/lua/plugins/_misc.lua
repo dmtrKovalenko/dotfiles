@@ -34,6 +34,9 @@ return {
           enabled = true,
           show_scores = true,
         },
+        preview = {
+          chunk_size = 8192,
+        },
         logging = {
           enabled = true,
           log_level = "debug",
