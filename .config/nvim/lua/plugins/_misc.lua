@@ -43,7 +43,11 @@ return {
           show_scores = true,
         },
         preview = {
-          chunk_size = 8192,
+          chunk_size = 4096,
+        },
+        layout = {
+          prompt_position = "top",
+          preview_size = 0.4, -- 40% of the window width
         },
         logging = {
           enabled = true,
@@ -226,7 +230,7 @@ return {
     opts = {
       signs = {
         add = { text = "┃" },
-        chage = { text = "┃" },
+        change = { text = "┃" },
         delete = { text = "_" },
         topdelete = { text = "‾" },
         changedelete = { text = "~" },

@@ -307,6 +307,12 @@ return {
         handlers = handlers,
       })
 
+      vim.lsp.config("zigls", {
+        capabilities = capabilities,
+        on_attach = on_lsp_attach,
+        handlers = handlers,
+      })
+
       require("typescript-tools").setup {
         on_attach = on_lsp_attach,
         handlers = handlers,
