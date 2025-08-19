@@ -30,7 +30,7 @@ return {
   },
   {
     "dmtrkovalenko/fff.nvim",
-    dir = "~/dev/fff.nvim",
+    -- dir = "~/dev/fff.nvim",
     build = "cargo build --release",
     dependencies = {
       "MunifTanjim/nui.nvim",
@@ -46,8 +46,8 @@ return {
           chunk_size = 4096,
         },
         layout = {
-          prompt_position = "top",
-          preview_size = 0.4, -- 40% of the window width
+          -- prompt_position = "top",
+          -- preview_size = 0.4, -- 40% of the window width
         },
         logging = {
           enabled = true,
