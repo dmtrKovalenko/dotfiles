@@ -30,31 +30,31 @@ return {
   },
   {
     "dmtrkovalenko/fff.nvim",
-    -- dir = "~/dev/fff.nvim",
-    build = "cargo build --release",
+    dir = "~/dev/fff.nvim",
+    -- build = "cargo build --release",
     dependencies = {
       "MunifTanjim/nui.nvim",
       "nvim-tree/nvim-web-devicons", -- Optional
     },
-    config = function()
-      require("fff.main").setup {
-        debug = {
-          enabled = true,
-          show_scores = true,
-        },
-        preview = {
-          chunk_size = 4096,
-        },
-        layout = {
-          -- prompt_position = "top",
-          -- preview_size = 0.4, -- 40% of the window width
-        },
-        logging = {
-          enabled = true,
-          log_level = "debug",
-        },
-      }
-    end,
+    lazy = false,
+    opts = {
+      debug = {
+        enabled = true,
+        show_scores = true,
+        lazy_sync = true,
+      },
+      preview = {
+        chunk_size = 4096,
+      },
+      layout = {
+        -- prompt_position = "top",
+        -- preview_size = 0.4, -- 40% of the window width
+      },
+      logging = {
+        enabled = true,
+        log_level = "debug",
+      },
+    },
     keys = {
       {
         "ff",
