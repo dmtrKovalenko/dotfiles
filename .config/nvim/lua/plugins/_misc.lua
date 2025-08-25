@@ -32,16 +32,12 @@ return {
     "dmtrkovalenko/fff.nvim",
     dir = "~/dev/fff.nvim",
     -- build = "cargo build --release",
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-      "nvim-tree/nvim-web-devicons", -- Optional
-    },
     lazy = false,
     opts = {
+      lazy_sync = false,
       debug = {
         enabled = true,
         show_scores = true,
-        lazy_sync = true,
       },
       preview = {
         chunk_size = 4096,
@@ -59,30 +55,9 @@ return {
       {
         "ff",
         function()
-          require("fff.main").find_files()
+          require("fff").find_files()
         end,
         desc = "Find files",
-      },
-      {
-        "<leader>fg",
-        function()
-          require("fff.main").find_in_git_root()
-        end,
-        desc = "Find files in git root",
-      },
-      {
-        "<leader>fr",
-        function()
-          require("fff.main").find_recent()
-        end,
-        desc = "Find recent files",
-      },
-      {
-        "<leader>ft",
-        function()
-          require("fff.main").toggle()
-        end,
-        desc = "Toggle FFF",
       },
     },
   },
