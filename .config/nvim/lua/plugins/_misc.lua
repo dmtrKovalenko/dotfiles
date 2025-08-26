@@ -34,7 +34,7 @@ return {
     -- build = "cargo build --release",
     lazy = false,
     opts = {
-      lazy_sync = false,
+      lazy_sync = true,
       debug = {
         enabled = true,
         show_scores = true,
