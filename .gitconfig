@@ -1,4 +1,5 @@
 [core]
+	pager = delta
 	editor = nvim --cmd 'let g:unception_block_while_host_edits=1'
 	excludesfile = /Users/neogoose/.gitignore_global
 [user]
@@ -20,12 +21,21 @@
 	cmd = "nvim -d -c \"wincmd l\" -c \"norm ]c\" \"$LOCAL\" \"$MERGED\" \"$REMOTE\""
 
 [diff]
+	tool = delta
 	renames = copy
 [difftool]
         prompt = false
 
 [difftool "difftastic"]
         cmd = difft "$LOCAL" "$REMOTE"
+
+[diftool "delta"]
+	cmd = delta --color-only
+
+[delta]
+	line-numbers = true
+	navigate = true
+	dark = true
 
 [pager]
         difftool = true
