@@ -203,5 +203,3 @@ vim.keymap.set(
   { silent = true, nowait = true, desc = "Split window horizontally" }
 )
 vim.keymap.set("n", "<C-D-o>", "<cmd>wincmd o<CR>", { silent = true, nowait = true, desc = "Quit other windows" })
-
-vim.keymap.set("n", "<C-w>", "<Nop>", { noremap = true, silent = true })
