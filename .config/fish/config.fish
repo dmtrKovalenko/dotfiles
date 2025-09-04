@@ -26,6 +26,7 @@ abbr -a Y --position anywhere --set-cursor "%| pbcopy"
 abbr --add 'c' 'cargo'
 abbr --add 'cc' 'cargo check'
 abbr --add 'cb' 'cargo build'
+abbr --add 'cbr' 'cargo build --release'
 abbr --add 'cr' 'cargo run'
 abbr --add 'ct' 'cargo test'
 abbr --add 'cfa' 'cargo fmt --all'
