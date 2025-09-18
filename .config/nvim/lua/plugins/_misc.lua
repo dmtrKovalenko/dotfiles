@@ -30,8 +30,11 @@ return {
   },
   {
     "dmtrkovalenko/fff.nvim",
-    dir = "~/dev/fff.nvim",
-    -- build = "cargo build --release",
+     -- dir = "~/dev/fff.nvim",
+    build = function()
+      -- No more need to cargo build!!!!
+      require("fff.download").download_or_build_binary()
+    end,
     lazy = false,
     opts = {
       lazy_sync = true,
