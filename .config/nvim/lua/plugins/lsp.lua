@@ -45,7 +45,6 @@ return {
     dependencies = {
       -- Automatically install LSPs to stdpath for neovim
       { "williamboman/mason.nvim", config = true },
-      "mason-org/mason-lspconfig.nvim", -- Updated repo URL
       {
         "folke/lazydev.nvim",
         ft = "lua", -- only load on lua files
@@ -211,17 +210,22 @@ return {
         return orig_util_open_floating_preview(contents, syntax, opts, ...)
       end
 
+      -- Set up global defaults first
+      vim.lsp.config('*', {
+        capabilities = capabilities,
+        on_attach = on_lsp_attach,
+        handlers = handlers,
+        root_markers = { '.git' },
+      })
+
+      -- Individual server configurations with minimal overrides
       vim.lsp.config("clangd", {
         filetypes = { "c", "cpp", "proto" },
         cmd = {
           "clangd",
-          -- "--background-index",
-          -- "--query-driver=/Users/dmtrkovalenko/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gcc",
           "--offset-encoding=utf-16",
         },
-        capabilities = capabilities,
-        on_attach = on_lsp_attach,
-        handlers = handlers,
+        root_markers = { '.clangd', 'compile_commands.json', '.git' },
       })
 
       vim.lsp.config("lua_ls", {
@@ -232,74 +236,70 @@ return {
             telemetry = { enable = false },
           },
         },
-        capabilities = capabilities,
-        on_attach = on_lsp_attach,
-        handlers = handlers,
+        root_markers = { '.luarc.json', '.luarc.jsonc', '.stylua.toml', 'stylua.toml', '.git' },
       })
 
       vim.lsp.config("bashls", {
         settings = { includeAllWorkspaceSymbols = true },
-        capabilities = capabilities,
-        on_attach = on_lsp_attach,
-        handlers = handlers,
+        filetypes = { "sh", "bash" },
       })
 
       vim.lsp.config("dhall_lsp_server", {
-        capabilities = capabilities,
-        on_attach = on_lsp_attach,
-        handlers = handlers,
+        filetypes = { "dhall" },
       })
 
       vim.lsp.config("marksman", {
-        capabilities = capabilities,
-        on_attach = on_lsp_attach,
-        handlers = handlers,
+        filetypes = { "markdown", "markdown.mdx" },
+        root_markers = { '.marksman.toml', '.git' },
       })
 
       vim.lsp.config("taplo", {
-        capabilities = capabilities,
-        on_attach = on_lsp_attach,
-        handlers = handlers,
+        filetypes = { "toml" },
+        root_markers = { 'pyproject.toml', 'Cargo.toml', '.git' },
       })
 
       vim.lsp.config("astro", {
-        capabilities = capabilities,
-        on_attach = on_lsp_attach,
-        handlers = handlers,
+        filetypes = { "astro" },
+        root_markers = { 'astro.config.mjs', 'astro.config.js', 'astro.config.ts', '.git' },
       })
 
       vim.lsp.config("eslint", {
         filetypes = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
-        capabilities = capabilities,
-        on_attach = on_lsp_attach,
-        handlers = handlers,
+        root_markers = { '.eslintrc.js', '.eslintrc.json', '.eslintrc.yml', 'eslint.config.js', 'package.json', '.git' },
       })
 
       vim.lsp.config("typos_lsp", {
         single_file_support = false,
         init_options = { diagnosticSeverity = "WARN" },
-        capabilities = capabilities,
-        on_attach = on_lsp_attach,
-        handlers = handlers,
+        root_markers = { 'typos.toml', '_typos.toml', '.typos.toml', '.git' },
       })
 
       vim.lsp.config("html", {
         filetypes = { "html", "twig", "hbs" },
-        capabilities = capabilities,
-        on_attach = on_lsp_attach,
-        handlers = handlers,
+        root_markers = { 'package.json', '.git' },
       })
 
       vim.lsp.config("pylsp", {
-        capabilities = capabilities,
-        on_attach = on_lsp_attach,
-        handlers = handlers,
+        filetypes = { "python" },
+        root_markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt', '.git' },
       })
 
-      vim.lsp.config("zigls", {
-        capabilities = capabilities,
-        on_attach = on_lsp_attach,
-        handlers = handlers,
+      vim.lsp.config("zls", {
+        filetypes = { "zig" },
+        root_markers = { 'build.zig', '.git' },
+      })
+
+      vim.lsp.config("ocamllsp", {
+        filetypes = { "ocaml", "ocaml.mli", "ocaml.interface", "ocaml.mlx" },
+        root_markers = { 'dune-project', 'dune', '.merlin', '.git' },
+        settings = {},
+      })
+
+      vim.lsp.config("relay_lsp", {
+        cmd = { "yarn", "relay-compiler", "lsp" },
+        filetypes = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
+        root_markers = { 'relay.config.js', 'relay.config.json', 'package.json', '.git' },
+        settings = {},
       })
 
       require("typescript-tools").setup {
@@ -331,36 +331,6 @@ return {
       }
 
       require("mason").setup()
-      require("mason-lspconfig").setup {
-        ensure_installed = {
-          "clangd",
-          "eslint",
-          "html",
-          "lua_ls",
-          "typos_lsp",
-          "bashls",
-          "pylsp",
-          "astro",
-          "dhall_lsp_server",
-          "marksman",
-          "taplo",
-        },
-      }
-
-      vim.lsp.config("ocamllsp", {
-        capabilities = capabilities,
-        on_attach = on_lsp_attach,
-        handlers = handlers,
-        settings = {},
-      })
-
-      vim.lsp.config("relay_lsp", {
-        handlers = handlers,
-        capabilities = capabilities,
-        on_attach = on_lsp_attach,
-        cmd = { "yarn", "relay-compiler", "lsp" },
-        settings = {},
-      })
     end,
   },
 }
