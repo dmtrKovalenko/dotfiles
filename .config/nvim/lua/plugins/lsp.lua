@@ -40,11 +40,9 @@ return {
   },
   {
     -- LSP Configuration & Plugins
-    "neovim/nvim-lspconfig",
+    "williamboman/mason.nvim",
     lazy = false,
     dependencies = {
-      -- Automatically install LSPs to stdpath for neovim
-      { "williamboman/mason.nvim", config = true },
       {
         "folke/lazydev.nvim",
         ft = "lua", -- only load on lua files
@@ -59,7 +57,7 @@ return {
       "ocaml-mlx/ocaml_mlx.nvim",
       {
         "pmizio/typescript-tools.nvim",
-        dependencies = { "nvim-lua/plenary.nvim" },
+        dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
         opts = {},
       },
       {
@@ -83,7 +81,6 @@ return {
         event = "BufWinEnter",
         dependencies = {
           "nvim-treesitter/nvim-treesitter",
-          "neovim/nvim-lspconfig", -- optional
         },
         opts = {
           custom_filetypes = "rescript",
@@ -218,14 +215,12 @@ return {
         root_markers = { '.git' },
       })
 
-      -- Individual server configurations with minimal overrides
+      -- Servers with custom command or settings need vim.lsp.config()
       vim.lsp.config("clangd", {
-        filetypes = { "c", "cpp", "proto" },
         cmd = {
           "clangd",
           "--offset-encoding=utf-16",
         },
-        root_markers = { '.clangd', 'compile_commands.json', '.git' },
       })
 
       vim.lsp.config("lua_ls", {
@@ -236,71 +231,49 @@ return {
             telemetry = { enable = false },
           },
         },
-        root_markers = { '.luarc.json', '.luarc.jsonc', '.stylua.toml', 'stylua.toml', '.git' },
       })
 
       vim.lsp.config("bashls", {
         settings = { includeAllWorkspaceSymbols = true },
-        filetypes = { "sh", "bash" },
-      })
-
-      vim.lsp.config("dhall_lsp_server", {
-        filetypes = { "dhall" },
-      })
-
-      vim.lsp.config("marksman", {
-        filetypes = { "markdown", "markdown.mdx" },
-        root_markers = { '.marksman.toml', '.git' },
-      })
-
-      vim.lsp.config("taplo", {
-        filetypes = { "toml" },
-        root_markers = { 'pyproject.toml', 'Cargo.toml', '.git' },
-      })
-
-      vim.lsp.config("astro", {
-        filetypes = { "astro" },
-        root_markers = { 'astro.config.mjs', 'astro.config.js', 'astro.config.ts', '.git' },
-      })
-
-      vim.lsp.config("eslint", {
-        filetypes = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
-        root_markers = { '.eslintrc.js', '.eslintrc.json', '.eslintrc.yml', 'eslint.config.js', 'package.json', '.git' },
       })
 
       vim.lsp.config("typos_lsp", {
         single_file_support = false,
         init_options = { diagnosticSeverity = "WARN" },
-        root_markers = { 'typos.toml', '_typos.toml', '.typos.toml', '.git' },
       })
 
-      vim.lsp.config("html", {
-        filetypes = { "html", "twig", "hbs" },
-        root_markers = { 'package.json', '.git' },
+      -- Custom Relay LSP setup using autocommand
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+        callback = function(args)
+          local bufnr = args.buf
+          local root_dir = vim.fs.root(bufnr, { "relay.config.js", "relay.config.json" })
+
+          if root_dir then
+            vim.lsp.start({
+              name = "relay",
+              cmd = { "yarn", "relay-compiler", "lsp" },
+              root_dir = root_dir,
+              capabilities = capabilities,
+              on_attach = function(client, buf)
+                on_lsp_attach(client, buf)
+              end,
+              handlers = handlers,
+            }, { bufnr = bufnr })
+          end
+        end,
       })
 
-      vim.lsp.config("pylsp", {
-        filetypes = { "python" },
-        root_markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt', '.git' },
-      })
-
-      vim.lsp.config("zls", {
-        filetypes = { "zig" },
-        root_markers = { 'build.zig', '.git' },
-      })
-
-      vim.lsp.config("ocamllsp", {
-        filetypes = { "ocaml", "ocaml.mli", "ocaml.interface", "ocaml.mlx" },
-        root_markers = { 'dune-project', 'dune', '.merlin', '.git' },
-        settings = {},
-      })
-
-      vim.lsp.config("relay_lsp", {
-        cmd = { "yarn", "relay-compiler", "lsp" },
-        filetypes = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
-        root_markers = { 'relay.config.js', 'relay.config.json', 'package.json', '.git' },
-        settings = {},
-      })
+      -- Servers that work with defaults can use vim.lsp.enable()
+      vim.lsp.enable('dhall_lsp_server')
+      vim.lsp.enable('marksman')
+      vim.lsp.enable('taplo')
+      vim.lsp.enable('astro')
+      vim.lsp.enable('eslint')
+      vim.lsp.enable('html')
+      vim.lsp.enable('pylsp')
+      vim.lsp.enable('zls')
+      vim.lsp.enable('ocamllsp')
 
       require("typescript-tools").setup {
         on_attach = on_lsp_attach,
