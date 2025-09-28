@@ -96,7 +96,7 @@ return {
   {
     "github/copilot.vim",
     config = function()
-      vim.g.copilot_settings = { selectedCompletionModel = "gpt-4o-copilot" }
+      vim.g.copilot_settings = { selectedCompletionModel = "gpt-41-copilot" }
       vim.g.copilot_integration_id = "vscode-chat"
     end,
   },
