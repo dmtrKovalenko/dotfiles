@@ -212,7 +212,7 @@ return {
         capabilities = capabilities,
         on_attach = on_lsp_attach,
         handlers = handlers,
-        root_markers = { '.git' },
+        -- root_markers = { '.git' },
       })
 
       -- Servers with custom command or settings need vim.lsp.config()
@@ -242,26 +242,127 @@ return {
         init_options = { diagnosticSeverity = "WARN" },
       })
 
-      -- Custom Relay LSP setup using autocommand
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
-        callback = function(args)
-          local bufnr = args.buf
-          local root_dir = vim.fs.root(bufnr, { "relay.config.js", "relay.config.json" })
+      -- Relay LSP configuration with smart binary detection
+      vim.lsp.config("relay_lsp", {
+        cmd = function(dispatchers, root_dir)
+          -- Try different ways to find and run relay-compiler
+          local cmd = nil
 
-          if root_dir then
-            vim.lsp.start({
-              name = "relay",
-              cmd = { "yarn", "relay-compiler", "lsp" },
-              root_dir = root_dir,
-              capabilities = capabilities,
-              on_attach = function(client, buf)
-                on_lsp_attach(client, buf)
-              end,
-              handlers = handlers,
-            }, { bufnr = bufnr })
+          -- Helper function to find workspace root
+          local function find_workspace_root(start_dir)
+            local current = start_dir
+            local root = nil
+
+            while current and current ~= "/" do
+              -- Look for yarn.lock, package-lock.json, or pnpm-lock.yaml
+              if vim.fn.filereadable(vim.fs.joinpath(current, "yarn.lock")) == 1 or
+                 vim.fn.filereadable(vim.fs.joinpath(current, "package-lock.json")) == 1 or
+                 vim.fn.filereadable(vim.fs.joinpath(current, "pnpm-lock.yaml")) == 1 then
+                root = current
+                break
+              end
+              current = vim.fn.fnamemodify(current, ":h")
+            end
+
+            return root
+          end
+
+          -- 1. Try local node_modules/.bin/relay-compiler
+          local local_bin = vim.fs.joinpath(root_dir, "node_modules", ".bin", "relay-compiler")
+          if vim.fn.executable(local_bin) == 1 then
+            cmd = { local_bin, "lsp" }
+          else
+            -- 2. Try workspace root node_modules/.bin/relay-compiler (for yarn workspaces)
+            local workspace_root = find_workspace_root(root_dir)
+            if workspace_root then
+              local workspace_bin = vim.fs.joinpath(workspace_root, "node_modules", ".bin", "relay-compiler")
+              if vim.fn.executable(workspace_bin) == 1 then
+                cmd = { workspace_bin, "lsp" }
+              end
+            end
+          end
+
+          -- 3. Try global relay-compiler
+          if not cmd and vim.fn.executable("relay-compiler") == 1 then
+            cmd = { "relay-compiler", "lsp" }
+          end
+
+          -- 4. Try yarn relay-compiler (if yarn.lock exists in workspace)
+          if not cmd then
+            local workspace_root = find_workspace_root(root_dir)
+            if workspace_root and vim.fn.filereadable(vim.fs.joinpath(workspace_root, "yarn.lock")) == 1
+               and vim.fn.executable("yarn") == 1 then
+              cmd = { "yarn", "relay-compiler", "lsp" }
+            end
+          end
+
+          -- 5. Try npx relay-compiler as fallback
+          if not cmd and vim.fn.executable("npx") == 1 then
+            cmd = { "npx", "relay-compiler", "lsp" }
+          end
+
+          if not cmd then
+            vim.notify("relay-compiler not found. Install it with: npm install -g relay-compiler", vim.log.levels.ERROR)
+            return nil
+          end
+
+          return cmd
+        end,
+        filetypes = {
+          "javascript",
+          "javascriptreact",
+          "javascript.jsx",
+          "typescript",
+          "typescriptreact",
+          "typescript.tsx"
+        },
+        root_dir = function(fname)
+          -- Look for relay config files first (most specific)
+          local relay_root = vim.fs.root(fname, {
+            "relay.config.js",
+            "relay.config.json",
+            "relay.config.cjs",
+            "relay.config.ts"
+          })
+          if relay_root then
+            return relay_root
+          end
+
+          -- Fallback to package.json
+          return vim.fs.root(fname, { "package.json" })
+        end,
+        default_config = {
+          auto_start_compiler = false,
+          path_to_config = nil
+        },
+        on_new_config = function(config, root_dir)
+          local relay_config_path = nil
+
+          -- Look for relay config files
+          for _, name in ipairs({ "relay.config.js", "relay.config.json", "relay.config.cjs" }) do
+            local config_file = vim.fs.joinpath(root_dir, name)
+            if vim.fn.filereadable(config_file) == 1 then
+              relay_config_path = config_file
+              break
+            end
+          end
+
+          if relay_config_path then
+            config.settings = config.settings or {}
+            config.settings.relay = config.settings.relay or {}
+            config.settings.relay.pathToConfig = relay_config_path
           end
         end,
+        handlers = vim.tbl_extend("force", handlers, {
+          ["window/showStatus"] = function(_, result, ctx, _)
+            if result then
+              local client = vim.lsp.get_client_by_id(ctx.client_id)
+              if client then
+                vim.notify(string.format("[%s] %s", client.name, result.message or ""), vim.log.levels.INFO)
+              end
+            end
+          end
+        })
       })
 
       -- Servers that work with defaults can use vim.lsp.enable()
@@ -274,6 +375,7 @@ return {
       vim.lsp.enable('pylsp')
       vim.lsp.enable('zls')
       vim.lsp.enable('ocamllsp')
+      vim.lsp.enable('relay_lsp')
 
       require("typescript-tools").setup {
         on_attach = on_lsp_attach,
