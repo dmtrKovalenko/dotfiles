@@ -2,6 +2,7 @@
 	pager = delta
 	editor = nvim --cmd 'let g:unception_block_while_host_edits=1'
 	excludesfile = /Users/neogoose/.gitignore_global
+	commentChar = ";"
 [user]
 	name = Dmitriy Kovalenko
 	email = dmtr.kovalenko@outlook.com
