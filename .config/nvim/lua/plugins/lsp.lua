@@ -366,6 +366,7 @@ return {
       })
 
       -- Servers that work with defaults can use vim.lsp.enable()
+      vim.lsp.enable('lua_ls')
       vim.lsp.enable('dhall_lsp_server')
       vim.lsp.enable('marksman')
       vim.lsp.enable('taplo')
