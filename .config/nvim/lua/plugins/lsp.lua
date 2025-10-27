@@ -208,7 +208,7 @@ return {
       end
 
       -- Set up global defaults first
-      vim.lsp.config('*', {
+      vim.lsp.config("*", {
         capabilities = capabilities,
         on_attach = on_lsp_attach,
         handlers = handlers,
@@ -242,141 +242,292 @@ return {
         init_options = { diagnosticSeverity = "WARN" },
       })
 
-      -- Relay LSP configuration with smart binary detection
-      vim.lsp.config("relay_lsp", {
-        cmd = function(dispatchers, root_dir)
-          -- Try different ways to find and run relay-compiler
-          local cmd = nil
+      -- Simplified relay_lsp configuration for debugging
+      -- First, let's disable the automatic enable to test manually
+      -- vim.lsp.config("relay_lsp", {
+      --   cmd = { "relay-compiler", "lsp" },
+      --   root_markers = { "relay.config.*", "package.json" },
+      --   filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+      -- })
 
-          -- Helper function to find workspace root
-          local function find_workspace_root(start_dir)
-            local current = start_dir
-            local root = nil
+      -- Temporarily disabled to prevent crashes - use RelayLspDiag to analyze setup
+      -- vim.lsp.enable "relay_lsp"
 
-            while current and current ~= "/" do
-              -- Look for yarn.lock, package-lock.json, or pnpm-lock.yaml
-              if vim.fn.filereadable(vim.fs.joinpath(current, "yarn.lock")) == 1 or
-                 vim.fn.filereadable(vim.fs.joinpath(current, "package-lock.json")) == 1 or
-                 vim.fn.filereadable(vim.fs.joinpath(current, "pnpm-lock.yaml")) == 1 then
-                root = current
-                break
-              end
-              current = vim.fn.fnamemodify(current, ":h")
-            end
+      -- Create user commands for Relay LSP management
+      vim.api.nvim_create_user_command("RelayLspRestart", function()
+        vim.cmd "LspRestart relay_lsp"
+      end, { desc = "Restart Relay LSP server" })
 
-            return root
-          end
+      -- Manual relay_lsp test command
+      vim.api.nvim_create_user_command("RelayLspManualTest", function()
+        local cwd = vim.uv.cwd()
+        local filepath = vim.api.nvim_buf_get_name(0)
+        local file_dir = vim.fn.fnamemodify(filepath, ":h")
 
-          -- 1. Try local node_modules/.bin/relay-compiler
-          local local_bin = vim.fs.joinpath(root_dir, "node_modules", ".bin", "relay-compiler")
-          if vim.fn.executable(local_bin) == 1 then
-            cmd = { local_bin, "lsp" }
-          else
-            -- 2. Try workspace root node_modules/.bin/relay-compiler (for yarn workspaces)
-            local workspace_root = find_workspace_root(root_dir)
-            if workspace_root then
-              local workspace_bin = vim.fs.joinpath(workspace_root, "node_modules", ".bin", "relay-compiler")
-              if vim.fn.executable(workspace_bin) == 1 then
-                cmd = { workspace_bin, "lsp" }
+        -- Find root directory
+        local function find_root_dir(start_path, patterns)
+          local current_dir = start_path
+          while current_dir and current_dir ~= "/" do
+            for _, pattern in ipairs(patterns) do
+              local files = vim.fn.glob(current_dir .. "/" .. pattern, false, true)
+              if #files > 0 then
+                return current_dir, files[1]
               end
             end
+            current_dir = vim.fn.fnamemodify(current_dir, ":h")
           end
+          return nil, nil
+        end
 
-          -- 3. Try global relay-compiler
-          if not cmd and vim.fn.executable("relay-compiler") == 1 then
-            cmd = { "relay-compiler", "lsp" }
-          end
+        local root_patterns = { "relay.config.*", "package.json" }
+        local found_root, root_file = find_root_dir(file_dir, root_patterns)
 
-          -- 4. Try yarn relay-compiler (if yarn.lock exists in workspace)
-          if not cmd then
-            local workspace_root = find_workspace_root(root_dir)
-            if workspace_root and vim.fn.filereadable(vim.fs.joinpath(workspace_root, "yarn.lock")) == 1
-               and vim.fn.executable("yarn") == 1 then
-              cmd = { "yarn", "relay-compiler", "lsp" }
-            end
-          end
+        if not found_root then
+          vim.notify("❌ No root directory found (no relay.config.* or package.json)", vim.log.levels.ERROR)
+          return
+        end
 
-          -- 5. Try npx relay-compiler as fallback
-          if not cmd and vim.fn.executable("npx") == 1 then
-            cmd = { "npx", "relay-compiler", "lsp" }
-          end
+        -- Check for relay-compiler
+        local relay_paths = {
+          found_root .. "/node_modules/.bin/relay-compiler",
+          vim.fn.fnamemodify(found_root, ":h") .. "/node_modules/.bin/relay-compiler",
+          "relay-compiler"
+        }
 
-          if not cmd then
-            vim.notify("relay-compiler not found. Install it with: npm install -g relay-compiler", vim.log.levels.ERROR)
-            return nil
+        local found_relay = nil
+        for _, path in ipairs(relay_paths) do
+          if vim.fn.executable(path) == 1 then
+            found_relay = path
+            break
           end
+        end
 
-          return cmd
-        end,
-        filetypes = {
-          "javascript",
-          "javascriptreact",
-          "javascript.jsx",
-          "typescript",
-          "typescriptreact",
-          "typescript.tsx"
-        },
-        root_dir = function(fname)
-          -- Look for relay config files first (most specific)
-          local relay_root = vim.fs.root(fname, {
-            "relay.config.js",
-            "relay.config.json",
-            "relay.config.cjs",
-            "relay.config.ts"
-          })
-          if relay_root then
-            return relay_root
-          end
+        if not found_relay then
+          vim.notify("❌ relay-compiler not found in any expected locations", vim.log.levels.ERROR)
+          return
+        end
 
-          -- Fallback to package.json
-          return vim.fs.root(fname, { "package.json" })
-        end,
-        default_config = {
-          auto_start_compiler = false,
-          path_to_config = nil
-        },
-        on_new_config = function(config, root_dir)
-          local relay_config_path = nil
+        vim.notify("✅ Found root: " .. found_root, vim.log.levels.INFO)
+        vim.notify("✅ Found relay-compiler: " .. found_relay, vim.log.levels.INFO)
 
-          -- Look for relay config files
-          for _, name in ipairs({ "relay.config.js", "relay.config.json", "relay.config.cjs" }) do
-            local config_file = vim.fs.joinpath(root_dir, name)
-            if vim.fn.filereadable(config_file) == 1 then
-              relay_config_path = config_file
-              break
-            end
-          end
-
-          if relay_config_path then
-            config.settings = config.settings or {}
-            config.settings.relay = config.settings.relay or {}
-            config.settings.relay.pathToConfig = relay_config_path
-          end
-        end,
-        handlers = vim.tbl_extend("force", handlers, {
-          ["window/showStatus"] = function(_, result, ctx, _)
-            if result then
-              local client = vim.lsp.get_client_by_id(ctx.client_id)
-              if client then
-                vim.notify(string.format("[%s] %s", client.name, result.message or ""), vim.log.levels.INFO)
-              end
-            end
-          end
+        -- Create a simple relay_lsp configuration
+        vim.lsp.config("relay_lsp_manual", {
+          cmd = { found_relay, "lsp" },
+          root_markers = { "relay.config.*", "package.json" },
+          filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
         })
-      })
+
+        -- Try to start it
+        vim.cmd("LspStart relay_lsp_manual")
+        vim.notify("🔄 Started relay_lsp_manual - check :LspInfo", vim.log.levels.INFO)
+      end, { desc = "Manually test relay_lsp with current setup" })
+
+      vim.api.nvim_create_user_command("RelayCompilerStart", function()
+        local root_dir = vim.lsp.get_clients({ name = "relay_lsp" })[1]
+        if root_dir then
+          root_dir = root_dir.config.root_dir
+        else
+          root_dir = vim.uv.cwd()
+        end
+
+        local relay_compiler_path = root_dir .. "/node_modules/.bin/relay-compiler"
+        if vim.fn.executable(relay_compiler_path) ~= 1 then
+          relay_compiler_path = "relay-compiler"
+        end
+
+        local watch_cmd = { relay_compiler_path, "--watch" }
+        vim.fn.jobstart(watch_cmd, {
+          cwd = root_dir,
+          detach = true,
+          on_stdout = function(_, data)
+            if data and #data > 0 then
+              vim.notify("Relay Compiler: " .. table.concat(data, "\n"), vim.log.levels.INFO)
+            end
+          end,
+          on_stderr = function(_, data)
+            if data and #data > 0 then
+              vim.notify("Relay Compiler Error: " .. table.concat(data, "\n"), vim.log.levels.WARN)
+            end
+          end,
+        })
+        vim.notify("Started Relay compiler in watch mode", vim.log.levels.INFO)
+      end, { desc = "Start Relay compiler in watch mode" })
+
+      -- Comprehensive relay_lsp diagnostic command
+      vim.api.nvim_create_user_command("RelayLspDiag", function()
+        local results = {}
+
+        -- Current buffer info
+        local bufnr = vim.api.nvim_get_current_buf()
+        local filepath = vim.api.nvim_buf_get_name(bufnr)
+        local filetype = vim.bo[bufnr].filetype
+
+        table.insert(results, "=== RELAY LSP DIAGNOSTICS ===")
+        table.insert(results, "Current file: " .. filepath)
+        table.insert(results, "Current filetype: " .. filetype)
+        table.insert(results, "")
+
+        -- Check if filetype matches relay_lsp filetypes
+        local relay_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" }
+        local filetype_match = vim.tbl_contains(relay_filetypes, filetype)
+        table.insert(results, "Filetype matches relay_lsp: " .. (filetype_match and "✅ YES" or "❌ NO"))
+        table.insert(results, "Expected filetypes: " .. table.concat(relay_filetypes, ", "))
+        table.insert(results, "")
+
+        -- Root directory detection (mimicking LSP's upward search)
+        local function find_root_dir(start_path, patterns)
+          local current_dir = start_path
+          while current_dir and current_dir ~= "/" do
+            for _, pattern in ipairs(patterns) do
+              local files = vim.fn.glob(current_dir .. "/" .. pattern, false, true)
+              if #files > 0 then
+                return current_dir, files[1]
+              end
+            end
+            current_dir = vim.fn.fnamemodify(current_dir, ":h")
+          end
+          return nil, nil
+        end
+
+        local file_dir = vim.fn.fnamemodify(filepath, ":h")
+        local root_patterns = { "relay.config.*", "package.json" }
+        local found_root, root_file = find_root_dir(file_dir, root_patterns)
+
+        table.insert(results, "Current file directory: " .. file_dir)
+        table.insert(results, "Current working directory: " .. vim.uv.cwd())
+
+        if not found_root then
+          table.insert(results, "❌ No root markers found")
+          table.insert(results, "Searched upward from: " .. file_dir)
+          table.insert(results, "Looking for: " .. table.concat(root_patterns, ", "))
+        else
+          table.insert(results, "✅ Root directory: " .. found_root)
+          table.insert(results, "Root marker found: " .. root_file)
+          table.insert(results, "Distance from CWD: " .. (found_root == vim.uv.cwd() and "same" or "different"))
+        end
+        table.insert(results, "")
+
+        -- Check relay-compiler installation (using detected root or fallbacks)
+        local relay_paths = {}
+        local found_relay = false
+
+        if found_root then
+          -- Primary: check in project's node_modules
+          table.insert(relay_paths, found_root .. "/node_modules/.bin/relay-compiler")
+
+          -- Secondary: check in parent directory (for monorepos)
+          local parent_dir = vim.fn.fnamemodify(found_root, ":h")
+          table.insert(relay_paths, parent_dir .. "/node_modules/.bin/relay-compiler")
+        end
+
+        -- Fallback: global installation
+        table.insert(relay_paths, "relay-compiler")
+
+        for i, path in ipairs(relay_paths) do
+          local executable = vim.fn.executable(path)
+          local status = executable == 1 and "✅ FOUND" or "❌ NOT FOUND"
+          local description = ""
+          if i == 1 then
+            description = " (project node_modules)"
+          elseif i == 2 then
+            description = " (parent/monorepo node_modules)"
+          elseif path == "relay-compiler" then
+            description = " (global)"
+          end
+
+          table.insert(results, "relay-compiler path " .. i .. ": " .. path .. description .. " - " .. status)
+          if executable == 1 and not found_relay then
+            found_relay = path
+          end
+        end
+        table.insert(results, "")
+
+        -- Check LSP clients
+        local clients = vim.lsp.get_clients({ bufnr = bufnr })
+        table.insert(results, "LSP clients attached to buffer: " .. #clients)
+
+        local relay_client = nil
+        for _, client in ipairs(clients) do
+          table.insert(results, "  - " .. client.name .. " (id: " .. client.id .. ")")
+          if client.name == "relay_lsp" then
+            relay_client = client
+          end
+        end
+
+        if relay_client then
+          table.insert(results, "✅ relay_lsp client found!")
+          table.insert(results, "  Root dir: " .. (relay_client.config.root_dir or "unknown"))
+          table.insert(results, "  Command: " .. (relay_client.config.cmd and table.concat(relay_client.config.cmd, " ") or "unknown"))
+        else
+          table.insert(results, "❌ relay_lsp client not attached")
+        end
+        table.insert(results, "")
+
+        -- Check if relay_lsp config exists
+        local has_config = pcall(function()
+          return vim.lsp.config.get("relay_lsp")
+        end)
+        table.insert(results, "relay_lsp config loaded: " .. (has_config and "✅ YES" or "❌ NO"))
+        table.insert(results, "")
+
+        -- Manual attachment analysis (without actually starting LSP)
+        table.insert(results, "=== ANALYSIS ===")
+        if found_relay and filetype_match and found_root then
+          table.insert(results, "✅ All prerequisites met for relay_lsp!")
+          table.insert(results, "Expected root: " .. found_root)
+          table.insert(results, "Expected compiler: " .. found_relay)
+          table.insert(results, "")
+          table.insert(results, "To manually test relay_lsp:")
+          table.insert(results, "  1. Run :LspStart relay_lsp")
+          table.insert(results, "  2. Check :LspInfo for relay_lsp")
+          table.insert(results, "  3. Look for 'relay_lsp starting in:' notification")
+        else
+          table.insert(results, "❌ Prerequisites not met:")
+          if not found_relay then table.insert(results, "  - relay-compiler not found in any checked paths") end
+          if not filetype_match then table.insert(results, "  - filetype '" .. filetype .. "' doesn't match expected types") end
+          if not found_root then table.insert(results, "  - no root directory found (no relay.config.* or package.json upward from file)") end
+        end
+
+        table.insert(results, "")
+        table.insert(results, "=== TROUBLESHOOTING ===")
+        table.insert(results, "If relay_lsp doesn't work:")
+        table.insert(results, "  1. Make sure you have relay-compiler installed")
+        table.insert(results, "  2. Check that relay.config.* exists")
+        table.insert(results, "  3. Verify you're in a JavaScript/TypeScript file")
+        table.insert(results, "  4. Run :LspInfo to see attached clients")
+
+        -- Show results - ensure no multi-line strings
+        local flat_results = {}
+        for _, line in ipairs(results) do
+          local str_line = tostring(line)
+          if str_line:find("[\r\n]") then
+            -- Split multi-line strings
+            for split_line in str_line:gmatch("[^\r\n]+") do
+              table.insert(flat_results, split_line)
+            end
+          else
+            table.insert(flat_results, str_line)
+          end
+        end
+
+        vim.cmd("new")
+        vim.api.nvim_buf_set_lines(0, 0, -1, false, flat_results)
+        vim.bo.buftype = "nofile"
+        vim.bo.bufhidden = "wipe"
+        vim.bo.filetype = "text"
+      end, { desc = "Diagnose relay_lsp configuration and attachment" })
 
       -- Servers that work with defaults can use vim.lsp.enable()
-      vim.lsp.enable('lua_ls')
-      vim.lsp.enable('dhall_lsp_server')
-      vim.lsp.enable('marksman')
-      vim.lsp.enable('taplo')
-      vim.lsp.enable('astro')
-      vim.lsp.enable('eslint')
-      vim.lsp.enable('html')
-      vim.lsp.enable('pylsp')
-      vim.lsp.enable('zls')
-      vim.lsp.enable('ocamllsp')
-      vim.lsp.enable('relay_lsp')
+      vim.lsp.enable "lua_ls"
+      vim.lsp.enable "dhall_lsp_server"
+      vim.lsp.enable "marksman"
+      vim.lsp.enable "taplo"
+      vim.lsp.enable "astro"
+      vim.lsp.enable "eslint"
+      vim.lsp.enable "html"
+      vim.lsp.enable "pylsp"
+      vim.lsp.enable "zls"
+      vim.lsp.enable "ocamllsp"
 
       require("typescript-tools").setup {
         on_attach = on_lsp_attach,
