@@ -56,11 +56,6 @@ return {
       },
       "ocaml-mlx/ocaml_mlx.nvim",
       {
-        "pmizio/typescript-tools.nvim",
-        dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
-        opts = {},
-      },
-      {
         "mrcjkb/rustaceanvim",
         lazy = false,
       },
@@ -251,11 +246,7 @@ return {
       vim.lsp.enable "pylsp"
       vim.lsp.enable "zls"
       vim.lsp.enable "ocamllsp"
-
-      require("typescript-tools").setup {
-        on_attach = on_lsp_attach,
-        handlers = handlers,
-      }
+      vim.lsp.enable "ts_ls"
 
       vim.g.rustaceanvim = {
         -- LSP configuration
