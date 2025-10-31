@@ -55,6 +55,7 @@ return {
         },
       },
       "ocaml-mlx/ocaml_mlx.nvim",
+      "neovim/nvim-lspconfig",
       {
         "mrcjkb/rustaceanvim",
         lazy = false,
@@ -127,7 +128,7 @@ return {
         -- Various picker for lsp related stuff
         lsp_map("gr", Snacks.picker.lsp_references, "[G]oto [R]eferences")
         lsp_map("gi", Snacks.picker.lsp_implementations, "[G]oto [I]mplementations")
-        lsp_map("gt", Snacks.picker.lsp_type_definitions, "[G]oto [T]ype Definitions")
+        lsp_map("<A-t>", Snacks.picker.lsp_type_definitions, "[G]oto [T]ype Definitions")
         lsp_map("<D-l>", Snacks.picker.lsp_workspace_symbols, "Search workspace symbols")
         lsp_map("<leader>ss", Snacks.picker.lsp_symbols, "[S]earch [S]ymbols")
 
@@ -247,6 +248,7 @@ return {
       vim.lsp.enable "zls"
       vim.lsp.enable "ocamllsp"
       vim.lsp.enable "ts_ls"
+      vim.lsp.enable "lua_ls"
 
       vim.g.rustaceanvim = {
         -- LSP configuration
