@@ -111,7 +111,9 @@ return {
           vim.keymap.set("n", keys, func, { remap = true, buffer = bufnr, desc = desc, silent = true })
         end
 
-        lsp_map("<D-.>", require("tiny-code-action").code_action, "Code Action")
+        lsp_map("<D-.>", function()
+          require("tiny-code-action").code_action {}
+        end, "Code Action")
         lsp_map("<D-i>", function()
           if client.name == "rust-analyzer" then
             vim.cmd.RustLsp { "hover", "actions" }
@@ -208,7 +210,7 @@ return {
         capabilities = capabilities,
         on_attach = on_lsp_attach,
         handlers = handlers,
-        -- root_markers = { '.git' },
+        root_markers = { ".git" },
       })
 
       -- Servers with custom command or settings need vim.lsp.config()
@@ -236,6 +238,10 @@ return {
       vim.lsp.config("typos_lsp", {
         single_file_support = false,
         init_options = { diagnosticSeverity = "WARN" },
+      })
+
+      vim.lsp.config("ts_ls", {
+        on_attach = on_lsp_attach,
       })
 
       vim.lsp.enable "dhall_lsp_server"
