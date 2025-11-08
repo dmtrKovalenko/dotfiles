@@ -29,7 +29,7 @@ vim.keymap.set("v", "<backspace>", '"_d', { noremap = true })
 vim.keymap.set("n", "<D-s>", "w<CR>", { silent = true })
 -- Open git
 vim.keymap.set("n", "<A-g>", "<cmd>Git<CR>", { silent = true })
-vim.keymap.set("n", "<D-S-g>", "<cmd>Git<CR>", { silent = true })
+vim.keymap.set("n", "<D-S-g>", "<cmd>above Git<CR>", { silent = true })
 
 -- Move to next occurrence using native search
 vim.keymap.set("n", "<D-n>", "*", { silent = true })
