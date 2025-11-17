@@ -204,3 +204,10 @@ vim.keymap.set(
   "<cmd>rightbelow split<cr>",
   { silent = true, nowait = true, desc = "Split window horizontally" }
 )
+
+vim.keymap.set("x", "$", function()
+  vim.notify "Learn new move you lazy bitch"
+end, { silent = true })
+vim.keymap.set("x", "0", function()
+  vim.notify "Learn new move you lazy bitch"
+end, { silent = true })
