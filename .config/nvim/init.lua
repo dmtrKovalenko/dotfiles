@@ -23,7 +23,23 @@ vim.o.tags = "./tags;"
 -- Enale mouse mode
 vim.o.mouse = "a"
 vim.o.foldmethod = "manual"
+
 vim.o.autochdir = true
+
+if os.getenv('SSH_CONNECTION') ~=nill then
+  vim.g.clipboard = {
+    name = 'OSC 52',
+    copy = {
+      ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+      ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+    },
+    paste = {
+      ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+      ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+    },
+  }
+end
+
 -- Sync clipboard between OS and Neovim.
 vim.o.clipboard = "unnamedplus"
 vim.o.showmode = false
