@@ -66,7 +66,7 @@ return {
   },
   {
     "dmtrkovalenko/fold-imports.nvim",
-    dir = "~/dev/fold-imports.nvim",
+    -- dir = "~/dev/fold-imports.nvim",
     opts = {},
     event = "BufReadPre",
   },
