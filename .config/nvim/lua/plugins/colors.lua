@@ -1,4 +1,4 @@
-local theme = "cyberdream"
+local theme = os.getenv "NEOVIM_THEME" or "cyberdream"
 
 local function get_goose_lualine_theme()
   if theme == "catppuccin" then
@@ -38,7 +38,15 @@ return {
       },
     },
   },
-
+  {
+    "rebelot/kanagawa.nvim",
+    priority = 1000,
+    name = "kanagawa",
+    enabled = (theme == "kanagawa"),
+    config = function()
+      vim.cmd "colorscheme kanagawa"
+    end,
+  },
   {
     "catppuccin/nvim",
     name = "catppuccin",

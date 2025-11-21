@@ -1,7 +1,7 @@
 [core]
 	pager = delta
 	editor = nvim --cmd 'let g:unception_block_while_host_edits=1'
-	excludesfile = /Users/neogoose/.gitignore_global
+	excludesfile = ~/.gitignore_global
 	commentChar = ";"
 [user]
 	name = Dmitriy Kovalenko
@@ -28,7 +28,7 @@
         prompt = false
 
 [difftool "difftastic"]
-        cmd = difft "$LOCAL" "$REMOTE"
+	cmd = difft "$LOCAL" "$REMOTE"
 
 [diftool "delta"]
 	cmd = delta --color-only
