@@ -32,8 +32,15 @@ return {
         }
       end
 
+      local function format_and_save()
+        vim.cmd "stopinsert"
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
+        format()
+        vim.cmd "write"
+      end
+
       vim.keymap.set({ "n", "i" }, "<F12>", format, { desc = "Format", silent = true })
-      vim.keymap.set({ "n", "i" }, "<C-f>", format, { desc = "Format", silent = true })
+      vim.keymap.set({ "n", "i" }, "<C-f>", format_and_save, { desc = "Format", silent = true })
 
       vim.api.nvim_create_user_command("Format", format, { desc = "Format current buffer with LSP" })
     end,
