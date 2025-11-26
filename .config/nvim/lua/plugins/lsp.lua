@@ -148,7 +148,7 @@ return {
           vim.cmd "LspInfo"
         end, "Lsp [R]eload")
         lsp_map("<leader>lh", function()
-          vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(filter), { bufnr })
+          vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), bufnr)
         end, "Lsp toggle inlay [h]ints")
       end
 

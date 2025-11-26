@@ -38,15 +38,7 @@ return {
       },
     },
   },
-  {
-    "rebelot/kanagawa.nvim",
-    priority = 1000,
-    name = "kanagawa",
-    enabled = (theme == "kanagawa"),
-    config = function()
-      vim.cmd "colorscheme kanagawa"
-    end,
-  },
+
   {
     "catppuccin/nvim",
     name = "catppuccin",

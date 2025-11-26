@@ -46,7 +46,7 @@ vim.opt.title = true
 vim.opt.titlestring = ssh_prefix .. '%{winnr("$")}xfish %{fnamemodify(getcwd(), ":~:.")}'
 
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   vim.fn.system {
     "git",
     "clone",
