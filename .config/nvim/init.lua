@@ -26,7 +26,7 @@ vim.o.foldmethod = "manual"
 
 vim.o.autochdir = true
 
-if os.getenv('SSH_CONNECTION') ~= nil then
+if os.getenv('SSH_CONNECTION') ~=nill then
   vim.g.clipboard = {
     name = 'OSC 52',
     copy = {
@@ -38,10 +38,10 @@ if os.getenv('SSH_CONNECTION') ~= nil then
       ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
     },
   }
-else
-  -- Sync clipboard between OS and Neovim.
-  vim.o.clipboard = "unnamedplus"
 end
+
+-- Sync clipboard between OS and Neovim.
+vim.o.clipboard = "unnamedplus"
 vim.o.showmode = false
 
 -- Enable break indent
