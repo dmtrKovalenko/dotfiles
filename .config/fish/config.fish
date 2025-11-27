@@ -16,9 +16,6 @@ opam env | source
 # Optimize done.fish plugin - increase min duration to reduce overhead
 set -g __done_min_cmd_duration 10000
 
-# Configure async prompt to inherit our cached color variables and defaults
-set -g async_prompt_inherit_variables CMD_DURATION fish_bind_mode pipestatus SHLVL status _prompt_success_color _prompt_status_color _prompt_user_color _prompt_cwd_color _prompt_normal
-
 # Git prompt configuration (set once at startup)
 set -g __fish_git_prompt_char_stateseparator ' '
 set -g __fish_git_prompt_use_informative_chars 'yes'
@@ -32,29 +29,16 @@ set -g __fish_git_prompt_showuntrackedfiles 'yes'
 set -g __fish_git_prompt_showupstream 'no'
 set -g __fish_git_prompt_show_informative_status 'no'
 
-# Cache prompt colors at startup
-function _init_prompt_colors --on-variable fish_color_status --on-variable fish_color_user --on-variable fish_color_cwd
-    set -g _prompt_success_color (set_color cyan)
-    set -g _prompt_status_color (set_color $fish_color_status 2>/dev/null; or set_color red --bold)
-    set -g _prompt_user_color (set_color $fish_color_user 2>/dev/null; or set_color cyan)
-    set -g _prompt_cwd_color (set_color $fish_color_cwd 2>/dev/null; or set_color green)
-    set -g _prompt_normal (set_color normal)
-end
-_init_prompt_colors  # Initialize colors once
+set -g _prompt_success_color (set_color cyan)
+set -g _prompt_status_color (set_color $fish_color_status 2>/dev/null; or set_color red --bold)
+set -g _prompt_user_color (set_color $fish_color_user 2>/dev/null; or set_color cyan)
+set -g _prompt_cwd_color (set_color $fish_color_cwd 2>/dev/null; or set_color green)
+set -g _prompt_normal (set_color normal)
 
 # Custom abbreviations
 abbr --add 'rm' 'rm -rf'
 abbr --add '-' 'cd -'
 
-# custom typos
-abbr --add 'jsut' 'just'
-abbr --add 'jtsu' 'just'
-abbr --add 'jstu' 'just'
-abbr --add 'mkae' 'make'
-abbr --add 'amek' 'make'
-abbr --add 'maek' 'make'
-abbr --add 'amke' 'make'
-abbr --add 'gti' 'git'
 
 abbr -a L --position anywhere --set-cursor "%| less -r"
 abbr -a F --position anywhere --set-cursor "%| fzf"
@@ -74,7 +58,6 @@ abbr --add 'cat' 'bat'
 abbr --add 'ls' 'eza'
 abbr --add 'j' 'just'
 abbr --add 'm' 'make'
-abbr --add 'rbf' 'RUST_BACKTRACE=full'
 
 # Git
 abbr --add 'grr' 'git rebase --continue'
@@ -83,7 +66,6 @@ abbr --add 'gap' 'git commit --amend --no-edit && git push --force-with-lease'
 abbr --add 'gaap' 'git add --all && git commit --amend --no-edit && git push --force-with-lease'
 abbr --add 'gtsnap' 'git diff --name-only | imfzf -m -q .png | xargs git checkout'
 abbr --add 'grim' 'git fetch && git rebase -i --autostash origin/(__git.default_branch)'
-abbr --add 'grac' 'git add --all && git rebase --continue' 
 abbr --add --position anywhere --set-cursor 'gbc' 'git branch --contains % | xargs git checkout'
 
 # Git spr

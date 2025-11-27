@@ -160,6 +160,9 @@ return {
   },
   { "akinsho/git-conflict.nvim", version = "*", config = true },
   {
+    "esmuellert/vscode-diff.nvim",
+  },
+  {
     "akinsho/toggleterm.nvim",
     keys = {
       {
