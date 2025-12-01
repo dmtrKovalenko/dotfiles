@@ -43,8 +43,8 @@ return {
     -- See :h blink-cmp-config-keymap for defining your own keymap
     keymap = {
       preset = "enter",
-      ["<Tab>"] = { "snippet_forward", "fallback" },
-      ["<S-Tab>"] = { "snippet_backward", "fallback" },
+      ["<Tab>"] = { "fallback" },
+      ["<S-Tab>"] = { "snippet_forward", "fallback" },
     },
     snippets = { preset = "luasnip" },
     appearance = {

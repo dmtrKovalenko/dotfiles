@@ -43,7 +43,7 @@ vim.keymap.set("n", "<A-BS>", "db", { noremap = true })
 vim.keymap.set("n", "<D-a>", "ggVG", {})
 
 -- Force reload the buffer
-vim.keymap.set({ "i", "x" }, "<D-e>", "<cmd>e!<cr>", {})
+vim.keymap.set("n", "<leader>e", "<cmd>e!<cr>", {})
 
 -- Comment out lines
 vim.keymap.set("n", "<D-_>", "gcc", {})
