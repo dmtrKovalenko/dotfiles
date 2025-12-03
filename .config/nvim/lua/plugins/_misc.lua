@@ -471,6 +471,7 @@ return {
   {
     "mistricky/codesnap.nvim",
     build = "make",
+    enabled = false,
     command = "CodeSnap",
     opts = {
       save_path = "~/Pictures",
