@@ -355,49 +355,18 @@ return {
   },
   -- Auto close brackets
   {
-    "saghen/blink.pairs",
-    version = "*", -- (recommended) only required with prebuilt binaries
-    dependencies = "saghen/blink.download",
-    --- @module 'blink.pairs'
-    --- @type blink.pairs.Config
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
     opts = {
-      mappings = {
-        -- you can call require("blink.pairs.mappings").enable()
-        -- and require("blink.pairs.mappings").disable()
-        -- to enable/disable mappings at runtime
-        enabled = true,
-        cmdline = true,
-        -- or disable with `vim.g.pairs = false` (global) and `vim.b.pairs = false` (per-buffer)
-        -- and/or with `vim.g.blink_pairs = false` and `vim.b.blink_pairs = false`
-        disabled_filetypes = {},
-        -- see the defaults:
-        -- https://github.com/Saghen/blink.pairs/blob/main/lua/blink/pairs/config/mappings.lua#L14
-        pairs = {},
-      },
-      highlights = {
-        enabled = true,
-        -- requires require('vim._extui').enable({}), otherwise has no effect
-        cmdline = true,
-        groups = {
-          "BlinkPairsOrange",
-          "BlinkPairsPurple",
-          "BlinkPairsBlue",
-        },
-        unmatched_group = "BlinkPairsUnmatched",
-
-        -- highlights matching pairs under the cursor
-        matchparen = {
-          enabled = true,
-          -- known issue where typing won't update matchparen highlight, disabled by default
-          cmdline = false,
-          -- also include pairs not on top of the cursor, but surrounding the cursor
-          include_surrounding = false,
-          group = "BlinkPairsMatchParen",
-          priority = 250,
-        },
-      },
-      debug = false,
+      enable_check_bracket_line = false,
     },
+    init = function()
+      local npairs = require "nvim-autopairs"
+      local rule = require "nvim-autopairs.rule"
+      local cond = require "nvim-autopairs.conds"
+
+      npairs.add_rules { rule("|", "|", { "rust", "go", "lua" }):with_move(cond.after_regex "|") }
+    end,
   },
   -- Search and replace
   {
@@ -502,7 +471,6 @@ return {
   {
     "mistricky/codesnap.nvim",
     build = "make",
-    enabled = false,
     command = "CodeSnap",
     opts = {
       save_path = "~/Pictures",
@@ -511,5 +479,53 @@ return {
       bg_theme = "summer",
       watermark = "neogoose",
     },
+  },
+  {
+    "NickvanDyke/opencode.nvim",
+    config = function()
+      ---@type opencode.Opts
+      vim.g.opencode_opts = {
+        provider = {
+          cmd = "awslogin && opencode",
+          enabled = "terminal",
+          terminal = {},
+        },
+      }
+
+      vim.o.autoread = true
+
+      vim.keymap.set({ "n", "x" }, "<C-a>", function()
+        require("opencode").ask("@this: ", { submit = true })
+      end, { desc = "Ask opencode" })
+
+      vim.keymap.set({ "n", "x" }, "<C-x>", function()
+        require("opencode").select()
+      end, { desc = "Execute opencode action…" })
+
+      vim.keymap.set({ "n" }, "<leader>o", function()
+        require("opencode").toggle()
+      end, { desc = "Toggle opencode" })
+
+      -- Override <C-d> and <C-u> in normal mode for opencode buffers only
+      vim.api.nvim_create_autocmd("BufEnter", {
+        callback = function(event)
+          local bufname = vim.api.nvim_buf_get_name(event.buf)
+          -- Check if this is an opencode buffer by buffer name pattern
+          if bufname:match "opencode" then
+            vim.keymap.set("n", "<C-u>", function()
+              require("opencode").command "session.half.page.up"
+            end, { desc = "opencode half page up", buffer = event.buf })
+
+            vim.keymap.set("n", "<C-d>", function()
+              require("opencode").command "session.half.page.down"
+            end, { desc = "opencode half page down", buffer = event.buf })
+          end
+        end,
+      })
+
+      -- Remap increment/decrement since we used <C-a> and <C-x>
+      vim.keymap.set("n", "+", "<C-a>", { desc = "Increment", noremap = true })
+      vim.keymap.set("n", "-", "<C-x>", { desc = "Decrement", noremap = true })
+    end,
   },
 }
