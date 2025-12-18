@@ -74,3 +74,6 @@ abbr --add 'saap' 'git add --all && git commit --amend --no-edit && git spr upda
 abbr --add 'spu' 'git spr update'
 abbr --add 'sps' 'git spr status'
 
+
+# opencode
+fish_add_path /Users/neogoose/.opencode/bin
