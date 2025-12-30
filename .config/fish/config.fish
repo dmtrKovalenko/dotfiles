@@ -51,6 +51,9 @@ abbr --add 'cbr' 'cargo build --release'
 abbr --add 'cr' 'cargo run'
 abbr --add 'ct' 'cargo test'
 abbr --add 'cfa' 'cargo fmt --all'
+abbr --add 'zb' 'zig build  --release=fast'
+zbbr --add 'zt' 'zig test --summary all'
+
 
 # Tools
 abbr --add 'y' 'yarn'
