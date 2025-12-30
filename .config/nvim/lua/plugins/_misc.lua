@@ -38,6 +38,7 @@ return {
     lazy = false,
     opts = {
       lazy_sync = true,
+      max_threads = 14,
       debug = {
         enabled = true,
         show_scores = true,
@@ -46,7 +47,7 @@ return {
         chunk_size = 4096,
       },
       layout = {
-        -- prompt_position = "top",
+        prompt_position = "top",
         -- preview_size = 0.4, -- 40% of the window width
       },
       logging = {
