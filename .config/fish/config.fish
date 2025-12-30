@@ -39,7 +39,6 @@ set -g _prompt_normal (set_color normal)
 abbr --add 'rm' 'rm -rf'
 abbr --add '-' 'cd -'
 
-
 abbr -a L --position anywhere --set-cursor "%| less -r"
 abbr -a F --position anywhere --set-cursor "%| fzf"
 abbr -a Y --position anywhere --set-cursor "%| pbcopy"
@@ -52,8 +51,7 @@ abbr --add 'cr' 'cargo run'
 abbr --add 'ct' 'cargo test'
 abbr --add 'cfa' 'cargo fmt --all'
 abbr --add 'zb' 'zig build  --release=fast'
-zbbr --add 'zt' 'zig test --summary all'
-
+abbr --add 'zt' 'zig test --summary all'
 
 # Tools
 abbr --add 'y' 'yarn'
