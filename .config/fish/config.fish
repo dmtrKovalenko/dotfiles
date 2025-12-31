@@ -53,6 +53,9 @@ abbr --add 'cfa' 'cargo fmt --all'
 abbr --add 'zb' 'zig build  --release=fast'
 abbr --add 'zt' 'zig test --summary all'
 
+# 💀
+abbr --add 'мшь' 'vim'
+
 # Tools
 abbr --add 'y' 'yarn'
 abbr --add 'cat' 'bat'
