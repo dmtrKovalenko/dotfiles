@@ -36,7 +36,7 @@ return {
         "ocaml",
       },
 
-      auto_install = true,
+      auto_install = false,
       highlight = {
         enable = true,
         use_languagetree = true,
