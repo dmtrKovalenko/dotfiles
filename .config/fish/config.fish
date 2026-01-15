@@ -51,7 +51,7 @@ abbr --add 'cr' 'cargo run'
 abbr --add 'ct' 'cargo test'
 abbr --add 'cfa' 'cargo fmt --all'
 abbr --add 'zb' 'zig build  --release=fast'
-abbr --add 'zt' 'zig test --summary all'
+abbr --add 'zt' 'zig build test --summary all'
 
 # 💀
 abbr --add 'мшь' 'vim'
