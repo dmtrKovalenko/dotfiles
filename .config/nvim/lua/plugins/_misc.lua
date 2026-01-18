@@ -482,11 +482,12 @@ return {
   },
   {
     "NickvanDyke/opencode.nvim",
+    dir = "~/dev/opencode.nvim",
     config = function()
       ---@type opencode.Opts
       vim.g.opencode_opts = {
         provider = {
-          cmd = "awslogin && opencode",
+          cmd = "awslogin && opencode --port",
           enabled = "terminal",
           terminal = {},
         },
@@ -505,23 +506,6 @@ return {
       vim.keymap.set({ "n" }, "<leader>o", function()
         require("opencode").toggle()
       end, { desc = "Toggle opencode" })
-
-      -- Override <C-d> and <C-u> in normal mode for opencode buffers only
-      vim.api.nvim_create_autocmd("BufEnter", {
-        callback = function(event)
-          local bufname = vim.api.nvim_buf_get_name(event.buf)
-          -- Check if this is an opencode buffer by buffer name pattern
-          if bufname:match "opencode" then
-            vim.keymap.set("n", "<C-u>", function()
-              require("opencode").command "session.half.page.up"
-            end, { desc = "opencode half page up", buffer = event.buf })
-
-            vim.keymap.set("n", "<C-d>", function()
-              require("opencode").command "session.half.page.down"
-            end, { desc = "opencode half page down", buffer = event.buf })
-          end
-        end,
-      })
 
       -- Remap increment/decrement since we used <C-a> and <C-x>
       vim.keymap.set("n", "+", "<C-a>", { desc = "Increment", noremap = true })
