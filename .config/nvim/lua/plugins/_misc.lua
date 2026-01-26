@@ -495,14 +495,9 @@ return {
 
       vim.o.autoread = true
 
-      vim.keymap.set({ "n", "x" }, "<C-a>", function()
+      vim.keymap.set({ "n", "x" }, "<leader>a", function()
         require("opencode").ask("@this: ", { submit = true })
       end, { desc = "Ask opencode" })
-
-      vim.keymap.set({ "n", "x" }, "<C-x>", function()
-        require("opencode").select()
-      end, { desc = "Execute opencode action…" })
-
       vim.keymap.set({ "n" }, "<leader>o", function()
         require("opencode").toggle()
       end, { desc = "Toggle opencode" })
