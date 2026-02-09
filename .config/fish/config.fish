@@ -80,3 +80,7 @@ abbr --add 'sps' 'git spr status'
 
 
 fish_add_path ~/.opencode/bin
+
+# bun
+set --export BUN_INSTALL "$HOME/.bun"
+set --export PATH $BUN_INSTALL/bin $PATH
