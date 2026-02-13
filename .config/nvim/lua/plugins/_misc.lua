@@ -310,7 +310,7 @@ return {
         harpoon.ui:toggle_quick_menu(harpoon:list())
       end, { noremap = true, desc = "Harpoon view" })
 
-      vim.keymap.set("n", "<leader>a", function()
+      vim.keymap.set("n", "<leader>m", function()
         harpoon:list():add()
       end, { noremap = true, desc = "Harpoon this path" })
 
