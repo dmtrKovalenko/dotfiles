@@ -62,6 +62,13 @@ return {
         end,
         desc = "Find files",
       },
+      {
+        "fg",
+        function()
+          require("fff").live_grep()
+        end,
+        desc = "Find files",
+      },
     },
   },
   {
