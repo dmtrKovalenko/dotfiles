@@ -69,6 +69,17 @@ return {
         end,
         desc = "Find files",
       },
+      {
+        "fz",
+        function()
+          require("fff").live_grep {
+            grep = {
+              modes = { "fuzzy", "plain" },
+            },
+          }
+        end,
+        desc = "Find files",
+      },
     },
   },
   {
