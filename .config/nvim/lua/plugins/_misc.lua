@@ -372,20 +372,20 @@ return {
     dependencies = { "nvim-lua/plenary.nvim" },
   },
   -- Auto close brackets
-  {
-    "windwp/nvim-autopairs",
-    event = "InsertEnter",
-    opts = {
-      enable_check_bracket_line = false,
-    },
-    init = function()
-      local npairs = require "nvim-autopairs"
-      local rule = require "nvim-autopairs.rule"
-      local cond = require "nvim-autopairs.conds"
-
-      npairs.add_rules { rule("|", "|", { "rust", "go", "lua" }):with_move(cond.after_regex "|") }
-    end,
-  },
+  -- {
+  --   "windwp/nvim-autopairs",
+  --   event = "InsertEnter",
+  --   opts = {
+  --     enable_check_bracket_line = false,
+  --   },
+  --   init = function()
+  --     local npairs = require "nvim-autopairs"
+  --     local rule = require "nvim-autopairs.rule"
+  --     local cond = require "nvim-autopairs.conds"
+  --
+  --     npairs.add_rules { rule("|", "|", { "rust", "go", "lua" }):with_move(cond.after_regex "|") }
+  --   end,
+  -- },
   -- Search and replace
   {
     "MagicDuck/grug-far.nvim",
