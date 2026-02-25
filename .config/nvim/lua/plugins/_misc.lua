@@ -29,7 +29,7 @@ return {
   },
   {
     "dmtrkovalenko/fff.nvim",
-    -- dir = "~/dev/fff.nvim",
+    dir = "~/dev/fff.nvim",
     -- branch = "feat/prebuild",
     build = function()
       -- No more need to cargo build!!!!
