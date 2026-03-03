@@ -39,7 +39,7 @@ return {
     opts = {
       lazy_sync = true,
       debug = {
-        enabled = true,
+        -- enabled = true,
         show_scores = true,
       },
       preview = {
