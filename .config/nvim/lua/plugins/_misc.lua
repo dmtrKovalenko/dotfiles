@@ -501,14 +501,22 @@ return {
   },
   {
     "NickvanDyke/opencode.nvim",
-    dir = "~/dev/opencode.nvim",
+    version = "*",
     config = function()
+      local cmd = "awslogin && opencode --port"
+
       ---@type opencode.Opts
       vim.g.opencode_opts = {
-        provider = {
-          cmd = "awslogin && opencode --port",
-          enabled = "terminal",
-          terminal = {},
+        server = {
+          start = function()
+            require("opencode.terminal").start(cmd)
+          end,
+          stop = function()
+            require("opencode.terminal").stop()
+          end,
+          toggle = function()
+            require("opencode.terminal").toggle(cmd)
+          end,
         },
       }
 
@@ -517,13 +525,12 @@ return {
       vim.keymap.set({ "n", "x" }, "<leader>a", function()
         require("opencode").ask("@this: ", { submit = true })
       end, { desc = "Ask opencode" })
-      vim.keymap.set({ "n" }, "<leader>o", function()
+      vim.keymap.set({ "n", "x" }, "<leader>x", function()
+        require("opencode").select()
+      end, { desc = "Execute opencode action" })
+      vim.keymap.set({ "n", "t" }, "<leader>o", function()
         require("opencode").toggle()
       end, { desc = "Toggle opencode" })
-
-      -- Remap increment/decrement since we used <C-a> and <C-x>
-      vim.keymap.set("n", "+", "<C-a>", { desc = "Increment", noremap = true })
-      vim.keymap.set("n", "-", "<C-x>", { desc = "Decrement", noremap = true })
     end,
   },
 }
