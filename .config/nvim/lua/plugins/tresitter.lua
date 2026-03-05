@@ -7,18 +7,18 @@ return {
     {
       "nvim-treesitter/nvim-treesitter-textobjects",
       config = function()
-        local select = require("nvim-treesitter-textobjects.select")
-        local swap = require("nvim-treesitter-textobjects.swap")
-        local move = require("nvim-treesitter-textobjects.move")
+        local select = require "nvim-treesitter-textobjects.select"
+        local swap = require "nvim-treesitter-textobjects.swap"
+        local move = require "nvim-treesitter-textobjects.move"
 
-        require("nvim-treesitter-textobjects").setup({
+        require("nvim-treesitter-textobjects").setup {
           select = {
             lookahead = true,
           },
           move = {
             set_jumps = true,
           },
-        })
+        }
 
         -- Select keymaps
         local select_maps = {
@@ -71,10 +71,10 @@ return {
 
         -- Swap keymaps
         vim.keymap.set("n", "<A-p>", function()
-          swap.swap_next("@parameter.inner")
+          swap.swap_next "@parameter.inner"
         end)
         vim.keymap.set("n", "<A-P>", function()
-          swap.swap_previous("@parameter.inner")
+          swap.swap_previous "@parameter.inner"
         end)
       end,
     },
