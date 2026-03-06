@@ -6,6 +6,7 @@ return {
   dependencies = {
     {
       "nvim-treesitter/nvim-treesitter-textobjects",
+      branch = "main",
       config = function()
         local select = require "nvim-treesitter-textobjects.select"
         local swap = require "nvim-treesitter-textobjects.swap"
