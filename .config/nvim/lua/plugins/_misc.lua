@@ -486,19 +486,18 @@ return {
     opts = {},
     dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
   },
-  {
-    "mistricky/codesnap.nvim",
-    build = "make",
-    enabled = false,
-    command = "CodeSnap",
-    opts = {
-      save_path = "~/Pictures",
-      has_breadcrumbs = false,
-      code_font_family = "JetBrains Mono",
-      bg_theme = "summer",
-      watermark = "neogoose",
-    },
-  },
+  -- {
+  --   "mistricky/codesnap.nvim",
+  --   build = "make",
+  --   command = "CodeSnap",
+  --   opts = {
+  --     save_path = "~/Pictures",
+  --     has_breadcrumbs = false,
+  --     code_font_family = "JetBrains Mono",
+  --     bg_theme = "summer",
+  --     watermark = "neogoose",
+  --   },
+  -- },
   {
     "NickvanDyke/opencode.nvim",
     version = "*",
@@ -532,5 +531,9 @@ return {
         require("opencode").toggle()
       end, { desc = "Toggle opencode" })
     end,
+    {
+      "esmuellert/codediff.nvim",
+      cmd = "CodeDiff",
+    },
   },
 }
