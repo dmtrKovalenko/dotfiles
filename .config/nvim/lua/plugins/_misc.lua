@@ -527,13 +527,13 @@ return {
       vim.keymap.set({ "n", "x" }, "<leader>x", function()
         require("opencode").select()
       end, { desc = "Execute opencode action" })
-      vim.keymap.set({ "n" }, "<leader>o", function()
+      vim.keymap.set("n", "<leader>o", function()
         require("opencode").toggle()
       end, { desc = "Toggle opencode" })
     end,
-    {
-      "esmuellert/codediff.nvim",
-      cmd = "CodeDiff",
-    },
+  },
+  {
+    "esmuellert/codediff.nvim",
+    cmd = "CodeDiff",
   },
 }
