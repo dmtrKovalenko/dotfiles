@@ -70,6 +70,20 @@ return {
         desc = "Find files",
       },
       {
+        "fw",
+        function()
+          require("fff").live_grep { query = vim.fn.expand "<cword>" }
+        end,
+        desc = "Search for <cword>",
+      },
+      {
+        "fW",
+        function()
+          require("fff").live_grep { query = vim.fn.expand "<cWORD>" }
+        end,
+        desc = "Search for <cWORD>",
+      },
+      {
         "fz",
         function()
           require("fff").live_grep {
