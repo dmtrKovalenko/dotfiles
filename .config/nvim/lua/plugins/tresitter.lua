@@ -86,9 +86,9 @@ return {
       },
     },
   },
-  main = "nvim-treesitter.configs",
-  opts = {
-    ensure_installed = {
+  config = function()
+    require("nvim-treesitter.install").compilers = { "gcc", "clang" }
+    require("nvim-treesitter.install").ensure_installed {
       "c",
       "cpp",
       "go",
@@ -106,28 +106,7 @@ return {
       "json",
       "yaml",
       "bash",
-    },
-    sync_install = false,
-    auto_install = true,
-    highlight = {
-      enable = true,
-      additional_vim_regex_highlighting = false,
-    },
-    indent = {
-      enable = true,
-    },
-    incremental_selection = {
-      enable = true,
-      keymaps = {
-        init_selection = "<c-space>",
-        node_incremental = "<c-space>",
-        scope_incremental = "<c-s>",
-        node_decremental = "<S-space>",
-      },
-    },
-  },
-  config = function(_, opts)
-    require("nvim-treesitter.install").compilers = { "gcc", "clang" }
-    require("nvim-treesitter.configs").setup(opts)
+    }
+    require("nvim-treesitter.install").auto_install = true
   end,
 }
