@@ -70,7 +70,18 @@ return {
         ":echo 'do the work you lazy ass'<CR>"
       ),
       dashboard.button("p", "  Projects", function()
-        Snacks.picker.projects()
+        Snacks.picker.projects {
+          finder = "recent_projects",
+          format = "file",
+          dev = { "~/dev" },
+          patterns = { ".git" },
+          matcher = {
+            frecency = true,
+            sort_empty = true,
+            cwd_bonus = false,
+          },
+          sort = { fields = { "score:desc", "idx" } },
+        }
       end),
       dashboard.button("a", "  New file", "<cmd>ene <BAR> startinsert <CR>"),
       dashboard.button("c", "󰢻  Configuration", "<cmd>e ~/.config/nvim/init.lua<CR>"),
