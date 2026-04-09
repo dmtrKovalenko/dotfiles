@@ -38,6 +38,9 @@ return {
     lazy = false,
     opts = {
       lazy_sync = true,
+      grep =  {
+        trim_whitespace = true,
+      },
       debug = {
         -- enabled = true,
         show_scores = true,
