@@ -27,6 +27,7 @@ return {
 
     opts = {},
   },
+  { "pablopunk/pi.nvim" },
   {
     "dmtrkovalenko/fff.nvim",
     dir = "~/dev/fff.nvim",
