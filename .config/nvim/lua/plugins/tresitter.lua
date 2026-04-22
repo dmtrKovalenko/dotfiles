@@ -1,6 +1,6 @@
 return {
   "nvim-treesitter/nvim-treesitter",
-  branch = "master",
+  branch = "main",
   build = ":TSUpdate",
   lazy = false,
   dependencies = {
@@ -87,8 +87,7 @@ return {
     },
   },
   config = function()
-    require("nvim-treesitter.install").compilers = { "gcc", "clang" }
-    require("nvim-treesitter.install").ensure_installed {
+    local parsers = {
       "c",
       "cpp",
       "go",
@@ -101,12 +100,28 @@ return {
       "vimdoc",
       "vim",
       "markdown",
+      "markdown_inline",
       "html",
       "css",
       "json",
       "yaml",
       "bash",
     }
-    require("nvim-treesitter.install").auto_install = true
+
+    require("nvim-treesitter").install(parsers)
+
+    local filetypes = {}
+    for _, lang in ipairs(parsers) do
+      for _, ft in ipairs(vim.treesitter.language.get_filetypes(lang)) do
+        filetypes[#filetypes + 1] = ft
+      end
+    end
+
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = filetypes,
+      callback = function(args)
+        pcall(vim.treesitter.start, args.buf)
+      end,
+    })
   end,
 }
