@@ -30,7 +30,7 @@ return {
   { "pablopunk/pi.nvim" },
   {
     "dmtrkovalenko/fff.nvim",
-    -- dir = "~/dev/fff.nvim",
+    dir = "~/dev/fff.nvim",
     -- branch = "feat/prebuild",
     build = function()
       -- No more need to cargo build!!!!
@@ -120,7 +120,7 @@ return {
       },
     },
     opts = {
-      command = "awsclaude",
+      -- command = "awsclaude",
       window = {
         split_ratio = 0.4,
         enter_insert = false,
