@@ -120,6 +120,7 @@ return {
       },
     },
     opts = {
+      command = "claude --model us.anthropic.claude-opus-4-7 --dangerously-skip-permissions --effort max",
       window = {
         split_ratio = 0.4,
         enter_insert = false,
