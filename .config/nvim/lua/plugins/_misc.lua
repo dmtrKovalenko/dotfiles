@@ -39,7 +39,7 @@ return {
     lazy = false,
     opts = {
       lazy_sync = true,
-      grep =  {
+      grep = {
         trim_whitespace = true,
       },
       debug = {
@@ -120,20 +120,12 @@ return {
       },
     },
     opts = {
-      -- command = "awsclaude",
       window = {
         split_ratio = 0.4,
         enter_insert = false,
         position = "rightbelow",
       },
     },
-  },
-  {
-    "github/copilot.vim",
-    config = function()
-      vim.g.copilot_settings = { selectedCompletionModel = "gpt-41-copilot" }
-      vim.g.copilot_integration_id = "vscode-chat"
-    end,
   },
   {
     "dmtrkovalenko/project.nvim",
@@ -520,7 +512,7 @@ return {
     "NickvanDyke/opencode.nvim",
     version = "*",
     config = function()
-      local cmd = "awslogin && opencode --port"
+      local cmd = "opencode --port"
 
       ---@type opencode.Opts
       vim.g.opencode_opts = {
