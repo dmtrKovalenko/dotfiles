@@ -57,3 +57,9 @@
     smtpencryption = tls
     smtpserverport = 587
     smtpauth = XOAUTH2
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
