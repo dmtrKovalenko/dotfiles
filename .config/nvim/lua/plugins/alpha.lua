@@ -63,7 +63,7 @@ return {
 
     dashboard.section.buttons.val = {
       dashboard.button("l", "󱐋 LightSource", openProject "~/dev/lightsource"),
-      dashboard.button("f", "fff", openProject "~/dev/fff.nvim"),
+      dashboard.button("f", "󰱼 fff", openProject "~/dev/fff.nvim"),
       dashboard.button("v", "󱔮 FFrames", openProject "~/dev/fframes"),
       dashboard.button(
         "--------------------------------------------------",
