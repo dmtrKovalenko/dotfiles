@@ -94,3 +94,7 @@ end
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/home/neogoose/dev/lightsource/google-cloud-sdk/path.fish.inc' ]; . '/home/neogoose/dev/lightsource/google-cloud-sdk/path.fish.inc'; end
+
+# >>> grok installer >>>
+fish_add_path $HOME/.grok/bin
+# <<< grok installer <<<
