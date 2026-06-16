@@ -511,23 +511,22 @@ return {
   --   },
   -- },
   {
-    "NickvanDyke/opencode.nvim",
+    "dmtrKovalenko/opencode.nvim",
     version = "*",
     config = function()
       local cmd = "opencode --port"
-      ---@type snacks.terminal.Opts
-      local snacks_terminal_opts = {
-        win = {
-          position = "right",
-          enter = false,
-        },
-      }
 
       ---@type opencode.Opts
       vim.g.opencode_opts = {
         server = {
           start = function()
-            require("snacks.terminal").open(cmd, snacks_terminal_opts)
+            require("opencode.terminal").start(cmd)
+          end,
+          stop = function()
+            require("opencode.terminal").stop()
+          end,
+          toggle = function()
+            require("opencode.terminal").toggle(cmd)
           end,
         },
       }
@@ -535,13 +534,13 @@ return {
       vim.o.autoread = true
 
       vim.keymap.set({ "n", "x" }, "<leader>a", function()
-        require("opencode").ask("@this: ")
+        require("opencode").ask "@this: "
       end, { desc = "Ask opencode" })
       vim.keymap.set({ "n", "x" }, "<leader>x", function()
         require("opencode").select()
       end, { desc = "Execute opencode action" })
-      vim.keymap.set({ "n", "t" }, "<leader>o", function()
-        require("snacks.terminal").toggle(cmd, snacks_terminal_opts)
+      vim.keymap.set("n", "<leader>o", function()
+        require("opencode").toggle()
       end, { desc = "Toggle opencode" })
     end,
   },
