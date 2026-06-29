@@ -30,7 +30,7 @@ return {
   { "pablopunk/pi.nvim" },
   {
     "dmtrkovalenko/fff.nvim",
-    -- dir = "~/dev/fff.nvim",
+    dir = "~/dev/fff.nvim",
     -- branch = "feat/prebuild",
     build = function()
       -- No more need to cargo build!!!!
@@ -77,9 +77,10 @@ return {
       {
         "fw",
         function()
-          require("fff").live_grep { query = vim.fn.expand "<cword>" }
+          require("fff").live_grep_under_cursor()
         end,
-        desc = "Search for <cword>",
+        mode = { "n", "x" },
+        desc = "Search current word / selection",
       },
       {
         "fW",
