@@ -1,6 +1,5 @@
 # A TOML linter such as https://taplo.tamasfe.dev/ can use this schema to validate your config.
 # If you encounter any issues, please make an issue at https://github.com/yazi-rs/schemas.
-"$schema" = "https://yazi-rs.github.io/schemas/yazi.json"
 
 [mgr]
 ratio = [1, 4, 3]
@@ -47,7 +46,7 @@ play = [
 ]
 [open]
 rules = [
-	{ name = "*/", use = [
+	{ url = "*/", use = [
 		"edit",
 		"open",
 		"reveal",
@@ -143,7 +142,7 @@ preloaders = [
 	{ mime = "application/pdf", run = "pdf" },
 ]
 previewers = [
-	{ name = "*/", run = "folder", sync = true },
+	{ url = "*/", run = "folder", sync = true },
 	# Code
 	{ mime = "text/*", run = "code" },
 	{ mime = "*/xml", run = "code" },
@@ -168,7 +167,7 @@ previewers = [
 	{ mime = "application/x-rar", run = "archive" },
 	{ mime = "application/xz", run = "archive" },
 	# Fallback
-	{ name = "*", run = "file" },
+	{ url = "*", run = "file" },
 ]
 
 [input]
