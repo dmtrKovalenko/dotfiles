@@ -28,9 +28,11 @@ return {
     opts = {},
   },
   { "pablopunk/pi.nvim" },
+  -- { "akinsho/git-conflict.nvim", version = "*", config = true },
   {
     "dmtrkovalenko/fff.nvim",
-    -- dir = "~/dev/fff.nvim",
+    dir = "~/dev/fff.nvim",
+    -- version = "0.9.4",
     -- branch = "feat/prebuild",
     build = function()
       -- No more need to cargo build!!!!
@@ -189,7 +191,6 @@ return {
       end)
     end,
   },
-  -- { "akinsho/git-conflict.nvim", version = "*", config = true },
   {
     "akinsho/toggleterm.nvim",
     keys = {
