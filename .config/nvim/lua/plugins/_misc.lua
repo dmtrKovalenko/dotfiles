@@ -40,7 +40,7 @@ return {
     end,
     lazy = false,
     opts = {
-      lazy_sync = true,
+      lazy_sync = false,
       wrap_around = true,
       grep = {
         trim_whitespace = true,
