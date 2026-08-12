@@ -1,0 +1,12 @@
+[ui]
+agent_panel_sort = "spaces"
+
+[theme]
+name = "nord"
+auto_switch = false
+
+[keys]
+prefix = "ctrl+space"
+
+[experimental]
+kitty_graphics = true
