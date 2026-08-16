@@ -3,7 +3,7 @@ onboarding = false
 agent_panel_sort = "spaces"
 
 [theme]
-name = "nord"
+name = "tokyo-night"
 auto_switch = false
 
 [keys]
