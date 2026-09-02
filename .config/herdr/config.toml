@@ -8,6 +8,35 @@ auto_switch = false
 
 [keys]
 prefix = "ctrl+space"
+# moved off prefix+minus so prefix+- is free for tab 4
+split_horizontal = "prefix+shift+v"
+
+# Tab switching on prefix + ! @ # - =  (tabs 1-5 by POSITION, matching prefix+1..9).
+
+[[keys.command]]
+key = "prefix+!"
+type = "shell"
+command = 't=$(/Users/neogoose/.local/bin/herdr tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[0].tab_id // empty"); [ -n "$t" ] && /Users/neogoose/.local/bin/herdr tab focus "$t"'
+
+[[keys.command]]
+key = "prefix+@"
+type = "shell"
+command = 't=$(/Users/neogoose/.local/bin/herdr tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[1].tab_id // empty"); [ -n "$t" ] && /Users/neogoose/.local/bin/herdr tab focus "$t"'
+
+[[keys.command]]
+key = "prefix+#"
+type = "shell"
+command = 't=$(/Users/neogoose/.local/bin/herdr tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[2].tab_id // empty"); [ -n "$t" ] && /Users/neogoose/.local/bin/herdr tab focus "$t"'
+
+[[keys.command]]
+key = "prefix+-"
+type = "shell"
+command = 't=$(/Users/neogoose/.local/bin/herdr tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[3].tab_id // empty"); [ -n "$t" ] && /Users/neogoose/.local/bin/herdr tab focus "$t"'
+
+[[keys.command]]
+key = "prefix+="
+type = "shell"
+command = 't=$(/Users/neogoose/.local/bin/herdr tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[4].tab_id // empty"); [ -n "$t" ] && /Users/neogoose/.local/bin/herdr tab focus "$t"'
 
 [experimental]
 kitty_graphics = true
