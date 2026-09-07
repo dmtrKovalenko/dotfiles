@@ -1,7 +1,10 @@
 ---
 name: Writing a PR body/title
-description: Use when writing or editing a pull request title or body.
+description: Use when writing or editing a pull request title or body, or a git commit message.
 ---
+
+everything below applies equally to commit messages (subject = title, body = body).
+utility commits get a subject line only, no body - e.g. fixing ci, fixing tests, formatting, bumping deps, iterating on review feedback, wip. dont narrate what you did or why, the subject is enough.
 
 dont write essays, dont include that you ran tests. rather, write a concise body. focus on mermaid codeblock diagrams, code samples/snippets (this can be internals, or even sample usage). use bullet points for the text you do write. 'validation/i ran tests' is not needed
 for visual changes (either directly or indirectly) show a table of before and after with uploaded images/videos.
