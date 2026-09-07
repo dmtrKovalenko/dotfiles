@@ -9,3 +9,4 @@ for benchmarks, always show tables of before/after (baseline from target branch,
 dont at intermidate PR details - e.g. if we reduced PR size from +6k lines to +1k lines, dont even mention it lol. if we refactored from one commit to another it doesnt matter. only the final aggregate squash merge commit is what matters for commentary
 for truely impressive, difficult, or high risk/wide scoped changes you might write the body like a technical blog (again with context, storytelling, code samples/before/after etc diagrams, images whatever.
 feel free to use code refs
+never add Co-Authored-By trailers or any AI attribution ("Generated with ...") to commits or PR bodies
