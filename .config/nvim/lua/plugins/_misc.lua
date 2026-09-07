@@ -87,7 +87,12 @@ return {
       {
         "fW",
         function()
-          require("fff").live_grep { query = vim.fn.expand "<cWORD>" }
+          require("fff").live_grep {
+            grep = {
+              modes = { "regex" },
+            },
+            query = [[\b]] .. vim.fn.expand "<cWORD>" .. [[\b]],
+          }
         end,
         desc = "Search for <cWORD>",
       },
