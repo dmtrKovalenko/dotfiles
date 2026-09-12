@@ -1,4 +1,9 @@
 #include QMK_KEYBOARD_H
+#include "vim.h"
+
+// Same vim-aware lighting as the Rev. 8 build (shared ../vim/vim.c).  The
+// only keymap change: layer 3's unused slot becomes VIM_TOGG (CUSTOM(0) in
+// VIA), which turns the lighting off/on.  It is on at boot.
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT(
@@ -24,7 +29,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [3] = LAYOUT(
         KC_LCTL, MS_LEFT,    MS_DOWN,    MS_UP,    MS_RGHT,     MS_BTN1,                   KC_GRV,  KC_MFFD, KC_MNXT, KC_MPLY, KC_MPRV, KC_MRWD,
-        TG(3),   KC_TRNS,    KC_TRNS,    KC_ESC,   KC_LBRC,     KC_RBRC,                   KC_NO,   KC_TRNS, KC_F9,   KC_F8,   KC_TRNS, KC_TRNS,
+        TG(3),   KC_TRNS,    KC_TRNS,    KC_ESC,   KC_LBRC,     KC_RBRC,                   VIM_TOGG, KC_TRNS, KC_F9,   KC_F8,   KC_TRNS, KC_TRNS,
         KC_LCTL, KC_TRNS,    KC_TRNS,    KC_TRNS,  S(KC_LBRC),  S(KC_RBRC),                KC_TRNS, KC_TRNS, KC_RGHT, KC_UP,   KC_DOWN, KC_LEFT,
         KC_TRNS, KC_TRNS,    KC_TRNS,    KC_TRNS,  S(KC_9),     S(KC_0),    KC_NO, KC_NO,  KC_PPLS, KC_SLSH, S(KC_DOT), S(KC_COMM), KC_PMNS, S(KC_MINS),
                                                     KC_TRNS,     KC_PEQL,    KC_TAB, KC_TRNS, KC_TRNS, KC_TRNS
@@ -64,3 +69,19 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
     return false;
 }
 #endif
+
+void keyboard_post_init_user(void) {
+    vim_init();
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    return vim_process_record(keycode, record);
+}
+
+void housekeeping_task_user(void) {
+    vim_housekeeping();
+}
+
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    return vim_render(led_min, led_max);
+}
