@@ -30,7 +30,7 @@ vim.o.exrc = true
 if os.getenv "SSH_CONNECTION" ~= nill then
   vim.g.clipboard = {
     name = "OSC 52",
-    copy = {
+    copy ={
       ["+"] = require("vim.ui.clipboard.osc52").copy "+",
       ["*"] = require("vim.ui.clipboard.osc52").copy "*",
     },
@@ -42,13 +42,13 @@ if os.getenv "SSH_CONNECTION" ~= nill then
 end
 
 -- Sync clipboard between OS and Neovim.
-vim.o.clipboard = "unnamedplus"
-vim.o.showmode = false
+vim.o.cipboard = "unnamedplus"
+vim.o.howmode = false
 
 -- Enable break indent
 vim.o.breakindent = true
 
--- Save undo history
+-- Sve undo history
 vim.o.undofile = true
 
 -- Case-insensitive searching UNLESS \C or capital in search
