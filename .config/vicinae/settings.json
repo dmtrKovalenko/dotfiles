@@ -1,0 +1,48 @@
+// This configuration is merged with the default vicinae configuration file, which you can obtain by running the `vicinae config default` command.
+// Every item defined in this file takes precedence over the values defined in the default config or any other imported file.
+//
+// You can make manual edits to this file, however you should keep in mind that this file may be written to by vicinae when a configuration change is made through the GUI.
+// When that happens, any custom comments or formatting will be lost.
+//
+// If you want to maintain a configuration file with your own comments and formatting, you should create a separate file and add it to the 'imports' array.
+//
+// Learn more about configuration at https://docs.vicinae.com/config
+
+{
+   "$schema": "https://vicinae.com/schemas/config.json",
+   "global_shortcuts": {
+      "toggle": "control+shift+k"
+   },
+   "font": {
+      "normal": {
+         "size": 14
+      }
+   },
+   "theme": {
+      "dark": {
+         "name": "rose-pine"
+      }
+   },
+   // Fallback commands shown when nothing matches the query (Raycast had web search as fallback).
+   "fallbacks": [
+      "shortcuts:sct-d667908a2633",
+      "shortcuts:sct-21caaaa037d4"
+   ],
+
+   "providers": {
+      "clipboard": {
+         "entrypoints": {
+            "history": {
+               "shortcut": "control+alt+V"
+            }
+         }
+      },
+      "files": {
+         "entrypoints": {
+            "search": {
+               "enabled": false
+            }
+         }
+      }
+   }
+}
