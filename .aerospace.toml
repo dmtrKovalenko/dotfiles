@@ -10,7 +10,7 @@ enable-normalization-opposite-orientation-for-nested-containers = true
 
 # Even split by default. Ratio presets are on cmd-alt-shift-r / cmd-alt-shift-e below.
 default-root-container-layout = 'tiles'
-default-root-container-orientation = 'auto'
+default-root-container-orientation = 'horizontal'
 accordion-padding = 30
 
 # Keep cursor with focus so trackpad + keys agree.
@@ -32,12 +32,17 @@ outer.right = 0
 
 # ---------------------------------------------------------------------------
 # Workspaces
-#   1  dev    kitty + browser side by side
-#   2  code   Zed / VS Code / Xcode
-#   3  chat   Slack / Telegram / Discord
-#   4  media  Zen browser, Music
-#   5  misc   anything else you send there
+#   1  dev    kitty + browser            (main monitor)
+#   2  work   editors, other browsers    (main monitor)
+#   3  side   chat + media               (second monitor, or laptop screen)
+# When only one display is connected, all three live on it.
 # ---------------------------------------------------------------------------
+
+[workspace-to-monitor-force-assignment]
+1 = 'main'
+2 = 'main'
+3 = ['secondary', 'main']
+
 
 [[on-window-detected]]
 if.app-id = 'net.kovidgoyal.kitty'
@@ -85,15 +90,15 @@ run = 'move-node-to-workspace 3'
 
 [[on-window-detected]]
 if.app-id = 'app.zen-browser.zen'
-run = 'move-node-to-workspace 4'
+run = 'move-node-to-workspace 3'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Music'
-run = 'move-node-to-workspace 4'
+run = 'move-node-to-workspace 3'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Safari'
-run = 'move-node-to-workspace 4'
+run = 'move-node-to-workspace 3'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.QuickTimePlayerX'
@@ -102,6 +107,11 @@ run = 'layout floating'
 [[on-window-detected]]
 if.app-name-regex-substring = 'UAD Meter'
 run = 'layout floating'
+
+# Apps that must always tile (guards against an accidental float toggle)
+[[on-window-detected]]
+if.app-id = 'com.apple.Notes'
+run = 'layout tiling'
 
 # Things that should never be tiled.
 [[on-window-detected]]
@@ -153,26 +163,36 @@ cmd-alt-j = 'focus down'
 cmd-alt-k = 'focus up'
 cmd-alt-l = 'focus right'
 
-# Move the focused window within the layout
-cmd-alt-shift-h = 'move left'
-cmd-alt-shift-j = 'move down'
-cmd-alt-shift-k = 'move up'
-cmd-alt-shift-l = 'move right'
+# Swap the focused window with its neighbour (tree stays the same, windows trade places)
+cmd-alt-shift-h = 'swap left'
+cmd-alt-shift-j = 'swap down'
+cmd-alt-shift-k = 'swap up'
+cmd-alt-shift-l = 'swap right'
+
+# Move the focused window through the tree (can enter/leave columns)
+cmd-ctrl-alt-h = 'move left'
+cmd-ctrl-alt-j = 'move down'
+cmd-ctrl-alt-k = 'move up'
+cmd-ctrl-alt-l = 'move right'
 
 # Workspaces
 cmd-alt-1 = 'workspace 1'
 cmd-alt-2 = 'workspace 2'
 cmd-alt-3 = 'workspace 3'
-cmd-alt-4 = 'workspace 4'
-cmd-alt-5 = 'workspace 5'
+# aliases: the other keyboard's top row sends shift+digits (! @ # $ %)
+cmd-alt-shift-1 = 'workspace 1'
+cmd-alt-shift-2 = 'workspace 2'
+cmd-alt-shift-3 = 'workspace 3'
 cmd-alt-tab = 'workspace-back-and-forth'
 
 # Send focused window to a workspace and follow it
-cmd-alt-shift-1 = 'move-node-to-workspace --focus-follows-window 1'
-cmd-alt-shift-2 = 'move-node-to-workspace --focus-follows-window 2'
-cmd-alt-shift-3 = 'move-node-to-workspace --focus-follows-window 3'
-cmd-alt-shift-4 = 'move-node-to-workspace --focus-follows-window 4'
-cmd-alt-shift-5 = 'move-node-to-workspace --focus-follows-window 5'
+cmd-ctrl-alt-1 = 'move-node-to-workspace --focus-follows-window 1'
+cmd-ctrl-alt-2 = 'move-node-to-workspace --focus-follows-window 2'
+cmd-ctrl-alt-3 = 'move-node-to-workspace --focus-follows-window 3'
+# aliases for the other keyboard's shifted top row
+cmd-ctrl-alt-shift-1 = 'move-node-to-workspace --focus-follows-window 1'
+cmd-ctrl-alt-shift-2 = 'move-node-to-workspace --focus-follows-window 2'
+cmd-ctrl-alt-shift-3 = 'move-node-to-workspace --focus-follows-window 3'
 
 # Monitors
 cmd-alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
@@ -183,8 +203,8 @@ cmd-alt-shift-right = 'move-node-to-monitor --wrap-around next'
 cmd-alt-minus = 'resize smart -60'
 cmd-alt-equal = 'resize smart +60'
 cmd-alt-0 = 'balance-sizes'                                          # back to even split
-cmd-alt-shift-r = 'exec-and-forget ~/.config/aerospace/ratio.sh 60'  # focused window -> 60% width
-cmd-alt-shift-e = 'exec-and-forget ~/.config/aerospace/ratio.sh 70'  # focused window -> 70% width
+cmd-alt-shift-r = 'exec-and-forget ~/.config/aerospace/ratio.py 60'  # focused window -> 60% width
+cmd-alt-shift-e = 'exec-and-forget ~/.config/aerospace/ratio.py 70'  # focused window -> 70% width
 
 # Layouts
 cmd-alt-f = 'fullscreen'                        # focused window fills the workspace, toggle
@@ -194,9 +214,9 @@ cmd-alt-q = 'join-with left'                     # stack focused window under it
 cmd-alt-shift-q = 'join-with right'              # same, but under the right neighbour
 
 # Apps
-f8 = 'exec-and-forget open -a kitty.app'                                 # focus kitty (launch if not running)
+f8 = 'exec-and-forget open -b net.kovidgoyal.kitty'                      # focus kitty (launch / restore if needed)
 cmd-alt-shift-enter = 'exec-and-forget open -na kitty.app'               # new kitty window
-f9 = 'exec-and-forget open -a "Brave Browser.app"'                       # focus Brave (launch if not running)
+f9 = 'exec-and-forget open -b com.brave.Browser'                         # focus Brave (launch / restore if needed)
 cmd-alt-shift-b = 'exec-and-forget open -na "Brave Browser.app"'         # new Brave window
 
 # Service mode
