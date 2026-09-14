@@ -42,8 +42,8 @@ if os.getenv "SSH_CONNECTION" ~= nill then
 end
 
 -- Sync clipboard between OS and Neovim.
-vim.o.cipboard = "unnamedplus"
-vim.o.howmode = false
+vim.o.clipboard = "unnamedplus"
+vim.o.showmode = false
 
 -- Enable break indent
 vim.o.breakindent = true
