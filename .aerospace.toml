@@ -1,6 +1,8 @@
 # AeroSpace config. Docs: https://nikitabobko.github.io/AeroSpace/guide
 # Reload after editing: cmd-alt-shift-; then esc   (or: aerospace reload-config)
 
+config-version = 2
+persistent-workspaces = ['1', '2', '3']   # always exist, even when empty
 start-at-login = true
 after-login-command = []
 after-startup-command = ['exec-and-forget ~/.config/aerospace/auto-quarter.sh']
@@ -34,14 +36,17 @@ outer.right = 0
 # Workspaces
 #   1  dev    kitty + browser            (main monitor)
 #   2  work   editors, other browsers    (main monitor)
-#   3  side   chat + media               (second monitor, or laptop screen)
-# When only one display is connected, all three live on it.
+#   3  side   chat + media               (laptop screen when docked)
+#   S  scratchpad  stash windows out of the layout, summon them back floating
+# When only one display is connected, all live on it.
 # ---------------------------------------------------------------------------
 
 [workspace-to-monitor-force-assignment]
-1 = 'main'
-2 = 'main'
-3 = ['secondary', 'main']
+# Pinned by monitor name so it doesn't flip if the menu bar moves.
+# XDR connected: 1 and 2 on the XDR, 3 (side) on the laptop screen. Undocked: everything on the built-in.
+1 = ['XDR', 'main']
+2 = ['XDR', 'main']
+3 = 'built-in'
 
 
 [[on-window-detected]]
@@ -184,6 +189,8 @@ cmd-alt-shift-1 = 'workspace 1'
 cmd-alt-shift-2 = 'workspace 2'
 cmd-alt-shift-3 = 'workspace 3'
 cmd-alt-tab = 'workspace-back-and-forth'
+cmd-alt-left = 'workspace --wrap-around prev'
+cmd-alt-right = 'workspace --wrap-around next'
 
 # Send focused window to a workspace and follow it
 cmd-ctrl-alt-1 = 'move-node-to-workspace --focus-follows-window 1'
@@ -210,6 +217,7 @@ cmd-alt-shift-e = 'exec-and-forget ~/.config/aerospace/ratio.py 70'  # focused w
 cmd-alt-f = 'fullscreen'                        # focused window fills the workspace, toggle
 cmd-alt-shift-f = 'layout floating tiling'      # toggle float for focused window
 cmd-alt-slash = 'layout tiles horizontal vertical'
+cmd-alt-a = 'layout accordion tiles'            # toggle: one window at a time (swap with cmd-alt-h/l) <-> side-by-side
 cmd-alt-q = 'join-with left'                     # stack focused window under its left neighbour (3rd window -> bottom quarter)
 cmd-alt-shift-q = 'join-with right'              # same, but under the right neighbour
 
@@ -218,6 +226,11 @@ f8 = 'exec-and-forget open -b net.kovidgoyal.kitty'                      # focus
 cmd-alt-shift-enter = 'exec-and-forget open -na kitty.app'               # new kitty window
 f9 = 'exec-and-forget open -b com.brave.Browser'                         # focus Brave (launch / restore if needed)
 cmd-alt-shift-b = 'exec-and-forget open -na "Brave Browser.app"'         # new Brave window
+
+# Scratchpad (workspace S) and window switcher
+cmd-alt-shift-s = 'exec-and-forget ~/.config/aerospace/scratchpad.sh stash'   # hide focused window in S
+cmd-alt-s = 'exec-and-forget ~/.config/aerospace/scratchpad.sh show'          # summon last stashed window (floating) / toggle S
+cmd-alt-w = 'exec-and-forget ~/.config/aerospace/window-switcher.sh'          # fuzzy switch to any window (Vicinae dmenu)
 
 # Service mode
 cmd-alt-shift-semicolon = 'mode service'

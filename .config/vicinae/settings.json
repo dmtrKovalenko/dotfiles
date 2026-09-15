@@ -23,17 +23,15 @@
          "name": "rose-pine"
       }
    },
-   // Fallback commands shown when nothing matches the query (Raycast had web search as fallback).
    "fallbacks": [
       "shortcuts:sct-d667908a2633",
       "shortcuts:sct-21caaaa037d4"
    ],
-
    "providers": {
       "clipboard": {
          "entrypoints": {
             "history": {
-               "shortcut": "control+alt+V"
+               "shortcut": "control+shift+V"
             }
          }
       },
