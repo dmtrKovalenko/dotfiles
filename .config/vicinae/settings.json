@@ -41,6 +41,16 @@
                "enabled": false
             }
          }
+      },
+      "applications": {
+         "entrypoints": {
+            "net.kovidgoyal.kitty": {
+               "shortcut": "F8"
+            },
+            "com.brave.Browser": {
+               "shortcut": "F9"
+            }
+         }
       }
    }
 }

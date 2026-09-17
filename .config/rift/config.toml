@@ -1,0 +1,170 @@
+# rift config (translated from ~/.aerospace.toml). Hot-reloads on save.
+# Notes:
+#  - workspaces live inside each macOS Space, so every display has its own 1..S
+#  - no key modes, no directional swap; accordion = rift "stack"
+#  - app-focus hotkeys (kitty, Brave) live in Vicinae, not here
+
+[settings]
+animate = false
+default_disable = false        # manage every Space immediately
+focus_follows_mouse = false
+mouse_follows_focus = true
+mouse_hides_on_focus = false
+auto_focus_blacklist = ["com.apple.Spotlight"]
+hot_reload = true
+
+[settings.layout]
+mode = "traditional"           # only engine with stacks/joins; quarter = cmd-alt-q on the 3rd window
+window_insertion_point = "next_to_selection"
+
+[settings.layout.traditional]
+equalize_nodes = true
+
+[settings.layout.stack]
+stack_offset = 30.0
+default_orientation = "perpendicular"
+
+[settings.layout.gaps.outer]
+top = 0
+left = 0
+bottom = 0
+right = 0
+
+[settings.layout.gaps.inner]
+horizontal = 8
+vertical = 8
+
+[settings.ui.menu_bar]
+enabled = true
+show_empty = false
+mode = "all"
+active_label = "name"
+display_style = "label"
+
+[virtual_workspaces]
+default_workspace_count = 5    # 1 2 3 4 + S (scratchpad)
+default_workspace = 0
+workspace_names = ["1", "2", "3", "4", "S"]
+prevent_wrapping = false
+
+# workspace is 0-based: "1"=0 ... "S"=4
+app_rules = [
+  # 1: terminals + browsers
+  { app_id = "net.kovidgoyal.kitty",      workspace = 0 },
+  { app_id = "com.brave.Browser",         workspace = 0 },
+  { app_id = "com.google.Chrome",         workspace = 0 },
+  { app_id = "com.mitchellh.ghostty",     workspace = 0 },
+  { app_id = "com.github.wez.wezterm",    workspace = 0 },
+  # 2: editors
+  { app_id = "dev.zed.Zed",               workspace = 1 },
+  { app_id = "com.microsoft.VSCode",      workspace = 1 },
+  { app_id = "com.apple.dt.Xcode",        workspace = 1 },
+  # 3: chat + media
+  { app_id = "com.tinyspeck.slackmacgap", workspace = 2 },
+  { app_id = "ru.keepcoder.Telegram",     workspace = 2 },
+  { app_id = "com.hnc.Discord",           workspace = 2 },
+  { app_id = "app.zen-browser.zen",       workspace = 2 },
+  { app_id = "com.apple.Music",           workspace = 2 },
+  { app_id = "com.apple.Safari",          workspace = 2 },
+  # floating
+  { app_id = "com.apple.QuickTimePlayerX",  floating = true },
+  { app_name = "UAD Meter",                 floating = true },
+  { app_id = "com.apple.finder",            floating = true },
+  { app_id = "com.apple.systempreferences", floating = true },
+  { app_id = "us.zoom.xos",                 floating = true },
+  { app_id = "com.sindresorhus.Velja",      floating = true },
+  { app_id = "com.apple.ActivityMonitor",   floating = true },
+  { app_id = "com.apple.calculator",        floating = true },
+  { app_id = "com.apple.archiveutility",    floating = true },
+  { app_id = "com.apple.installer",         floating = true },
+  # always tile
+  { app_id = "com.apple.Notes",             floating = false },
+  # dialogs / sheets / pickers of any app float
+  { title_regex = "(?i)^(open|save|save as|print|preferences|settings)", floating = true },
+  { ax_subrole = "AXDialog",                floating = true },
+  { ax_subrole = "AXSystemDialog",          floating = true },
+]
+
+[modifier_combinations]
+ma   = "Meta + Alt"
+mas  = "Meta + Alt + Shift"
+mca  = "Meta + Ctrl + Alt"
+mcas = "Meta + Ctrl + Alt + Shift"
+
+[keys]
+# focus
+"ma + H" = { move_focus = "left" }
+"ma + J" = { move_focus = "down" }
+"ma + K" = { move_focus = "up" }
+"ma + L" = { move_focus = "right" }
+
+# move window in the tree
+"mas + H" = { move_node = "left" }
+"mas + J" = { move_node = "down" }
+"mas + K" = { move_node = "up" }
+"mas + L" = { move_node = "right" }
+
+# join with / expel from a neighbour
+"mca + H" = { consume_or_expel_window = "left" }
+"mca + J" = { consume_or_expel_window = "down" }
+"mca + K" = { consume_or_expel_window = "up" }
+"mca + L" = { consume_or_expel_window = "right" }
+
+# workspaces (shift variants = other keyboard's top row)
+"ma + 1" = { switch_to_workspace = 0 }
+"ma + 2" = { switch_to_workspace = 1 }
+"ma + 3" = { switch_to_workspace = 2 }
+"ma + 4" = { switch_to_workspace = 3 }
+"mas + 1" = { switch_to_workspace = 0 }
+"mas + 2" = { switch_to_workspace = 1 }
+"mas + 3" = { switch_to_workspace = 2 }
+"mas + 4" = { switch_to_workspace = 3 }
+"ma + Tab" = "switch_to_last_workspace"
+"ma + Left" = "prev_workspace"
+"ma + Right" = "next_workspace"
+
+# send window to a workspace and follow it
+"mca + 1" = { move_window_to_workspace = { workspace = 0, follow = true } }
+"mca + 2" = { move_window_to_workspace = { workspace = 1, follow = true } }
+"mca + 3" = { move_window_to_workspace = { workspace = 2, follow = true } }
+"mca + 4" = { move_window_to_workspace = { workspace = 3, follow = true } }
+"mcas + 1" = { move_window_to_workspace = { workspace = 0, follow = true } }
+"mcas + 2" = { move_window_to_workspace = { workspace = 1, follow = true } }
+"mcas + 3" = { move_window_to_workspace = { workspace = 2, follow = true } }
+"mcas + 4" = { move_window_to_workspace = { workspace = 3, follow = true } }
+
+# monitors
+"mas + Tab" = { move_workspace_to_display = { selector = "right", wrap_around = true } }
+"mas + Left" = { move_window_to_display = { selector = "left" } }
+"mas + Right" = { move_window_to_display = { selector = "right" } }
+
+# sizing
+"ma + Minus" = { resize_window_shrink = "smart" }
+"ma + Equal" = { resize_window_grow = "smart" }
+"ma + 0" = { exec = ["/bin/sh", "-c", "~/.config/rift/ratio.py 50"] }   # equalize halves
+"mas + R" = { exec = ["/bin/sh", "-c", "~/.config/rift/ratio.py 60"] }  # focused column -> 60%
+"mas + E" = { exec = ["/bin/sh", "-c", "~/.config/rift/ratio.py 70"] }  # focused column -> 70%
+
+# layouts
+"ma + F" = "toggle_fullscreen"
+"mas + F" = "toggle_window_floating"
+"ma + Slash" = "toggle_orientation"
+"mas + Slash" = "toggle_stack"                 # stack focused window with its neighbour / undo
+"ma + A" = { exec = ["/bin/sh", "-c", "~/.config/rift/toggle-accordion.sh"] }   # workspace: accordion <-> tiles
+"ma + Q" = { join_window = "left" }
+"mas + Q" = { join_window = "right" }
+"ma + U" = "unjoin_windows"
+"ma + D" = { exec = ["/bin/sh", "-c", "~/.config/rift/dev-layout.sh"] }   # [ChatGPT+kitty stack] | Brave, 50/50
+
+# new windows
+"mas + Enter" = { exec = ["open", "-na", "kitty.app"] }
+"mas + B" = { exec = ["open", "-na", "Brave Browser.app"] }
+
+# scratchpad (workspace S) and window switcher
+"mas + S" = { exec = ["/bin/sh", "-c", "~/.config/rift/scratchpad.sh stash"] }
+"ma + S"  = { exec = ["/bin/sh", "-c", "~/.config/rift/scratchpad.sh show"] }
+"ma + W"  = { exec = ["/bin/sh", "-c", "~/.config/rift/window-switcher.sh"] }
+
+# misc
+"mas + Semicolon" = "reload_config"
+"ma + Z" = "toggle_space_activated"

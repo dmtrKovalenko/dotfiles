@@ -2,7 +2,7 @@
 # Reload after editing: cmd-alt-shift-; then esc   (or: aerospace reload-config)
 
 config-version = 2
-persistent-workspaces = ['1', '2', '3']   # always exist, even when empty
+persistent-workspaces = ['1', '2', '3', '4']   # always exist, even when empty
 start-at-login = true
 after-login-command = []
 after-startup-command = ['exec-and-forget ~/.config/aerospace/auto-quarter.sh']
@@ -37,6 +37,7 @@ outer.right = 0
 #   1  dev    kitty + browser            (main monitor)
 #   2  work   editors, other browsers    (main monitor)
 #   3  side   chat + media               (laptop screen when docked)
+#   4  misc   anything else              (main monitor)
 #   S  scratchpad  stash windows out of the layout, summon them back floating
 # When only one display is connected, all live on it.
 # ---------------------------------------------------------------------------
@@ -47,6 +48,7 @@ outer.right = 0
 1 = ['XDR', 'main']
 2 = ['XDR', 'main']
 3 = 'built-in'
+4 = ['XDR', 'main']
 
 
 [[on-window-detected]]
@@ -184,10 +186,12 @@ cmd-ctrl-alt-l = 'move right'
 cmd-alt-1 = 'workspace 1'
 cmd-alt-2 = 'workspace 2'
 cmd-alt-3 = 'workspace 3'
+cmd-alt-4 = 'workspace 4'
 # aliases: the other keyboard's top row sends shift+digits (! @ # $ %)
 cmd-alt-shift-1 = 'workspace 1'
 cmd-alt-shift-2 = 'workspace 2'
 cmd-alt-shift-3 = 'workspace 3'
+cmd-alt-shift-4 = 'workspace 4'
 cmd-alt-tab = 'workspace-back-and-forth'
 cmd-alt-left = 'workspace --wrap-around prev'
 cmd-alt-right = 'workspace --wrap-around next'
@@ -196,10 +200,12 @@ cmd-alt-right = 'workspace --wrap-around next'
 cmd-ctrl-alt-1 = 'move-node-to-workspace --focus-follows-window 1'
 cmd-ctrl-alt-2 = 'move-node-to-workspace --focus-follows-window 2'
 cmd-ctrl-alt-3 = 'move-node-to-workspace --focus-follows-window 3'
+cmd-ctrl-alt-4 = 'move-node-to-workspace --focus-follows-window 4'
 # aliases for the other keyboard's shifted top row
 cmd-ctrl-alt-shift-1 = 'move-node-to-workspace --focus-follows-window 1'
 cmd-ctrl-alt-shift-2 = 'move-node-to-workspace --focus-follows-window 2'
 cmd-ctrl-alt-shift-3 = 'move-node-to-workspace --focus-follows-window 3'
+cmd-ctrl-alt-shift-4 = 'move-node-to-workspace --focus-follows-window 4'
 
 # Monitors
 cmd-alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
