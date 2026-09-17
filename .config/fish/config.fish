@@ -98,3 +98,6 @@ if [ -f '/home/neogoose/dev/lightsource/google-cloud-sdk/path.fish.inc' ]; . '/h
 # >>> grok installer >>>
 fish_add_path $HOME/.grok/bin
 # <<< grok installer <<<
+
+# Bedrock model override leaks in via the herdr daemon env; never let it pick the Claude Code model
+set -e ANTHROPIC_MODEL
