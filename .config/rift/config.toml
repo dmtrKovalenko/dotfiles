@@ -1,9 +1,3 @@
-# rift config (translated from ~/.aerospace.toml). Hot-reloads on save.
-# Notes:
-#  - workspaces live inside each macOS Space, so every display has its own 1..S
-#  - no key modes, no directional swap; accordion = rift "stack"
-#  - app-focus hotkeys (kitty, Brave) live in Vicinae, not here
-
 [settings]
 animate = false
 default_disable = false        # manage every Space immediately
@@ -14,7 +8,7 @@ auto_focus_blacklist = ["com.apple.Spotlight"]
 hot_reload = true
 
 [settings.layout]
-mode = "traditional"           # only engine with stacks/joins; quarter = cmd-alt-q on the 3rd window
+mode = "bsp"                   # new windows split the focused one (3rd window = quarter); cmd-alt-a = stack, cmd-alt-d = traditional dev layout
 window_insertion_point = "next_to_selection"
 
 [settings.layout.traditional]

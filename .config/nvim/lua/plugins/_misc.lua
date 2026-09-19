@@ -42,6 +42,7 @@ return {
     opts = {
       lazy_sync = false,
       wrap_around = true,
+      max_threads = 16,
       grep = {
         trim_whitespace = true,
       },
