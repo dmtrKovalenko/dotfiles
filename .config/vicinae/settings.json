@@ -45,10 +45,10 @@
       "applications": {
          "entrypoints": {
             "net.kovidgoyal.kitty": {
-               "shortcut": "F8"
+               "shortcut": ""
             },
             "com.brave.Browser": {
-               "shortcut": "F9"
+               "shortcut": ""
             }
          }
       }

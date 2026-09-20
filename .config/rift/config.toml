@@ -44,28 +44,27 @@ prevent_wrapping = false
 # workspace is 0-based: "1"=0 ... "S"=4
 app_rules = [
   # 1: terminals + browsers
-  { app_id = "net.kovidgoyal.kitty",      workspace = 0 },
-  { app_id = "com.brave.Browser",         workspace = 0 },
-  { app_id = "com.google.Chrome",         workspace = 0 },
-  { app_id = "com.mitchellh.ghostty",     workspace = 0 },
-  { app_id = "com.github.wez.wezterm",    workspace = 0 },
+  { app_id = "net.kovidgoyal.kitty",      workspace = 0, focus = true },
+  { app_id = "com.brave.Browser",         workspace = 0, focus = true },
+  { app_id = "com.google.Chrome",         workspace = 0, focus = true },
+  { app_id = "com.mitchellh.ghostty",     workspace = 0, focus = true },
+  { app_id = "com.github.wez.wezterm",    workspace = 0, focus = true },
   # 2: editors
-  { app_id = "dev.zed.Zed",               workspace = 1 },
-  { app_id = "com.microsoft.VSCode",      workspace = 1 },
-  { app_id = "com.apple.dt.Xcode",        workspace = 1 },
+  { app_id = "dev.zed.Zed",               workspace = 1, focus = true },
+  { app_id = "com.microsoft.VSCode",      workspace = 1, focus = true },
+  { app_id = "com.apple.dt.Xcode",        workspace = 1, focus = true },
   # 3: chat + media
-  { app_id = "com.tinyspeck.slackmacgap", workspace = 2 },
-  { app_id = "ru.keepcoder.Telegram",     workspace = 2 },
-  { app_id = "com.hnc.Discord",           workspace = 2 },
-  { app_id = "app.zen-browser.zen",       workspace = 2 },
-  { app_id = "com.apple.Music",           workspace = 2 },
-  { app_id = "com.apple.Safari",          workspace = 2 },
+  { app_id = "com.tinyspeck.slackmacgap", workspace = 2, focus = true },
+  { app_id = "ru.keepcoder.Telegram",     workspace = 2, focus = true },
+  { app_id = "com.hnc.Discord",           workspace = 2, focus = true },
+  { app_id = "app.zen-browser.zen",       workspace = 2, focus = true },
+  { app_id = "com.apple.Music",           workspace = 2, focus = true },
+  { app_id = "com.apple.Safari",          workspace = 2, focus = true },
   # floating
   { app_id = "com.apple.QuickTimePlayerX",  floating = true },
   { app_name = "UAD Meter",                 floating = true },
   { app_id = "com.apple.finder",            floating = true },
   { app_id = "com.apple.systempreferences", floating = true },
-  { app_id = "us.zoom.xos",                 floating = true },
   { app_id = "com.sindresorhus.Velja",      floating = true },
   { app_id = "com.apple.ActivityMonitor",   floating = true },
   { app_id = "com.apple.calculator",        floating = true },
@@ -153,6 +152,11 @@ mcas = "Meta + Ctrl + Alt + Shift"
 # new windows
 "mas + Enter" = { exec = ["open", "-na", "kitty.app"] }
 "mas + B" = { exec = ["open", "-na", "Brave Browser.app"] }
+
+# app focus keys go through rift so the keypress counts as "user input" — after wake/unlock rift
+# drops app-activation workspace switches until it sees a mouse event or one of its own commands
+"F8" = { exec = ["open", "-b", "net.kovidgoyal.kitty"] }     # focus kitty
+"F9" = { exec = ["open", "-b", "com.brave.Browser"] }        # focus Brave
 
 # scratchpad (workspace S) and window switcher
 "mas + S" = { exec = ["/bin/sh", "-c", "~/.config/rift/scratchpad.sh stash"] }

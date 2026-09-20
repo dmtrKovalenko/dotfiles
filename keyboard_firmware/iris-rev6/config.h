@@ -14,13 +14,13 @@
 // Optional: Uncomment if you want even more responsive mod-taps
 // #define HOLD_ON_OTHER_KEY_PRESS  // Activate hold immediately when another key is pressed
 
-// Vim-aware lighting (../vim/vim.c): the master pushes a per-LED overlay to
+// Host-driven lighting (../jev/jev.c): the master forwards the host frame to
 // the other half, which is bigger than the default 32-byte RPC buffer.
-#define SPLIT_TRANSACTION_IDS_USER VIM_SYNC
+#define SPLIT_TRANSACTION_IDS_USER JEV_SYNC
 #define RPC_M2S_BUFFER_SIZE 80
 
-// The vim lighting paints every LED itself, so the stock animations are dead
-// weight -- and the ATmega32U4 has no room for them alongside vim.c.
+// The host lighting paints every LED itself, so the stock animations are dead
+// weight -- and the ATmega32U4 has no room for them alongside jev.c.
 #undef ENABLE_RGB_MATRIX_ALPHAS_MODS
 #undef ENABLE_RGB_MATRIX_GRADIENT_UP_DOWN
 #undef ENABLE_RGB_MATRIX_GRADIENT_LEFT_RIGHT

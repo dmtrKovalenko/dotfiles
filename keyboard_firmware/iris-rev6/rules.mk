@@ -4,6 +4,5 @@ CAPS_WORD_ENABLE = yes
 MOUSEKEY_ENABLE = yes
 ENCODER_MAP_ENABLE = no
 
-# Vim-aware lighting
-WPM_ENABLE = yes
-SRC += vim.c
+# Host-driven lighting (../jev/jev.c), talks raw HID over the VIA channel
+SRC += jev.c
