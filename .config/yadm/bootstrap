@@ -260,6 +260,25 @@ load_launchagents() {
 
 decrypt_secrets() {
     [[ -f $HOME/.config/yadm/encrypt ]] || { skip "no encrypt manifest"; return 0; }
+
+    # Without a pinentry that works headlessly, gpg dies with
+    # "Inappropriate ioctl for device" and yadm reports a bare tar write error.
+    if [[ ! -x $BREW_PREFIX/bin/pinentry-mac ]]; then
+        warn "pinentry-mac missing; installing it or gpg cannot prompt"
+        brew install pinentry-mac || return 1
+    fi
+    if [[ ! -f $HOME/.gnupg/gpg-agent.conf ]]; then
+        warn "no gpg-agent.conf; writing one pointing at pinentry-mac"
+        mkdir -p "$HOME/.gnupg"
+        chmod 700 "$HOME/.gnupg"
+        printf 'pinentry-program %s/bin/pinentry-mac\n' "$BREW_PREFIX" \
+            >"$HOME/.gnupg/gpg-agent.conf"
+    fi
+    gpgconf --kill gpg-agent >/dev/null 2>&1 || true
+    # Curses pinentry fallback needs this; harmless for pinentry-mac.
+    GPG_TTY="$(tty || true)"
+    export GPG_TTY
+
     # A cancelled passphrase prompt must not fail the whole bootstrap.
     yadm decrypt || warn "yadm decrypt skipped or failed — run it manually later"
 }
