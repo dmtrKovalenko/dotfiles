@@ -1,0 +1,147 @@
+model = "gpt-6-astra"
+model_reasoning_effort = "high"
+log_dir = "/Users/neogoose/.codex/log"
+approvals_reviewer = "user"
+
+notify = ["/Users/neogoose/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+
+[projects."/Users/neogoose"]
+trust_level = "trusted"
+
+[projects."/Users/neogoose/dev/zlob"]
+trust_level = "trusted"
+
+[projects."/Users/neogoose/dev/codex"]
+trust_level = "trusted"
+
+[projects."/Users/neogoose/dev/codex-image-generation-interview"]
+trust_level = "trusted"
+
+[projects."/Users/neogoose/dev/fff.nvim"]
+trust_level = "trusted"
+
+[projects."/Users/neogoose/Documents/Codex/2026-09-08/users-neogoose-desktop-calendar"]
+trust_level = "trusted"
+
+[projects."/Users/neogoose/Documents/Codex/2026-09-08/0"]
+trust_level = "trusted"
+
+[projects."/Users/neogoose/Documents/Codex/2026-09-11/0"]
+trust_level = "trusted"
+
+[projects."/Users/neogoose/Documents/Codex/2026-09-11/this-x20"]
+trust_level = "trusted"
+
+[projects."/Users/neogoose/Documents/Codex/2026-09-13/users-neogoose-downloads-img-0270-stabilized"]
+trust_level = "trusted"
+
+[projects."/Users/neogoose/Documents/Codex/2026-09-13/how-to-get-rid-of-chatgpt"]
+trust_level = "trusted"
+
+[projects."/Users/neogoose/Documents/Codex/2026-09-14/can-x20"]
+trust_level = "trusted"
+
+[projects."/Users/neogoose/Documents/Codex/2026-09-15/i-x20"]
+trust_level = "trusted"
+
+[projects."/Users/neogoose/Documents/Codex/2026-09-18/j"]
+trust_level = "trusted"
+
+[projects."/Users/neogoose/Documents/Codex/2026-09-18/f"]
+trust_level = "trusted"
+
+[projects."/Users/neogoose/Documents/Codex/2026-09-18/o-x20"]
+trust_level = "trusted"
+
+[tui.model_availability_nux]
+"gpt-5.5" = 3
+"gpt-5.6-sol" = 4
+
+[features]
+hooks = true
+js_repl = false
+
+[hooks.state]
+
+[hooks.state."/Users/neogoose/.codex/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:926166cbcebb2e00dc20310016a0562c01ed6269d5167703b9804b3736878522"
+
+[marketplaces.openai-bundled]
+source_type = "local"
+source = "/Users/neogoose/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+source_type = "local"
+source = "/Users/neogoose/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."visualize@openai-bundled"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[plugins."codex-app-tools@openai-bundled"]
+enabled = true
+
+[plugins."unified-computer-use@openai-bundled"]
+enabled = true
+
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
+[mcp_servers.node_repl]
+args = []
+command = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+startup_timeout_sec = 120
+
+[mcp_servers.node_repl.env]
+NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/neogoose/.codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+CODEX_HOME = "/Users/neogoose/.codex"
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+BROWSER_USE_TINYSKY_ENABLED = "1"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = ""
+NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = ""
+NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = ""
+BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
+BROWSER_USE_CODEX_APP_VERSION = "26.915.31945"
+NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/neogoose/.codex/plugins/cache/openai-bundled/browser/26.915.31945/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
+SKY_CUA_SERVICE_PATH = "/Users/neogoose/.codex/computer-use/Codex Computer Use.app"
+CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
+
+[mcp_servers.computer-use]
+command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
+args = ["mcp"]
+cwd = "."
+enabled = false
+
+[shell_environment_policy.set]
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "87e84e5b4db45250b323ac54ab2f33585d867d0d13abc198e73a4e28420b657b"
+
+[desktop]
+conversationDetailMode = "STEPS_COMMANDS"
+followUpQueueMode = "queue"
+avatar-overlay-pet-visible = false
+
+[desktop.open-in-target-preferences]
+global = "kitty"
+
+[desktop.open-in-target-preferences.perPath]
+"/Users/neogoose/dev/fff.nvim" = "kitty"

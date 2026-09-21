@@ -1,0 +1,56 @@
+# yadm encrypt — patterns listed here are bundled into an encrypted archive.
+#
+# Paths are globs relative to $HOME. Lines starting with `#` are comments.
+# A line starting with `!` EXCLUDES a match (useful to keep giant keyrings out).
+#
+#   yadm encrypt          -> reads this file, writes .local/share/yadm/archive
+#   yadm decrypt          -> restores files from the archive
+#   yadm decrypt -l       -> list archive contents WITHOUT extracting
+#
+# The archive itself is tracked in the repo; the plaintext files are not.
+# Re-run `yadm encrypt` every time you add a pattern OR change a secret file,
+# otherwise the archive silently goes stale.
+
+# ---- SSH ----------------------------------------------------------------
+.ssh/config
+.ssh/known_hosts
+.ssh/id_rsa
+.ssh/id_rsa.pub
+.ssh/agent
+.ssh/bastion
+.ssh/bastion.pub
+.ssh/gaslamp
+.ssh/gaslamp.pub
+.ssh/gustav.pub
+.ssh/ls-work
+.ssh/ls-work.pub
+.ssh/prod
+.ssh/prod.pub
+.ssh/*.pem
+# Sockets are runtime state, never archive them.
+!.ssh/sockets
+
+# ---- GPG ----------------------------------------------------------------
+# This machine has no pubring.kbx/trustdb.gpg — only ~/.gnupg/private-keys-v1.d.
+# Archiving private keys is your call. The archive IS passphrase-encrypted, so
+# if you want them carried over, uncomment the next line:
+#.gnupg/private-keys-v1.d/*
+#
+# Otherwise export by hand to offline storage:
+#   gpg --export-secret-keys --armor > gpg-secret-backup.asc
+# Never archive the S.gpg-agent* sockets; they are runtime state.
+
+# ---- Registry / cloud credentials ---------------------------------------
+.npmrc
+.aws/credentials
+.config/gh/hosts.yml
+.config/jevlight/api_key
+
+# ---- Agent / AI tool tokens ---------------------------------------------
+.codex/auth.json
+.pi/agent/auth.json
+
+# ---- LaunchAgents containing inline credentials --------------------------
+# com.neogoose.triage.plist embeds a live AWS_BEARER_TOKEN_BEDROCK, so it must
+# never be tracked as plaintext. Rotate that token if it has ever been pushed.
+Library/LaunchAgents/com.neogoose.triage.plist

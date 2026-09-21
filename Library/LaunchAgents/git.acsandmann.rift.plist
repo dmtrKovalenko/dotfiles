@@ -1,0 +1,38 @@
+<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+    <key>Label</key>
+    <string>git.acsandmann.rift</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/rift</string>
+    </array>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/home/neogoose/.local/share/pnpm:/Users/neogoose/.bun/bin:/Users/neogoose/.opam/5.2.0+ox/bin:/nix/var/nix/profiles/default/bin:/Users/neogoose/.grok/bin:/Users/neogoose/.local/bin:/Users/neogoose/.opencode/bin:/Users/neogoose/go/bin:/opt/homebrew/opt/postgresql@17/bin:/opt/homebrew/opt/gnu-sed/libexec/gnubin:/Users/dmtrkovalenko/.rustup/toolchains/esp/xtensa-esp-elf/esp-13.2.0_20230928/xtensa-esp-elf/bin:/Users/dmtrkovalenko/.opam/default/bin:/Users/dmtrkovalenko/.local/share/nvim/mason/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/kitty.app/Contents/MacOS:/opt/homebrew/opt/llvm/bin:/opt/homebrew/sbin:/Users/dmtrkovalenko/dev/nvim-macos/bin:/Users/dmtrkovalenko/.local/bin:/opt/homebrew/opt/icu4c/sbin:/opt/homebrew/opt/icu4c/bin:/opt/homebrew/opt/libpq/bin:/opt/homebrew/opt/openssl@3/bin:/opt/homebrew/opt/ffmpeg@4/bin:/opt/homebrew/opt/openjdk/bin:/Users/dmtrkovalenko/.cargo/bin:/opt/homebrew/bin:/Users/neogoose/.vite-plus/bin:/Users/neogoose/.cargo/bin:/Users/neogoose/.local/share/nvm/v23.9.0/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin</string>
+        <key>RUST_LOG</key>
+        <string>info,rift_wm::actor::reactor=debug,rift_wm::actor::app=debug</string>
+    </dict>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <dict>
+        <key>SuccessfulExit</key>
+        <false/>
+        <key>Crashed</key>
+        <true/>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>/tmp/rift_neogoose.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/rift_neogoose.err.log</string>
+    <key>ProcessType</key>
+    <string>Interactive</string>
+    <key>LimitLoadToSessionType</key>
+    <string>Aqua</string>
+    <key>Nice</key>
+    <integer>-20</integer>
+</dict>
+</plist>

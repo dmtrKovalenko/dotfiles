@@ -1,0 +1,4 @@
+@earendil-works/pi-coding-agent
+wgc
+wscat
+yarn

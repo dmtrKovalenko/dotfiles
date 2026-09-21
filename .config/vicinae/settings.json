@@ -23,6 +23,12 @@
          "name": "rose-pine"
       }
    },
+   "telemetry": {
+      "system_info": false
+   },
+   "keybinds": {
+      "action.edit-secondary": "super+control+shift+E"
+   },
    "fallbacks": [
       "shortcuts:sct-d667908a2633",
       "shortcuts:sct-21caaaa037d4"
@@ -35,20 +41,17 @@
             }
          }
       },
+      "core": {
+         "entrypoints": {
+            "search-emojis": {
+               "shortcut": "control+shift+E"
+            }
+         }
+      },
       "files": {
          "entrypoints": {
             "search": {
                "enabled": false
-            }
-         }
-      },
-      "applications": {
-         "entrypoints": {
-            "net.kovidgoyal.kitty": {
-               "shortcut": ""
-            },
-            "com.brave.Browser": {
-               "shortcut": ""
             }
          }
       }
