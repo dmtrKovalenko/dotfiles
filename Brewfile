@@ -201,6 +201,8 @@ brew "patchelf"
 brew "perl"
 # Tool for interacting with RP2040/RP2350 devices and binaries
 brew "picotool"
+# Pinentry for GPG on Mac
+brew "pinentry-mac"
 # Package compiler and linker metadata toolkit
 brew "pkgconf"
 # Your Gateway to Embedded Software Development Excellence
