@@ -1,0 +1,333 @@
+#!/usr/bin/env bash
+#
+# yadm bootstrap — provisions a fresh macOS (Apple Silicon) machine.
+#
+# yadm runs this automatically after `yadm clone`, or on demand:
+#     yadm bootstrap
+#
+# It is IDEMPOTENT: every step is guarded, so re-running is fast and safe.
+# A failing step does not abort the run; failures are collected and reported
+# in a summary at the end, and the script exits non-zero if anything failed.
+#
+# Package inventory lives in ~/.config/yadm/inventory/*.txt and is read at
+# runtime, so adding a tool means editing a manifest, not this script.
+#
+set -euo pipefail
+
+BREW_PREFIX="/opt/homebrew"
+INVENTORY="$HOME/.config/yadm/inventory"
+FAILED=()
+
+log()  { printf '\033[1;34m==>\033[0m %s\n' "$*" >&2; }
+warn() { printf '\033[1;33m[warn]\033[0m %s\n' "$*" >&2; }
+skip() { printf '\033[2m  ·  %s\033[0m\n' "$*" >&2; }
+
+# Read a manifest, stripping comments, blank lines and surrounding whitespace.
+manifest() {
+    local file="$INVENTORY/$1"
+    if [[ ! -f $file ]]; then
+        warn "missing manifest: $file"
+        return 0
+    fi
+    sed -e 's/#.*//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' "$file" | grep -v '^$' || true
+}
+
+# Run a step, recording but not propagating failure.
+step() {
+    local name="$1"
+    log "$name"
+    if ! "$name"; then
+        warn "step failed: $name"
+        FAILED+=("$name")
+    fi
+}
+
+# ---------------------------------------------------------------- homebrew ---
+
+install_homebrew() {
+    if [[ -x $BREW_PREFIX/bin/brew ]]; then
+        skip "homebrew already installed"
+    else
+        NONINTERACTIVE=1 /bin/bash -c \
+            "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+    eval "$("$BREW_PREFIX/bin/brew" shellenv)"
+}
+
+brew_bundle() {
+    if [[ ! -f $HOME/Brewfile ]]; then
+        warn "no ~/Brewfile — nothing to install"
+        return 1
+    fi
+    # Installs taps, formulae, casks and VS Code extensions. Already-installed
+    # entries are no-ops, so this is safe to re-run.
+    brew bundle install --file="$HOME/Brewfile" --no-upgrade
+}
+
+# -------------------------------------------------------------------- fish ---
+
+setup_fish() {
+    local fish_bin="$BREW_PREFIX/bin/fish"
+    if [[ ! -x $fish_bin ]]; then
+        warn "fish not installed — did brew bundle run?"
+        return 1
+    fi
+
+    # Login shells must be listed in /etc/shells; both writes need root, which
+    # is why this is the one place sudo appears.
+    if ! grep -qxF "$fish_bin" /etc/shells; then
+        log "registering $fish_bin in /etc/shells (sudo)"
+        echo "$fish_bin" | sudo tee -a /etc/shells >/dev/null
+    fi
+    if [[ $SHELL != "$fish_bin" ]]; then
+        log "setting login shell to fish (sudo)"
+        sudo chsh -s "$fish_bin" "$USER"
+    else
+        skip "login shell already fish"
+    fi
+
+    # fisher bootstraps itself, then restores everything in fish_plugins.
+    if [[ -f $HOME/.config/fish/functions/fisher.fish ]]; then
+        skip "fisher already present"
+    else
+        log "installing fisher"
+        "$fish_bin" -c 'curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher'
+    fi
+    "$fish_bin" -c 'fisher update'
+}
+
+# -------------------------------------------------------------------- rust ---
+
+setup_rust() {
+    if command -v rustup >/dev/null 2>&1; then
+        skip "rustup already installed"
+    else
+        # rustup is intentionally NOT from brew; upstream installer is canonical.
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+            | sh -s -- -y --no-modify-path
+    fi
+    # shellcheck source=/dev/null
+    [[ -f $HOME/.cargo/env ]] && source "$HOME/.cargo/env"
+
+    local installed target crate
+    installed="$(rustup target list --installed)"
+    while IFS= read -r target; do
+        if grep -qxF "$target" <<<"$installed"; then
+            skip "target $target"
+        else
+            rustup target add "$target"
+        fi
+    done < <(manifest rustup-targets.txt)
+
+    while IFS= read -r crate; do
+        if cargo install --list | grep -q "^$crate "; then
+            skip "cargo $crate"
+        else
+            cargo install --locked "$crate"
+        fi
+    done < <(manifest cargo-tools.txt)
+}
+
+# ---------------------------------------------------------------------- go ---
+
+setup_go() {
+    if ! command -v go >/dev/null 2>&1; then
+        # `go` is absent from the Brewfile even though ~/go/bin was populated on
+        # the previous machine, so install it explicitly here.
+        warn "go missing from Brewfile — installing it directly"
+        brew install go
+    else
+        skip "go already installed"
+    fi
+
+    local pkg bin
+    while IFS= read -r pkg; do
+        bin="${pkg##*/}"
+        if [[ -x "${GOPATH:-$HOME/go}/bin/$bin" ]]; then
+            skip "go $bin"
+        else
+            go install "$pkg@latest"
+        fi
+    done < <(manifest go-tools.txt)
+}
+
+# -------------------------------------------------------------------- node ---
+
+setup_node() {
+    local fish_bin="$BREW_PREFIX/bin/fish"
+    local version pkg
+
+    # nvm here is the fish plugin jorgebucaran/nvm.fish, so it only exists as a
+    # fish function — hence `fish -c` rather than a bash call.
+    while IFS= read -r version; do
+        "$fish_bin" -c "nvm install $version"
+    done < <(manifest nvm-node-versions.txt)
+    "$fish_bin" -c 'nvm use lts' || warn "could not activate lts node"
+
+    if ! command -v npm >/dev/null 2>&1; then
+        warn "npm not on PATH yet; open a new fish shell and re-run bootstrap"
+        return 1
+    fi
+    while IFS= read -r pkg; do
+        if npm ls -g --depth=0 "$pkg" >/dev/null 2>&1; then
+            skip "npm $pkg"
+        else
+            npm install -g "$pkg"
+        fi
+    done < <(manifest npm-globals.txt)
+}
+
+# ------------------------------------------------------------------- python ---
+
+setup_python_tools() {
+    if ! command -v uv >/dev/null 2>&1; then
+        warn "uv not installed — did brew bundle run?"
+        return 1
+    fi
+    local tool installed
+    installed="$(uv tool list 2>/dev/null || true)"
+    while IFS= read -r tool; do
+        if grep -q "^$tool " <<<"$installed"; then
+            skip "uv $tool"
+        else
+            uv tool install "$tool"
+        fi
+    done < <(manifest uv-tools.txt)
+}
+
+# -------------------------------------------------------------------- ocaml ---
+
+setup_ocaml() {
+    if ! command -v opam >/dev/null 2>&1; then
+        warn "opam not installed — did brew bundle run?"
+        return 1
+    fi
+    if [[ -d $HOME/.opam ]]; then
+        skip "opam already initialised"
+    else
+        opam init --bare --no-setup --yes
+    fi
+    # Only the `default` switch is created here. The previous machine also had
+    # 4.14.1, 5.2.0+ox and oxcaml — see MANUAL FOLLOW-UP.
+    if opam switch list --short 2>/dev/null | grep -qx default; then
+        skip "opam switch default"
+    else
+        opam switch create default --yes
+    fi
+
+    local pkg installed
+    installed="$(opam list --installed --short 2>/dev/null || true)"
+    while IFS= read -r pkg; do
+        if grep -qxF "$pkg" <<<"$installed"; then
+            skip "opam $pkg"
+        else
+            opam install -y "$pkg"
+        fi
+    done < <(manifest opam-packages.txt)
+}
+
+# ------------------------------------------------------------------- neovim ---
+
+restore_nvim() {
+    if ! command -v nvim >/dev/null 2>&1; then
+        warn "nvim not installed — did brew bundle run?"
+        return 1
+    fi
+    # `Lazy! restore` pins every plugin to the commit in lazy-lock.json, which
+    # is why that file is tracked rather than gitignored.
+    if [[ -f $HOME/.config/nvim/lazy-lock.json ]]; then
+        nvim --headless "+Lazy! restore" +qa
+    else
+        warn "no lazy-lock.json — installing plugins unpinned"
+        nvim --headless "+Lazy! sync" +qa
+    fi
+}
+
+# ------------------------------------------------------------- launchagents ---
+
+load_launchagents() {
+    local dir="$HOME/Library/LaunchAgents" plist
+    [[ -d $dir ]] || { skip "no LaunchAgents directory"; return 0; }
+    shopt -s nullglob
+    for plist in "$dir"/*.plist; do
+        # Already-loaded agents exit non-zero; that is not an error here.
+        launchctl load -w "$plist" 2>/dev/null || skip "already loaded: $(basename "$plist")"
+    done
+    shopt -u nullglob
+}
+
+# ----------------------------------------------------------------- secrets ---
+
+decrypt_secrets() {
+    [[ -f $HOME/.config/yadm/encrypt ]] || { skip "no encrypt manifest"; return 0; }
+    # A cancelled passphrase prompt must not fail the whole bootstrap.
+    yadm decrypt || warn "yadm decrypt skipped or failed — run it manually later"
+}
+
+# ------------------------------------------------------------ macos defaults ---
+
+macos_defaults() {
+    # Fast key repeat, and disable press-and-hold so vim-style j/k repeat works.
+    defaults write NSGlobalDomain KeyRepeat -int 2
+    defaults write NSGlobalDomain InitialKeyRepeat -int 15
+    defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
+
+    defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+    defaults write com.apple.finder AppleShowAllFiles -bool true
+
+    defaults write com.apple.dock autohide-delay -float 0
+    defaults write com.apple.dock autohide-time-modifier -float 0.15
+
+    mkdir -p "$HOME/Screenshots"
+    defaults write com.apple.screencapture location "$HOME/Screenshots"
+
+    killall Finder Dock SystemUIServer 2>/dev/null || true
+}
+
+# -------------------------------------------------------------------- main ---
+
+manual_followup() {
+    cat >&2 <<'EOF'
+
+────────────────────────────────────────────────────────────────────
+ MANUAL FOLLOW-UP — things this script cannot do for you
+────────────────────────────────────────────────────────────────────
+  1. Sign in to the Mac App Store.
+  2. Grant Accessibility + Screen Recording permissions in
+     System Settings → Privacy & Security to: rift, vicinae, keycastr.
+  3. Import your GPG secret key:   gpg --import <backup>.asc
+  4. Flash keyboard firmware from ~/keyboard_firmware (qmk / vial).
+  5. Create the extra opam switches:
+       opam switch create 4.14.1
+       opam switch create 5.2.0+ox
+       opam switch create oxcaml
+  6. Re-authenticate CLIs:  gh auth login   ·   aws configure sso
+────────────────────────────────────────────────────────────────────
+EOF
+}
+
+main() {
+    step install_homebrew
+    step brew_bundle
+    step setup_fish
+    step decrypt_secrets
+    step setup_rust
+    step setup_go
+    step setup_node
+    step setup_python_tools
+    step setup_ocaml
+    step restore_nvim
+    step load_launchagents
+    step macos_defaults
+
+    manual_followup
+
+    if (( ${#FAILED[@]} )); then
+        warn "${#FAILED[@]} step(s) FAILED: ${FAILED[*]}"
+        warn "fix the cause and re-run: yadm bootstrap"
+        return 1
+    fi
+    log "bootstrap complete — start a new fish shell"
+}
+
+main "$@"

@@ -1,0 +1,2 @@
+common --remote_header=x-buildbuddy-api-key=x18bWk7SC7BT1tuSlkdr
+build --disk_cache=~/.cache/bazel-disk-cache

@@ -1,0 +1,12 @@
+github.com/bufbuild/buf/cmd/buf
+github.com/google/codesearch/cmd/cindex
+github.com/google/codesearch/cmd/csearch
+github.com/google/codesearch/cmd/cgrep
+github.com/github/github-mcp-server/cmd/github-mcp-server
+gotest.tools/gotestsum
+github.com/norwoodj/helm-docs/cmd/helm-docs
+github.com/yannh/kubeconform/cmd/kubeconform
+connectrpc.com/connect/cmd/protoc-gen-connect-go
+google.golang.org/protobuf/cmd/protoc-gen-go
+honnef.co/go/tools/cmd/staticcheck
+github.com/Antonboom/testifylint

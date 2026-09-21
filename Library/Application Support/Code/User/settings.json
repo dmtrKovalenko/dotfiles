@@ -1,0 +1,280 @@
+{
+  "git.confirmSync": false,
+  "editor.linkedEditing": true,
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "nasc-touchbar.addCursorBelow": false,
+  "editor.suggestFontSize": 15,
+  "terminal.integrated.fontFamily": "Fira Code, MesloLGS NF",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "nasc-touchbar.showCommands": false,
+  "gitlens.defaultDateLocale": null,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "files.associations": {
+    "*.prisma": "graphql"
+  },
+  "polacode.transparentBackground": true,
+  "nasc-touchbar.copyLineDown": true,
+  "nasc-touchbar.togglePanel": false,
+  "markdown.preview.fontSize": 14.5,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "nasc-touchbar.goToDefinition": false,
+  "terminal.integrated.shell.osx": "/bin/zsh",
+  "workbench.productIconTheme": "fluent-icons",
+  "editor.minimap.enabled": false,
+  "cSpell.userWords": [
+    "Adhoc",
+    "arrayify",
+    "autogeneraled",
+    "bindgen",
+    "clsx",
+    "codegen",
+    "debounced",
+    "Dropzone",
+    "errored",
+    "fframes",
+    "focusable",
+    "Formik",
+    "Geocode",
+    "Geocodes",
+    "gravatar",
+    "Iframes",
+    "Incoterms",
+    "Instantiable",
+    "inversify",
+    "Kanban",
+    "Kawaii",
+    "kova",
+    "lerna",
+    "Lightbulb",
+    "LIGHTSOURCE",
+    "Localizaiton",
+    "Luxon",
+    "memoized",
+    "mimetype",
+    "Orgs",
+    "Overridable",
+    "personalizations",
+    "Proxied",
+    "refetch",
+    "Refetchable",
+    "rehype",
+    "Repo",
+    "rerendered",
+    "Rifm",
+    "Signup",
+    "Snackbar",
+    "Sourcings",
+    "sublocality",
+    "testid",
+    "Tokenizeable",
+    "Truthy",
+    "Unmount",
+    "Uploader",
+    "upsert",
+    "Waitlist"
+  ],
+  "workbench.editor.enablePreviewFromQuickOpen": true,
+  "editor.suggest.preview": true,
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "editor.quickSuggestions": {
+    "strings": "on",
+    "other": "on",
+    "comments": "on"
+  },
+  "vsicons.dontShowNewVersionMessage": true,
+  "editor.guides.bracketPairs": true,
+  "workbench.iconTheme": "vscode-icons",
+  "js/ts.implicitProjectConfig.experimentalDecorators": true,
+  "search.useGlobalIgnoreFiles": true,
+  "cmake.configureOnOpen": false,
+  "workbench.editor.closeEmptyGroups": false,
+  "editor.renderWhitespace": "all",
+  "editor.fontFamily": "JetBrains Mono, Menlo, Monaco, 'Courier New', monospace",
+  "editor.useTabStops": false,
+  "github.copilot.enable": {
+    "*": true,
+    "yaml": true,
+    "plaintext": true,
+    "markdown": true
+  },
+  "tailwindCSS.experimental.classRegex": [],
+  "editor.accessibilitySupport": "off",
+  "explorer.confirmDragAndDrop": false,
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "debug.allowBreakpointsEverywhere": true,
+  "debug.console.fontSize": 15,
+  "nasc-touchbar.blockComment": true,
+  "vetur.completion.autoImport": false,
+  "explorer.confirmDelete": false,
+  "editor.fontLigatures": true,
+  "gitlens.views.repositories.files.layout": "auto",
+  "eslint.format.enable": true,
+  "git.enableSmartCommit": true,
+  "terminal.integrated.defaultProfile.osx": "fish",
+  "editor.inlineSuggest.enabled": true,
+  "prettier.prettierPath": "/Users/dmtrkovalenko/.nvm/versions/node/v16.13.1/lib/node_modules/prettier",
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "prettier.packageManager": "yarn",
+  "workbench.colorTheme": "GitHub Dark Dimmed",
+  "security.workspace.trust.untrustedFiles": "open",
+  "terminal.integrated.fontSize": 14,
+  "typescript.locale": "en",
+  "files.autoSave": "onFocusChange",
+  "rust-analyzer.rustfmt.rangeFormatting.enable": true,
+  "editor.acceptSuggestionOnCommitCharacter": false,
+  "polacode.target": "snippet",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "cSpell.enableFiletypes": ["reason"],
+  "nasc-touchbar.gitSync": false,
+  "cSpell.enabledLanguageIds": [
+    "asciidoc",
+    "c",
+    "cpp",
+    "csharp",
+    "css",
+    "go",
+    "handlebars",
+    "html",
+    "jade",
+    "javascript",
+    "javascriptreact",
+    "json",
+    "latex",
+    "less",
+    "markdown",
+    "php",
+    "plaintext",
+    "pub",
+    "python",
+    "restructuredtext",
+    "rust",
+    "scss",
+    "text",
+    "typescript",
+    "typescriptreact",
+    "yml"
+  ],
+  "vetur.format.defaultFormatter.js": "prettier-eslint",
+  "flow.useNPMPackagedFlow": true,
+  "git.autofetch": true,
+  "rust-analyzer.rustfmt.overrideCommand": null,
+  "workbench.fontAliasing": "antialiased",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer"
+  },
+  "nasc-touchbar.toggleWhiteSpace": true,
+  "editor.formatOnPaste": true,
+  "terminal.integrated.rendererType": "dom",
+  "[rescript]": {},
+  "githubPullRequests.terminalLinksHandler": "github",
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[handlebars]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "vscode.css-language-features"
+  },
+  "editor.tabSize": 2,
+  "tailwindCSS.includeLanguages": {
+    "typescriptreact": "html",
+    "typescript": "tsx",
+    "plaintext": "js"
+  },
+  "typescript.check.npmIsInstalled": true,
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.fontSize": 15,
+  "terminal.integrated.env.osx": {
+    "FIG_NEW_SESSION": "1"
+  },
+  "git.mergeEditor": false,
+  "rust-analyzer.checkOnSave.command": "clippy",
+  "workbench.colorCustomizations": {
+    "editorCursor.foreground": "#94a3b8"
+  },
+  "vim.textwidth": 100,
+  "editor.stickyScroll.enabled": true,
+  "vim.useSystemClipboard": true,
+  "editor.wordWrap": "off",
+  "editor.lineNumbers": "relative",
+  "vim.camelCaseMotion.enable": true,
+  "editor.smoothScrolling": true,
+  "window.restoreWindows": "folders",
+  "svg.preview.mode": "svg",
+  "vim.handleKeys": {
+    "<C-d>": true,
+    "<C-s>": false,
+    "<C-z>": false
+  },
+  "vim.easymotion": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "rust-analyzer.imports.prefix": "crate",
+  "rust-analyzer.hover.actions.references.enable": true,
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass",
+    "cssClasses"
+  ],
+  "vim.leader": "=",
+  "vim.changeWordIncludesWhitespace": true,
+  "vim.insertModeKeyBindings": [
+    {
+      "before": ["j", "j"],
+      "after": ["<Esc>"]
+    }
+  ],
+  "rust-analyzer.check.command": "clippy",
+  "terminal.integrated.tabs.location": "left",
+  "terminal.integrated.profiles.osx": {
+    
+    "bash": {
+      "path": "bash",
+      "args": [
+        "-l"
+      ],
+      "icon": "terminal-bash"
+    },
+    "zsh": {
+      "path": "zsh",
+      "args": [
+        "-l"
+      ]
+    },
+    "fish": {
+      "path": "fish",
+      "args": [
+        "-l"
+      ]
+    },
+    "tmux": {
+      "path": "tmux",
+      "icon": "terminal-tmux"
+    },
+    "pwsh": {
+      "path": "pwsh",
+      "icon": "terminal-powershell"
+    }
+  },
+  "terminal.integrated.automationProfile.osx": {
+  
+  },
+  "workbench.activityBar.location": "hidden",
+  "github.copilot.nextEditSuggestions.enabled": true
+}

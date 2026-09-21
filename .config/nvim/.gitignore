@@ -39,5 +39,5 @@ luac.out
 *.x86_64
 *.hex
 
-# lazy lock
-lazy-lock.json
+# lazy-lock.json is intentionally TRACKED so `Lazy! restore` can pin plugin
+# versions on a fresh machine. See ~/.config/yadm/bootstrap.
