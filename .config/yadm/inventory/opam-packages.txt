@@ -1,5 +1,0 @@
-core_unix
-merlin
-ocamlformat
-parallel
-utop
