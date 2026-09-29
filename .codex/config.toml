@@ -1,5 +1,5 @@
-model = "gpt-6-astra"
-model_reasoning_effort = "high"
+model = "gpt-6-sol"
+model_reasoning_effort = "medium"
 log_dir = "/Users/neogoose/.codex/log"
 approvals_reviewer = "user"
 

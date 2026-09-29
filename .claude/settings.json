@@ -68,5 +68,10 @@
   },
   "feedbackSurveyState": {
     "lastShownTime": 1754079277917
+  },
+  "voiceEnabled": true,
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
   }
 }
