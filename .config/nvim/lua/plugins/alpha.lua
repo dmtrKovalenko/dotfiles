@@ -57,7 +57,6 @@ return {
       return function()
         vim.cmd("cd " .. path)
         require("persistence").load()
-        vim.cmd "Outline"
       end
     end
 

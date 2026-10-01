@@ -1,25 +1,5 @@
 return {
   "saghen/blink.cmp",
-  dependencies = {
-    {
-      "L3MON4D3/LuaSnip",
-      build = "make install_jsregexp",
-      config = function()
-        local luasnip = require "luasnip"
-
-        -- Loads all the snippets installed by extensions in vscode.
-        -- require('luasnip.loaders.from_vscode').lazy_load()
-        require("luasnip.loaders.from_vscode").load { paths = "~/.config/nvim/snippets" }
-
-        luasnip.config.set_config {
-          region_check_events = "InsertEnter",
-          delete_check_events = "InsertLeave",
-        }
-
-        luasnip.config.setup {}
-      end,
-    },
-  },
   -- use a release tag to download pre-built binaries
   version = "1.*",
   -- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
@@ -46,7 +26,7 @@ return {
       ["<Tab>"] = { "fallback" },
       ["<S-Tab>"] = { "snippet_forward", "fallback" },
     },
-    snippets = { preset = "luasnip" },
+    snippets = { preset = "default" },
     appearance = {
       -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
       -- Adjusts spacing to ensure icons are aligned

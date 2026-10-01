@@ -62,6 +62,10 @@ brew_bundle() {
     brew bundle install --file="$HOME/Brewfile" --no-upgrade
 }
 
+setup_path_filter() {
+    python3 "$HOME/.config/yadm/setup-path-filter.py"
+}
+
 # -------------------------------------------------------------------- fish ---
 
 setup_fish() {
@@ -226,6 +230,7 @@ EOF
 main() {
     step install_homebrew
     step brew_bundle
+    step setup_path_filter
     step setup_fish
     step decrypt_secrets
     step setup_rust

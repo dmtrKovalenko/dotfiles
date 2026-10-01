@@ -118,7 +118,7 @@
   "git.enableSmartCommit": true,
   "terminal.integrated.defaultProfile.osx": "fish",
   "editor.inlineSuggest.enabled": true,
-  "prettier.prettierPath": "/Users/dmtrkovalenko/.nvm/versions/node/v16.13.1/lib/node_modules/prettier",
+  "prettier.prettierPath": "@@DOTFILES_HOME@@/.nvm/versions/node/v16.13.1/lib/node_modules/prettier",
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

@@ -2,12 +2,16 @@ onboarding = false
 [ui]
 agent_panel_sort = "spaces"
 
+status_indicators = "symbols"
 [theme]
 name = "tokyo-night"
 auto_switch = false
 
 [keys]
 prefix = "ctrl+space"
+# Prefix bindings also apply after prefix+w enters workspace navigation.
+open_worktree = "prefix+g"
+goto = "prefix+alt+g"
 # moved off prefix+minus so prefix+- is free for tab 4
 split_horizontal = "prefix+shift+v"
 
@@ -16,27 +20,51 @@ split_horizontal = "prefix+shift+v"
 [[keys.command]]
 key = "prefix+!"
 type = "shell"
-command = 't=$(/Users/neogoose/.local/bin/herdr tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[0].tab_id // empty"); [ -n "$t" ] && /Users/neogoose/.local/bin/herdr tab focus "$t"'
+command = 't=$("$HOME/.local/bin/herdr" tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[0].tab_id // empty"); [ -n "$t" ] && "$HOME/.local/bin/herdr" tab focus "$t"'
 
 [[keys.command]]
 key = "prefix+@"
 type = "shell"
-command = 't=$(/Users/neogoose/.local/bin/herdr tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[1].tab_id // empty"); [ -n "$t" ] && /Users/neogoose/.local/bin/herdr tab focus "$t"'
+command = 't=$("$HOME/.local/bin/herdr" tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[1].tab_id // empty"); [ -n "$t" ] && "$HOME/.local/bin/herdr" tab focus "$t"'
 
 [[keys.command]]
 key = "prefix+#"
 type = "shell"
-command = 't=$(/Users/neogoose/.local/bin/herdr tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[2].tab_id // empty"); [ -n "$t" ] && /Users/neogoose/.local/bin/herdr tab focus "$t"'
+command = 't=$("$HOME/.local/bin/herdr" tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[2].tab_id // empty"); [ -n "$t" ] && "$HOME/.local/bin/herdr" tab focus "$t"'
 
 [[keys.command]]
 key = "prefix+-"
 type = "shell"
-command = 't=$(/Users/neogoose/.local/bin/herdr tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[3].tab_id // empty"); [ -n "$t" ] && /Users/neogoose/.local/bin/herdr tab focus "$t"'
+command = 't=$("$HOME/.local/bin/herdr" tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[3].tab_id // empty"); [ -n "$t" ] && "$HOME/.local/bin/herdr" tab focus "$t"'
 
 [[keys.command]]
 key = "prefix+="
 type = "shell"
-command = 't=$(/Users/neogoose/.local/bin/herdr tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[4].tab_id // empty"); [ -n "$t" ] && /Users/neogoose/.local/bin/herdr tab focus "$t"'
+command = 't=$("$HOME/.local/bin/herdr" tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[4].tab_id // empty"); [ -n "$t" ] && "$HOME/.local/bin/herdr" tab focus "$t"'
+
+[[keys.command]]
+key = "prefix+f"
+type = "plugin_action"
+command = "nathan-poncet.herdr-fingers.start"
+description = "copy with hints"
+
+[[keys.command]]
+key = "prefix+shift+s"
+type = "plugin_action"
+command = "workspace-save.save-default"
+description = "save default tabs and pane layout for new worktree workspaces"
+
+[[keys.command]]
+key = "prefix+alt+w"
+type = "plugin_action"
+command = "workspace-save.open"
+description = "restore saved workspace"
 
 [experimental]
 kitty_graphics = true
+
+[ui.toast]
+delivery = "terminal"
+
+[ui.sound]
+enabled = false

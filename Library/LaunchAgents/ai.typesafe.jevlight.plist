@@ -6,7 +6,7 @@
     <string>ai.typesafe.jevlight</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/neogoose/keyboard_firmware/jevlight/target/release/jevlight</string>
+        <string>@@DOTFILES_HOME@@/keyboard_firmware/jevlight/target/release/jevlight</string>
         <string>--verbose</string>
     </array>
     <key>RunAtLoad</key>

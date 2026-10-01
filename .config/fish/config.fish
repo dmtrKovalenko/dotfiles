@@ -1,4 +1,10 @@
+# The following lines were added by Docker Desktop to add commands to your PATH.
+export PATH="$PATH:$HOME/.docker/bin"
+# End of Docker Desktop section.
+
 # Generate completions once and cache them
+set -gx SSH_AUTH_SOCK "$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
+
 if not test -f ~/.config/fish/completions/just.fish
     just --completions fish > ~/.config/fish/completions/just.fish
 end
@@ -86,14 +92,14 @@ set --export BUN_INSTALL "$HOME/.bun"
 set --export PATH $BUN_INSTALL/bin $PATH
 
 # pnpm
-set -gx PNPM_HOME "/home/neogoose/.local/share/pnpm"
+set -gx PNPM_HOME "$HOME/.local/share/pnpm"
 if not string match -q -- $PNPM_HOME $PATH
   set -gx PATH "$PNPM_HOME" $PATH
 end
 # pnpm end
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/neogoose/dev/lightsource/google-cloud-sdk/path.fish.inc' ]; . '/home/neogoose/dev/lightsource/google-cloud-sdk/path.fish.inc'; end
+if [ -f "$HOME/dev/lightsource/google-cloud-sdk/path.fish.inc" ]; . "$HOME/dev/lightsource/google-cloud-sdk/path.fish.inc"; end
 
 # >>> grok installer >>>
 fish_add_path $HOME/.grok/bin

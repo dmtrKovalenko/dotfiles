@@ -9,8 +9,8 @@ tap "ejoffe/tap"
 tap "felixkratz/formulae", "https://github.com/FelixKratz/homebrew-formulae"
 tap "fish-shell/fish-beta-4"
 tap "gustav-fff/tap"
+tap "hashicorp/tap"
 tap "homebrew-ffmpeg/ffmpeg", trusted: true
-tap "homebrew/services"
 tap "nikitabobko/tap", trusted: true
 tap "oven-sh/bun"
 tap "th0jensen/fff-gpui"
@@ -242,7 +242,7 @@ brew "sqlcipher"
 # Opinionated Lua code formatter
 brew "stylua"
 # Tool to build, change, and version infrastructure
-brew "terraform"
+brew "hashicorp/tap/terraform"
 # Enables extra languages support for Tesseract
 brew "tesseract-lang"
 # Content analysis toolkit

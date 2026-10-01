@@ -35,7 +35,7 @@ config.keys = {
 config.background = {
 	{
 		source = {
-			File = "/Users/dmtrkovalenko/Downloads/background.png",
+			File = "@@DOTFILES_HOME@@/Downloads/background.png",
 		},
 		-- This will maintain the aspect ratio and scale to fit
 		repeat_x = "NoRepeat",

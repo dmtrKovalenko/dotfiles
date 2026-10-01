@@ -56,6 +56,9 @@ vim.keymap.set("n", "cd", "0D", {})
 vim.keymap.set("n", "H", "<cmd>bprevious<CR>", { silent = true })
 vim.keymap.set("n", "L", "<cmd>bnext<CR>", { silent = true })
 
+vim.keymap.set("n", "<A-,>", "<cmd>tabprevious<CR>", { silent = true, desc = "Previous tab" })
+vim.keymap.set("n", "<A-.>", "<cmd>tabnext<CR>", { silent = true, desc = "Next tab" })
+
 vim.keymap.set({ "n", "v" }, "<C-h>", "b", { silent = true })
 vim.keymap.set({ "n", "v" }, "<C-l>", "w", { silent = true })
 
@@ -160,28 +163,10 @@ vim.keymap.set("n", "<C-q>", function()
     return
   end
 
-  local normal_windows = {}
-  local has_outline = false
-
-  for _, win in ipairs(vim.api.nvim_list_wins()) do
-    local config = vim.api.nvim_win_get_config(win)
-    if config.relative == "" then -- Non-floating windows
-      table.insert(normal_windows, win)
-      local bufnr = vim.api.nvim_win_get_buf(win)
-      local filetype = vim.bo[bufnr].filetype
-      if filetype == "Outline" then
-        has_outline = true
-      end
-    end
-  end
-
-  if #normal_windows == 2 and has_outline then
-    vim.cmd "qa"
-  else
-    -- Use the original <C-w>q behavior
-    vim.cmd "quit"
-  end
+  vim.cmd "quit"
 end, { silent = true, noremap = true, nowait = true, desc = "Smart quit" })
+
+vim.keymap.set({ "n", "x", "i", "t" }, "<D-A-w>", "<cmd>tabclose<CR>", { silent = true, desc = "Close tab" })
 
 vim.keymap.set("n", "<C-D-h>", "<cmd>wincmd h<CR>", { silent = true, nowait = true, desc = "Go to left window" })
 vim.keymap.set("n", "<C-D-l>", "<cmd>wincmd l<CR>", { silent = true, nowait = true, desc = "Go to right window" })
