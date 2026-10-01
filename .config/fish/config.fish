@@ -3,21 +3,36 @@ export PATH="$PATH:$HOME/.docker/bin"
 # End of Docker Desktop section.
 
 # Generate completions once and cache them
-set -gx SSH_AUTH_SOCK "$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
+set -l secretive_socket "$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
+if test (uname) = Darwin; and test -S "$secretive_socket"; and not set -q SSH_CONNECTION
+    set -gx SSH_AUTH_SOCK "$secretive_socket"
+end
 
-if not test -f ~/.config/fish/completions/just.fish
+fish_add_path "$HOME/.local/bin" "$HOME/.cargo/bin"
+for brew_prefix in /opt/homebrew /usr/local
+    if test -x "$brew_prefix/bin/brew"
+        fish_add_path "$brew_prefix/bin" "$brew_prefix/sbin"
+        break
+    end
+end
+
+mkdir -p "$HOME/.config/fish/completions" "$HOME/.config/fish/conf.d"
+
+if type -q just; and not test -s ~/.config/fish/completions/just.fish
     just --completions fish > ~/.config/fish/completions/just.fish
 end
 
-if not test -f ~/.config/fish/conf.d/zoxide_init.fish
+if type -q zoxide; and not test -s ~/.config/fish/conf.d/zoxide_init.fish
     zoxide init fish > ~/.config/fish/conf.d/zoxide_init.fish
 end
 
-if not test -f ~/.config/fish/conf.d/fzf_init.fish
+if type -q fzf; and not test -s ~/.config/fish/conf.d/fzf_init.fish
     fzf --fish > ~/.config/fish/conf.d/fzf_init.fish
 end
 
-opam env | source
+if type -q opam; and test -d "$HOME/.opam"
+    opam env --shell=fish 2>/dev/null | source
+end
 
 # Optimize done.fish plugin - increase min duration to reduce overhead
 set -g __done_min_cmd_duration 10000

@@ -1,3 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
-python3 "$(dirname "$0")/../setup-path-filter.py"
+for python_bin in python3 python3.13 "$HOME/.local/bin/python3.13"; do
+    if "$python_bin" -c 'import tomllib' >/dev/null 2>&1; then
+        exec "$python_bin" "$(dirname "$0")/../setup-path-filter.py"
+    fi
+done
+printf '%s\n' 'Home-path setup needs Python 3.11+; yadm bootstrap will install it and finish setup.' >&2

@@ -1,7 +1,13 @@
-# The following lines were added by Docker Desktop to add commands to your PATH.
-export PATH="$PATH:$HOME/.docker/bin"
-# End of Docker Desktop section.
+# User-installed CLI tools are available in login shells, including over SSH.
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.docker/bin:$PATH"
 
-. "$HOME/.cargo/env"
+if [ -f "$HOME/.cargo/env" ]; then . "$HOME/.cargo/env"; fi
+if [ -f "$HOME/.local/bin/env" ]; then . "$HOME/.local/bin/env"; fi
 
-. "$HOME/.local/bin/env"
+case "$(uname -s)" in
+    Darwin)
+        for brew_bin in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+            if [ -x "$brew_bin" ]; then eval "$("$brew_bin" shellenv)"; break; fi
+        done
+        ;;
+esac

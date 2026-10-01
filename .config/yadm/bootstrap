@@ -1,252 +1,313 @@
 #!/usr/bin/env bash
-#
-# yadm bootstrap — provisions a fresh macOS (Apple Silicon) machine.
-#
-# yadm runs this automatically after `yadm clone`, or on demand:
-#     yadm bootstrap
-#
-# DESIGN RULE: this script only installs things whose list is derived from a
-# file that some tool maintains for us:
-#
-#     ~/Brewfile                       <- brew bundle dump
-#     ~/.config/fish/fish_plugins      <- fisher
-#     ~/.config/nvim/lazy-lock.json    <- lazy.nvim
-#
-# It deliberately does NOT carry hand-written lists of cargo/go/npm/opam/uv
-# packages. Those drift, silently go stale, and are not worth maintaining by
-# hand — install them on demand instead.
-#
-# It is IDEMPOTENT: every step is guarded, so re-running is fast and safe.
-# A failing step does not abort the run; failures are collected and reported
-# in a summary at the end, and the script exits non-zero if anything failed.
-#
+# Install the CLI environment used over SSH. Safe to run again after yadm pull.
 set -euo pipefail
 
-BREW_PREFIX="/opt/homebrew"
+BOOTSTRAP_DIR="$(cd "$(dirname "$0")" && pwd)"
+STATE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/yadm-bootstrap"
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+SYSTEM="$(uname -s)"
+CHANGE_SHELL=0
 FAILED=()
 
-log()  { printf '\033[1;34m==>\033[0m %s\n' "$*" >&2; }
-warn() { printf '\033[1;33m[warn]\033[0m %s\n' "$*" >&2; }
-skip() { printf '\033[2m  ·  %s\033[0m\n' "$*" >&2; }
+log() { printf '==> %s\n' "$*" >&2; }
+die() { printf 'bootstrap: %s\n' "$*" >&2; exit 1; }
 
-# Run a step, recording but not propagating failure.
-step() {
-    local name="$1"
-    log "$name"
-    if ! "$name"; then
-        warn "step failed: $name"
-        FAILED+=("$name")
-    fi
-}
-
-# ---------------------------------------------------------------- homebrew ---
-
-install_homebrew() {
-    if [[ -x $BREW_PREFIX/bin/brew ]]; then
-        skip "homebrew already installed"
-    else
-        NONINTERACTIVE=1 /bin/bash -c \
-            "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    fi
-    eval "$("$BREW_PREFIX/bin/brew" shellenv)"
-}
-
-brew_bundle() {
-    if [[ ! -f $HOME/Brewfile ]]; then
-        warn "no ~/Brewfile — nothing to install"
-        return 1
-    fi
-    # Installs taps, formulae, casks and VS Code extensions. Already-installed
-    # entries are no-ops, so this is safe to re-run.
-    # Regenerate with: brew bundle dump --force --file=~/Brewfile
-    brew bundle install --file="$HOME/Brewfile" --no-upgrade
-}
-
-setup_path_filter() {
-    python3 "$HOME/.config/yadm/setup-path-filter.py"
-}
-
-# -------------------------------------------------------------------- fish ---
-
-setup_fish() {
-    local fish_bin="$BREW_PREFIX/bin/fish"
-    if [[ ! -x $fish_bin ]]; then
-        warn "fish not installed — did brew bundle run?"
-        return 1
-    fi
-
-    # Login shells must be listed in /etc/shells; both writes need root, which
-    # is why this is the one place sudo appears.
-    if ! grep -qxF "$fish_bin" /etc/shells; then
-        log "registering $fish_bin in /etc/shells (sudo)"
-        echo "$fish_bin" | sudo tee -a /etc/shells >/dev/null
-    fi
-    if [[ $SHELL != "$fish_bin" ]]; then
-        log "setting login shell to fish (sudo)"
-        sudo chsh -s "$fish_bin" "$USER"
-    else
-        skip "login shell already fish"
-    fi
-
-    # fisher bootstraps itself, then restores everything in fish_plugins.
-    if [[ -f $HOME/.config/fish/functions/fisher.fish ]]; then
-        skip "fisher already present"
-    else
-        log "installing fisher"
-        "$fish_bin" -c 'curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher'
-    fi
-    "$fish_bin" -c 'fisher update'
-}
-
-# ------------------------------------------------------------- toolchains ---
-# Toolchain runtimes only. Individual packages are installed on demand.
-
-setup_rust() {
-    if command -v rustup >/dev/null 2>&1; then
-        skip "rustup already installed"
-        return 0
-    fi
-    # rustup is intentionally NOT from brew; the upstream installer is canonical.
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
-        | sh -s -- -y --no-modify-path
-}
-
-setup_ocaml() {
-    if ! command -v opam >/dev/null 2>&1; then
-        warn "opam not installed — did brew bundle run?"
-        return 1
-    fi
-    if [[ -d $HOME/.opam ]]; then
-        skip "opam already initialised"
-    else
-        opam init --bare --no-setup --yes
-    fi
-    if opam switch list --short 2>/dev/null | grep -qx default; then
-        skip "opam switch default"
-    else
-        opam switch create default --yes
-    fi
-}
-
-# ------------------------------------------------------------------- neovim ---
-
-restore_nvim() {
-    if ! command -v nvim >/dev/null 2>&1; then
-        warn "nvim not installed — did brew bundle run?"
-        return 1
-    fi
-    # `Lazy! restore` pins every plugin to the commit in lazy-lock.json, which
-    # is why that file is tracked rather than gitignored.
-    if [[ -f $HOME/.config/nvim/lazy-lock.json ]]; then
-        nvim --headless "+Lazy! restore" +qa
-    else
-        warn "no lazy-lock.json — installing plugins unpinned"
-        nvim --headless "+Lazy! sync" +qa
-    fi
-}
-
-# ------------------------------------------------------------- launchagents ---
-
-load_launchagents() {
-    local dir="$HOME/Library/LaunchAgents" plist
-    [[ -d $dir ]] || { skip "no LaunchAgents directory"; return 0; }
-    shopt -s nullglob
-    for plist in "$dir"/*.plist; do
-        # Already-loaded agents exit non-zero; that is not an error here.
-        launchctl load -w "$plist" 2>/dev/null || skip "already loaded: $(basename "$plist")"
-    done
-    shopt -u nullglob
-}
-
-# ----------------------------------------------------------------- secrets ---
-
-decrypt_secrets() {
-    [[ -f $HOME/.config/yadm/encrypt ]] || { skip "no encrypt manifest"; return 0; }
-
-    # Without a pinentry that works headlessly, gpg dies with
-    # "Inappropriate ioctl for device" and yadm reports a bare tar write error.
-    if [[ ! -x $BREW_PREFIX/bin/pinentry-mac ]]; then
-        warn "pinentry-mac missing; installing it or gpg cannot prompt"
-        brew install pinentry-mac || return 1
-    fi
-    if [[ ! -f $HOME/.gnupg/gpg-agent.conf ]]; then
-        warn "no gpg-agent.conf; writing one pointing at pinentry-mac"
-        mkdir -p "$HOME/.gnupg"
-        chmod 700 "$HOME/.gnupg"
-        printf 'pinentry-program %s/bin/pinentry-mac\n' "$BREW_PREFIX" \
-            >"$HOME/.gnupg/gpg-agent.conf"
-    fi
-    gpgconf --kill gpg-agent >/dev/null 2>&1 || true
-    # Curses pinentry fallback needs this; harmless for pinentry-mac.
-    GPG_TTY="$(tty || true)"
-    export GPG_TTY
-
-    # A cancelled passphrase prompt must not fail the whole bootstrap.
-    yadm decrypt || warn "yadm decrypt skipped or failed — run it manually later"
-}
-
-# ------------------------------------------------------------ macos defaults ---
-
-macos_defaults() {
-    # Fast key repeat, and disable press-and-hold so vim-style j/k repeat works.
-    defaults write NSGlobalDomain KeyRepeat -int 2
-    defaults write NSGlobalDomain InitialKeyRepeat -int 15
-    defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
-
-    defaults write NSGlobalDomain AppleShowAllExtensions -bool true
-    defaults write com.apple.finder AppleShowAllFiles -bool true
-
-    defaults write com.apple.dock autohide-delay -float 0
-    defaults write com.apple.dock autohide-time-modifier -float 0.15
-
-    mkdir -p "$HOME/Screenshots"
-    defaults write com.apple.screencapture location "$HOME/Screenshots"
-
-    killall Finder Dock SystemUIServer 2>/dev/null || true
-}
-
-# -------------------------------------------------------------------- main ---
-
-manual_followup() {
-    cat >&2 <<'EOF'
-
-────────────────────────────────────────────────────────────────────
- MANUAL FOLLOW-UP — things this script deliberately does not do
-────────────────────────────────────────────────────────────────────
-  1. Sign in to the Mac App Store.
-  2. Grant Accessibility + Screen Recording permissions in
-     System Settings → Privacy & Security to: rift, vicinae, keycastr.
-  3. Import your GPG secret key:   gpg --import <backup>.asc
-  4. Flash keyboard firmware from ~/keyboard_firmware (qmk / vial).
-  5. Re-authenticate CLIs:  gh auth login   ·   aws configure sso
-  6. Install language packages on demand, not up front:
-       cargo install <crate>      rustup target add <triple>
-       go install <pkg>@latest    npm i -g <pkg>
-       uv tool install <tool>     opam install <pkg>
-────────────────────────────────────────────────────────────────────
+usage() {
+    cat <<'EOF'
+Usage: ~/.config/yadm/bootstrap [--change-shell]
+Installs CLI tools, C/C++ build tools, Rust, Node, Python/uv, Fish plugins,
+and the locked Neovim plugins. --change-shell makes Fish the login shell.
 EOF
 }
 
-main() {
-    step install_homebrew
-    step brew_bundle
-    step setup_path_filter
-    step setup_fish
-    step decrypt_secrets
-    step setup_rust
-    step setup_ocaml
-    step restore_nvim
-    step load_launchagents
-    step macos_defaults
+for option in "$@"; do
+    case "$option" in
+        --change-shell) CHANGE_SHELL=1 ;;
+        -h|--help) usage; exit 0 ;;
+        *) die "unknown option: $option" ;;
+    esac
+done
+case "$SYSTEM" in Darwin|Linux) ;; *) die "unsupported OS: $SYSTEM" ;; esac
 
-    manual_followup
-
-    if (( ${#FAILED[@]} )); then
-        warn "${#FAILED[@]} step(s) FAILED: ${FAILED[*]}"
-        warn "fix the cause and re-run: yadm bootstrap"
+as_root() {
+    if [[ $(id -u) == 0 ]]; then
+        "$@"
+    elif command -v sudo >/dev/null 2>&1; then
+        sudo "$@"
+    else
+        printf 'bootstrap: sudo is required to install system packages\n' >&2
         return 1
     fi
-    log "bootstrap complete — start a new fish shell"
 }
 
-main "$@"
+# Run each step in a separate shell so errexit still catches a failed command
+# inside the step. A failed download must never leave a success marker.
+step() {
+    log "$1"
+    local status_code=0
+    set +e
+    ( set -e; "$1" )
+    status_code=$?
+    set -e
+    if [[ $status_code != 0 ]]; then FAILED+=("$1"); fi
+}
+
+install_system_packages() {
+    local packages=() missing=() package_name brew_bin
+    if [[ $SYSTEM == Darwin ]]; then
+        if ! command -v brew >/dev/null 2>&1; then
+            for brew_bin in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+                if [[ -x $brew_bin ]]; then eval "$("$brew_bin" shellenv)"; break; fi
+            done
+        fi
+        if ! command -v brew >/dev/null 2>&1; then
+            curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o "$STATE_DIR/homebrew-install.sh"
+            NONINTERACTIVE=1 /bin/bash "$STATE_DIR/homebrew-install.sh"
+            if [[ $(uname -m) == arm64 ]]; then brew_bin=/opt/homebrew/bin/brew; else brew_bin=/usr/local/bin/brew; fi
+            eval "$("$brew_bin" shellenv)"
+        fi
+        # A CLI-only selection; ~/Brewfile is the desktop inventory and is not run.
+        packages=(git curl fish tmux ripgrep fd fzf jq bat eza just zoxide gh
+                  python@3.13 uv neovim tree-sitter-cli cmake pkgconf)
+        for package_name in "${packages[@]}"; do
+            if ! brew list --versions "$package_name" >/dev/null 2>&1; then missing+=("$package_name"); fi
+        done
+        if (( ${#missing[@]} )); then HOMEBREW_NO_AUTO_UPDATE=1 brew install --formula "${missing[@]}"; fi
+        xcrun --find clang >/dev/null
+    elif command -v apt-get >/dev/null 2>&1; then
+        packages=(ca-certificates curl git openssh-client unzip xz-utils fish tmux
+                  ripgrep fd-find fzf jq bat zoxide gh python3 python3-venv
+                  build-essential pkg-config cmake)
+        for package_name in "${packages[@]}"; do
+            if [[ $(dpkg-query -W -f='${Status}' "$package_name" 2>/dev/null || true) != 'install ok installed' ]]; then
+                missing+=("$package_name")
+            fi
+        done
+        if (( ${#missing[@]} )); then
+            as_root apt-get update
+            as_root env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${missing[@]}"
+        fi
+    elif command -v dnf >/dev/null 2>&1; then
+        packages=(ca-certificates curl git openssh-clients unzip xz fish tmux
+                  ripgrep fd-find fzf jq bat zoxide gh python3 gcc gcc-c++ make pkgconf-pkg-config cmake)
+        for package_name in "${packages[@]}"; do
+            if ! rpm -q "$package_name" >/dev/null 2>&1; then missing+=("$package_name"); fi
+        done
+        if (( ${#missing[@]} )); then as_root dnf install -y "${missing[@]}"; fi
+    elif command -v pacman >/dev/null 2>&1; then
+        packages=(base-devel ca-certificates curl git openssh unzip xz fish tmux
+                  ripgrep fd fzf jq bat zoxide github-cli python cmake)
+        for package_name in "${packages[@]}"; do
+            if ! pacman -Q "$package_name" >/dev/null 2>&1; then missing+=("$package_name"); fi
+        done
+        # Arch requires a full upgrade when refreshing the package database.
+        if (( ${#missing[@]} )); then as_root pacman -Syu --needed --noconfirm "${missing[@]}"; fi
+    else
+        die 'Linux needs apt-get, dnf, or pacman'
+    fi
+}
+
+activate_homebrew() {
+    local brew_bin
+    if [[ $SYSTEM == Darwin ]]; then
+        for brew_bin in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+            if [[ -x $brew_bin ]]; then eval "$("$brew_bin" shellenv)"; break; fi
+        done
+    fi
+    export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+}
+
+install_uv() {
+    command -v uv >/dev/null 2>&1 && return 0
+    curl -fsSL https://astral.sh/uv/install.sh -o "$STATE_DIR/uv-install.sh"
+    UV_INSTALL_DIR="$HOME/.local/bin" UV_NO_MODIFY_PATH=1 sh "$STATE_DIR/uv-install.sh"
+}
+
+select_python() {
+    local candidate
+    for candidate in python3 python3.13 "$HOME/.local/bin/python3.13"; do
+        if "$candidate" -c 'import tomllib' >/dev/null 2>&1; then
+            command -v "$candidate"
+            return 0
+        fi
+    done
+    uv python install 3.13 >&2
+    uv python find 3.13
+}
+
+# Download only missing/old tools. Archives are cached outside the repository.
+install_linux_tools() {
+    [[ $SYSTEM == Linux ]] || return 0
+    local arch target archive release release_arch fzf_arch
+    case "$(uname -m)" in
+        x86_64) arch=x86_64 ;;
+        aarch64|arm64) arch=aarch64 ;;
+        *) die 'prebuilt CLI tools require Linux x86_64 or arm64' ;;
+    esac
+    target="${arch}-unknown-linux-musl"
+    if [[ $arch == aarch64 ]]; then
+        release_arch=arm64
+        fzf_arch=arm64
+    else
+        release_arch=x64
+        fzf_arch=amd64
+    fi
+
+    if ! command -v just >/dev/null 2>&1; then
+        archive="$STATE_DIR/just.tar.gz"
+        curl -fL --retry 2 "https://github.com/casey/just/releases/download/1.58.0/just-1.58.0-$target.tar.gz" -o "$archive"
+        tar -xzf "$archive" -C "$HOME/.local/bin" just
+    fi
+    if ! command -v eza >/dev/null 2>&1; then
+        archive="$STATE_DIR/eza.tar.gz"
+        if [[ $arch == aarch64 ]]; then target=aarch64-unknown-linux-gnu_no_libgit; fi
+        curl -fL --retry 2 "https://github.com/eza-community/eza/releases/download/v0.23.5/eza_$target.tar.gz" -o "$archive"
+        tar -xzf "$archive" -C "$HOME/.local/bin"
+        if ! "$HOME/.local/bin/eza" --version >/dev/null 2>&1; then
+            rm "$HOME/.local/bin/eza"
+            cargo install --locked eza --version 0.23.5
+        fi
+    fi
+    if ! command -v tree-sitter >/dev/null 2>&1 || ! tree-sitter --version >/dev/null 2>&1; then
+        curl -fL --retry 2 "https://github.com/tree-sitter/tree-sitter/releases/download/v0.27.0/tree-sitter-linux-$release_arch.gz" -o "$STATE_DIR/tree-sitter.gz"
+        gzip -dc "$STATE_DIR/tree-sitter.gz" > "$STATE_DIR/tree-sitter"
+        chmod +x "$STATE_DIR/tree-sitter"
+        mv "$STATE_DIR/tree-sitter" "$HOME/.local/bin/tree-sitter"
+        # Upstream ARM binaries can target a newer glibc than the machine has.
+        if ! "$HOME/.local/bin/tree-sitter" --version >/dev/null 2>&1; then
+            rm "$HOME/.local/bin/tree-sitter"
+            cargo install --locked tree-sitter-cli --version 0.27.0
+        fi
+    fi
+    if ! fzf --fish >/dev/null 2>&1; then
+        curl -fL --retry 2 "https://github.com/junegunn/fzf/releases/download/v0.74.4/fzf-0.74.4-linux_$fzf_arch.tar.gz" -o "$STATE_DIR/fzf.tar.gz"
+        tar -xzf "$STATE_DIR/fzf.tar.gz" -C "$HOME/.local/bin" fzf
+    fi
+    # This configuration uses nvim-treesitter main, which requires Neovim 0.12+.
+    if ! command -v nvim >/dev/null 2>&1 || ! nvim --clean --headless '+lua if vim.fn.has("nvim-0.12") == 0 then vim.cmd("cquit") end' +qa; then
+        if [[ $arch == aarch64 ]]; then arch=arm64; fi
+        release="nvim-linux-$arch"
+        archive="$STATE_DIR/nvim.tar.gz"
+        curl -fL --retry 2 "https://github.com/neovim/neovim/releases/download/v0.12.5/$release.tar.gz" -o "$archive"
+        mkdir -p "$HOME/.local/share/nvim-release"
+        tar -xzf "$archive" -C "$HOME/.local/share/nvim-release"
+        ln -sfn "$HOME/.local/share/nvim-release/$release/bin/nvim" "$HOME/.local/bin/nvim"
+    fi
+    # Debian calls these executables batcat and fdfind.
+    if ! command -v bat >/dev/null 2>&1; then ln -sfn "$(command -v batcat)" "$HOME/.local/bin/bat"; fi
+    if ! command -v fd >/dev/null 2>&1; then ln -sfn "$(command -v fdfind)" "$HOME/.local/bin/fd"; fi
+}
+
+setup_rust() {
+    if ! command -v rustup >/dev/null 2>&1; then
+        curl -fsSL https://static.rust-lang.org/rustup/rustup-init.sh -o "$STATE_DIR/rustup-init.sh"
+        sh "$STATE_DIR/rustup-init.sh" -y --no-modify-path --profile default --component rust-analyzer
+    elif ! rustc --version >/dev/null 2>&1; then
+        rustup default stable
+    fi
+}
+
+check_macos_neovim() {
+    [[ $SYSTEM == Darwin ]] || return 0
+    if ! nvim --clean --headless '+lua if vim.fn.has("nvim-0.12") == 0 then vim.cmd("cquit") end' +qa; then
+        HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade --formula neovim
+    fi
+}
+
+setup_node() {
+    # Keep an existing recent runtime. Install Node LTS in HOME otherwise.
+    if command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1 && node -e 'process.exit(Number(process.versions.node.split(".")[0]) >= 22 ? 0 : 1)'; then return 0; fi
+    local arch platform version release
+    case "$(uname -m)" in x86_64) arch=x64 ;; aarch64|arm64) arch=arm64 ;; *) die 'Node requires x86_64 or arm64' ;; esac
+    if [[ $SYSTEM == Darwin ]]; then platform=darwin; else platform=linux; fi
+    curl -fsSL https://nodejs.org/dist/latest-v24.x/SHASUMS256.txt -o "$STATE_DIR/node-shasums.txt"
+    version="$(sed -n 's/.*node-\(v24\.[0-9]*\.[0-9]*\)-.*/\1/p' "$STATE_DIR/node-shasums.txt" | head -n 1)"
+    [[ -n $version ]] || die 'could not resolve Node 24 LTS'
+    release="node-$version-$platform-$arch"
+    curl -fL --retry 2 "https://nodejs.org/dist/$version/$release.tar.gz" -o "$STATE_DIR/node.tar.gz"
+    mkdir -p "$HOME/.local/share/node"
+    tar -xzf "$STATE_DIR/node.tar.gz" -C "$HOME/.local/share/node"
+    local executable
+    for executable in node npm npx; do
+        ln -sfn "$HOME/.local/share/node/$release/bin/$executable" "$HOME/.local/bin/$executable"
+    done
+}
+
+fingerprint() {
+    "$PYTHON" - "$@" <<'PY'
+import hashlib
+from pathlib import Path
+import sys
+digest = hashlib.sha256()
+for name in sys.argv[1:]:
+    root = Path(name)
+    files = sorted(root.rglob('*.lua')) if root.is_dir() else [root]
+    for file in files:
+        digest.update(str(file.relative_to(root) if root.is_dir() else file.name).encode())
+        digest.update(file.read_bytes())
+print(digest.hexdigest())
+PY
+}
+
+setup_fish() {
+    local signature
+    signature="$(fingerprint "$HOME/.config/fish/fish_plugins")"
+    if [[ ! -f $STATE_DIR/fish-ready || $(cat "$STATE_DIR/fish-ready") != "$signature" ]]; then
+        # Prerequisites are installed before loading the interactive plugin hooks.
+        cp "$HOME/.config/fish/fish_plugins" "$STATE_DIR/fish_plugins.backup"
+        local fish_status=0
+        fish --interactive "$BOOTSTRAP_DIR/restore-fish.fish" || fish_status=$?
+        # Fisher rewrites/removes the manifest even when installation fails.
+        cp "$STATE_DIR/fish_plugins.backup" "$HOME/.config/fish/fish_plugins"
+        [[ $fish_status == 0 ]]
+        printf '%s\n' "$signature" > "$STATE_DIR/fish-ready"
+    fi
+    if (( CHANGE_SHELL )); then
+        local fish_bin account current_shell
+        fish_bin="$(command -v fish)"
+        account="$(id -un)"
+        if [[ $SYSTEM == Darwin ]]; then
+            current_shell="$(dscl . -read "/Users/$account" UserShell | awk '{print $2}')"
+        else
+            current_shell="$(getent passwd "$account" | cut -d: -f7)"
+        fi
+        if [[ $current_shell != "$fish_bin" ]]; then
+            if ! grep -qxF "$fish_bin" /etc/shells; then printf '%s\n' "$fish_bin" | as_root tee -a /etc/shells >/dev/null; fi
+            as_root chsh -s "$fish_bin" "$account"
+        fi
+    fi
+    fish -n "$HOME/.config/fish/config.fish"
+}
+
+restore_nvim() {
+    local signature
+    signature="$(fingerprint "$HOME/.config/nvim" "$HOME/.config/nvim/lazy-lock.json")"
+    if [[ ! -f $STATE_DIR/nvim-ready || $(cat "$STATE_DIR/nvim-ready") != "$signature" || ( ! -d ${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy/fff.nvim && ! -d $HOME/dev/fff.nvim ) ]]; then
+        DOTFILES_BOOTSTRAP=1 nvim --headless '+Lazy! restore' '+lua for _, p in pairs(require("lazy.core.config").plugins) do for _, t in ipairs(p._.tasks or {}) do if t:has_errors() then vim.cmd("cquit") end end end; if vim.v.errmsg ~= "" then vim.cmd("cquit") end' +qa
+        # Reload the restored commits before building their matching parsers.
+        DOTFILES_BOOTSTRAP=1 nvim --headless '+lua assert(require("fff.fuzzy")); if vim.v.errmsg ~= "" then vim.cmd("cquit") end' +qa
+        # Lazy can add a missing lock entry during the first restore.
+        fingerprint "$HOME/.config/nvim" "$HOME/.config/nvim/lazy-lock.json" > "$STATE_DIR/nvim-ready"
+    fi
+}
+
+main() {
+    mkdir -p "$STATE_DIR" "$HOME/.local/bin"
+    # Package prerequisites are essential for every subsequent step.
+    install_system_packages
+    activate_homebrew
+    install_uv
+    PYTHON="$(select_python)"
+    export PYTHON
+    "$PYTHON" "$BOOTSTRAP_DIR/setup-path-filter.py"
+    step setup_rust
+    install_linux_tools
+    check_macos_neovim
+    step setup_node
+    step setup_fish
+    step restore_nvim
+    if (( ${#FAILED[@]} )); then die "failed steps: ${FAILED[*]}. Fix the error and run yadm bootstrap again."; fi
+    log 'ready — run fish, or ~/.config/yadm/bootstrap --change-shell to make it your login shell'
+}
+
+main

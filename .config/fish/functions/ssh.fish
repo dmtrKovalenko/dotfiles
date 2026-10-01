@@ -1,7 +1,7 @@
 function ssh
-    if [ "$TERM" = "xterm-kitty" ]
+    if test "$TERM" = xterm-kitty; and type -q kitty
        kitty +kitten 'ssh' $argv
     else
-       ssh $argv
+       command ssh $argv
     end
 end
