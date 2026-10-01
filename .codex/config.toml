@@ -1,5 +1,5 @@
-model = "gpt-6-sol"
-model_reasoning_effort = "medium"
+model = "gpt-6.1-sol"
+model_reasoning_effort = "low"
 log_dir = "/Users/neogoose/.codex/log"
 approvals_reviewer = "user"
 
@@ -64,6 +64,7 @@ screen_reader_detection_done = true
 "gpt-5.5" = 3
 "gpt-5.6-sol" = 4
 gpt-6-astra = 1
+"gpt-6.1-sol" = 2
 
 [features]
 hooks = true
