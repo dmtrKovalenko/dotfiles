@@ -8,6 +8,7 @@
   "conform.nvim": { "branch": "master", "commit": "016802de402556da54c36bd7359b441266b01cdd" },
   "crates.nvim": { "branch": "main", "commit": "7039bc1d130e424232a7aa64ceddb170a154ff5b" },
   "cyberdream.nvim": { "branch": "main", "commit": "b3f4ef5e9b8ee370c913a48b63e130b730ee8782" },
+  "fff.nvim": { "branch": "main", "commit": "89c19270ea2dfc20829a7429f72022571558093e" },
   "fileline.nvim": { "branch": "main", "commit": "c116aa8dd7aa7e1db6938f872285e598dc9ee00b" },
   "fold-imports.nvim": { "branch": "main", "commit": "7211b1f6ee61c972be5291e3a9cca1516b790439" },
   "foldsigns.nvim": { "branch": "main", "commit": "c36c2cc8122caf2a5bb05096097ea8e684233a34" },

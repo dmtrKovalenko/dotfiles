@@ -1,7 +1,7 @@
 return {
   "nvim-treesitter/nvim-treesitter",
   branch = "main",
-  build = ":TSUpdate",
+  build = vim.env.DOTFILES_BOOTSTRAP ~= "1" and ":TSUpdate" or nil,
   lazy = false,
   dependencies = {
     {
@@ -108,7 +108,16 @@ return {
       "bash",
     }
 
-    require("nvim-treesitter").install(parsers)
+    if vim.env.DOTFILES_BOOTSTRAP == "1" then
+      local treesitter = require "nvim-treesitter"
+      assert(treesitter.install(parsers):wait(300000), "Parser installation failed")
+      assert(treesitter.update(parsers):wait(300000), "Parser update failed")
+      for _, lang in ipairs(parsers) do
+        assert(pcall(vim.treesitter.language.add, lang), "Parser installation failed: " .. lang)
+      end
+    else
+      require("nvim-treesitter").install(parsers)
+    end
 
     local filetypes = {}
     for _, lang in ipairs(parsers) do

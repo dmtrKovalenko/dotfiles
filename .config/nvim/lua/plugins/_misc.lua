@@ -32,7 +32,7 @@ return {
   -- { "akinsho/git-conflict.nvim", version = "*", config = true },
   {
     "dmtrkovalenko/fff.nvim",
-    dir = "~/dev/fff.nvim",
+    dir = vim.fn.isdirectory(vim.fn.expand "~/dev/fff.nvim") == 1 and "~/dev/fff.nvim" or nil,
     -- version = "0.9.4",
     -- branch = "feat/prebuild",
     build = function()
