@@ -8,7 +8,7 @@ auto_focus_blacklist = ["com.apple.Spotlight"]
 hot_reload = true
 
 [settings.layout]
-mode = "bsp"                   # new windows split the focused one (3rd window = quarter); cmd-alt-a = stack, cmd-alt-d = traditional dev layout
+mode = "bsp"                   # new windows split the focused one (3rd window = quarter); cmd-alt-a = stack, cmd-alt-shift-d = traditional dev layout
 window_insertion_point = "next_to_selection"
 
 [settings.layout.traditional]
@@ -103,18 +103,20 @@ mcas = "Meta + Ctrl + Alt + Shift"
 "mca + K" = { consume_or_expel_window = "up" }
 "mca + L" = { consume_or_expel_window = "right" }
 
-# workspaces (shift variants = other keyboard's top row)
-"ma + 1" = { switch_to_workspace = 0 }
-"ma + 2" = { switch_to_workspace = 1 }
-"ma + 3" = { switch_to_workspace = 2 }
-"ma + 4" = { switch_to_workspace = 3 }
-"mas + 1" = { switch_to_workspace = 0 }
-"mas + 2" = { switch_to_workspace = 1 }
-"mas + 3" = { switch_to_workspace = 2 }
-"mas + 4" = { switch_to_workspace = 3 }
+# Numbered shortcuts use the external display; 3 brings Slack to workspace 3.
+# Falls back to the MacBook when undocked; shift variants support the other keyboard.
+"ma + 1" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/workspace.py", "1"] }
+"ma + 2" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/workspace.py", "2"] }
+"ma + 3" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/workspace.py", "3"] }
+"ma + 4" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/workspace.py", "4"] }
+"mas + 1" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/workspace.py", "1"] }
+"mas + 2" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/workspace.py", "2"] }
+"mas + 3" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/workspace.py", "3"] }
+"mas + 4" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/workspace.py", "4"] }
 "ma + Tab" = "switch_to_last_workspace"
-"ma + Left" = "prev_workspace"
-"ma + Right" = "next_workspace"
+# Use the standard macOS shortcuts for Rift virtual workspaces.
+"Ctrl + Left" = "prev_workspace"
+"Ctrl + Right" = "next_workspace"
 
 # send window to a workspace and follow it
 "mca + 1" = { move_window_to_workspace = { workspace = 0, follow = true } }
@@ -127,13 +129,21 @@ mcas = "Meta + Ctrl + Alt + Shift"
 "mcas + 4" = { move_window_to_workspace = { workspace = 3, follow = true } }
 
 # monitors
-"mas + Tab" = { move_workspace_to_display = { selector = "right", wrap_around = true } }
+"mas + Tab" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/move-workspace.py"] }
+"ma + D" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/move-workspace.py"] }
 "mas + Left" = { move_window_to_display = { selector = "left" } }
 "mas + Right" = { move_window_to_display = { selector = "right" } }
 
 # sizing
 "ma + Minus" = { resize_window_shrink = "smart" }
+"ma + NumpadSubtract" = { resize_window_shrink = "smart" }  # dedicated keypad minus
+"mas + NumpadSubtract" = { resize_window_shrink = "smart" }
 "ma + Equal" = { resize_window_grow = "smart" }
+"mas + Equal" = { resize_window_grow = "smart" }  # cmd-alt-plus (Shift + =)
+# Iris firmware uses keypad keycodes for its dedicated + and = keys.
+"ma + NumpadAdd" = { resize_window_grow = "smart" }
+"mas + NumpadAdd" = { resize_window_grow = "smart" }
+"ma + NumpadEqual" = { resize_window_grow = "smart" }
 "ma + 0" = { exec = ["/bin/sh", "-c", "~/.config/rift/ratio.py 50"] }   # equalize halves
 "mas + R" = { exec = ["/bin/sh", "-c", "~/.config/rift/ratio.py 60"] }  # focused column -> 60%
 "mas + E" = { exec = ["/bin/sh", "-c", "~/.config/rift/ratio.py 70"] }  # focused column -> 70%
@@ -147,22 +157,23 @@ mcas = "Meta + Ctrl + Alt + Shift"
 "ma + Q" = { join_window = "left" }
 "mas + Q" = { join_window = "right" }
 "ma + U" = "unjoin_windows"
-"ma + D" = { exec = ["/bin/sh", "-c", "~/.config/rift/dev-layout.sh"] }   # [ChatGPT+kitty stack] | Brave, 50/50
+"mas + D" = { exec = ["/bin/sh", "-c", "~/.config/rift/dev-layout.sh"] }   # kitty stack | browser, 50/50
 
 # new windows
 "mas + Enter" = { exec = ["open", "-na", "kitty.app"] }
 "mas + B" = { exec = ["open", "-na", "Brave Browser.app"] }
 
-# app focus keys go through rift so the keypress counts as "user input" — after wake/unlock rift
-# drops app-activation workspace switches until it sees a mouse event or one of its own commands
-"F8" = { exec = ["open", "-b", "net.kovidgoyal.kitty"] }     # focus kitty
-"F9" = { exec = ["open", "-b", "com.brave.Browser"] }        # focus Brave
+# Select the app display/workspace explicitly before focusing its window.
+# Launch the app only when Rift has no matching window.
+"F8" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/focus-app.py", "net.kovidgoyal.kitty"] }
+"F9" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/focus-app.py", "com.google.Chrome"] }
+"F10" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/focus-app.py", "com.tinyspeck.slackmacgap"] }
 
 # scratchpad (workspace S) and window switcher
 "mas + S" = { exec = ["/bin/sh", "-c", "~/.config/rift/scratchpad.sh stash"] }
 "ma + S"  = { exec = ["/bin/sh", "-c", "~/.config/rift/scratchpad.sh show"] }
-"ma + W"  = { exec = ["/bin/sh", "-c", "~/.config/rift/window-switcher.sh"] }
+"mas + W" = { exec = ["/bin/sh", "-c", "~/.config/rift/window-switcher.sh"] }
 
 # misc
 "mas + Semicolon" = "reload_config"
-"ma + Z" = "toggle_space_activated"
+"mcas + Z" = "toggle_space_activated"

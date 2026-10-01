@@ -1,0 +1,9 @@
+# Only these general configs use the reversible home-path driver.
+.config/rift/config.toml filter=dotfiles-home
+.config/kitty/kitty.conf filter=dotfiles-home
+.config/opencode/opencode.json filter=dotfiles-home
+.wezterm.lua filter=dotfiles-home
+"Library/Application Support/Code/User/settings.json" filter=dotfiles-home
+Library/LaunchAgents/ai.typesafe.jevlight.plist filter=dotfiles-home
+Library/LaunchAgents/git.acsandmann.rift.plist filter=dotfiles-home
+Library/LaunchAgents/rift-unlock-nudge.plist filter=dotfiles-home

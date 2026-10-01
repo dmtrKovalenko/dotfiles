@@ -13,7 +13,7 @@
     "fff": {
       "type": "local",
       "command": [
-        "/Users/neogoose/.local/bin/fff-mcp"
+        "@@DOTFILES_HOME@@/.local/bin/fff-mcp"
       ],
       "enabled": false
     }

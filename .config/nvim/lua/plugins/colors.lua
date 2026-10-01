@@ -149,11 +149,22 @@ return {
       require("lualine").setup {
         options = {
           disabled_filetypes = {
-            statusline = { "alpha", "NvimTree", "trouble", "Outline" },
+            statusline = { "alpha", "NvimTree", "trouble" },
           },
           theme = get_goose_lualine_theme(),
           component_separators = "|",
           section_separators = "",
+        },
+        tabline = {
+          lualine_a = {
+            {
+              "tabs",
+              mode = 2,
+              max_length = function()
+                return vim.o.columns
+              end,
+            },
+          },
         },
         sections = {
           lualine_a = {

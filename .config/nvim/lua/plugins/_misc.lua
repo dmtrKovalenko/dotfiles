@@ -1,3 +1,5 @@
+local extra_pickers = os.getenv "NEOVIM_EXTRA_PICKERS" == "1"
+
 return {
   -- Git management
   "tpope/vim-fugitive",
@@ -5,8 +7,6 @@ return {
   "lewis6991/fileline.nvim",
   --  Automatically jump to the last cursor position
   "farmergreg/vim-lastplace",
-  -- Respects .editorconfig file
-  "gpanders/editorconfig.nvim",
   -- Syntax highlighting for at&t assembly
   "HealsCodes/vim-gas",
   -- Detect tabstop and shiftwidth automatically
@@ -17,17 +17,18 @@ return {
   },
   {
     "nvim-telescope/telescope.nvim",
+    cond = extra_pickers,
     tag = "0.1.8",
     dependencies = { "nvim-lua/plenary.nvim" },
   },
   {
     "ibhagwan/fzf-lua",
+    cond = extra_pickers,
     -- optional for icon support
     dependencies = { "nvim-tree/nvim-web-devicons" },
 
     opts = {},
   },
-  { "pablopunk/pi.nvim" },
   -- { "akinsho/git-conflict.nvim", version = "*", config = true },
   {
     "dmtrkovalenko/fff.nvim",
@@ -39,6 +40,29 @@ return {
       require("fff.download").download_binary()
     end,
     lazy = false,
+    init = function()
+      if vim.fn.argc() ~= 1 or vim.fn.isdirectory(vim.fn.argv(0)) ~= 1 then
+        return
+      end
+      local directory = vim.fn.fnamemodify(vim.fn.argv(0), ":p")
+      local restore_session = vim.fn.argv(0) == "."
+      vim.api.nvim_create_autocmd("VimEnter", {
+        once = true,
+        callback = function()
+          vim.schedule(function()
+            if restore_session then
+              local persistence = require "persistence"
+              vim.fn.chdir(directory)
+              if vim.fn.filereadable(persistence.current()) == 1 then
+                persistence.load()
+                return
+              end
+            end
+            require("fff").find_files { cwd = directory }
+          end)
+        end,
+      })
+    end,
     opts = {
       lazy_sync = false,
       wrap_around = true,
@@ -518,42 +542,4 @@ return {
   --     watermark = "neogoose",
   --   },
   -- },
-  {
-    "dmtrKovalenko/opencode.nvim",
-    version = "*",
-    config = function()
-      local cmd = "opencode --port"
-
-      ---@type opencode.Opts
-      vim.g.opencode_opts = {
-        server = {
-          start = function()
-            require("opencode.terminal").start(cmd)
-          end,
-          stop = function()
-            require("opencode.terminal").stop()
-          end,
-          toggle = function()
-            require("opencode.terminal").toggle(cmd)
-          end,
-        },
-      }
-
-      vim.o.autoread = true
-
-      vim.keymap.set({ "n", "x" }, "<leader>a", function()
-        require("opencode").ask "@this: "
-      end, { desc = "Ask opencode" })
-      vim.keymap.set({ "n", "x" }, "<leader>x", function()
-        require("opencode").select()
-      end, { desc = "Execute opencode action" })
-      vim.keymap.set("n", "<leader>o", function()
-        require("opencode").toggle()
-      end, { desc = "Toggle opencode" })
-    end,
-  },
-  {
-    "esmuellert/codediff.nvim",
-    cmd = "CodeDiff",
-  },
 }

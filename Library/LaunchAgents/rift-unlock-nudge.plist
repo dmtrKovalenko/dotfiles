@@ -6,7 +6,7 @@
     <string>rift-unlock-nudge</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/neogoose/.config/rift/bin/rift-unlock-nudge</string>
+        <string>@@DOTFILES_HOME@@/.config/rift/bin/rift-unlock-nudge</string>
     </array>
     <key>RunAtLoad</key>
     <true/>

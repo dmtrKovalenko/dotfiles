@@ -26,6 +26,11 @@
    "telemetry": {
       "system_info": false
    },
+   "launcher_window": {
+      "compact_mode": {
+         "enabled": false
+      }
+   },
    "keybinds": {
       "action.edit-secondary": "super+control+shift+E"
    },
@@ -52,6 +57,13 @@
          "entrypoints": {
             "search": {
                "enabled": false
+            }
+         }
+      },
+      "wm": {
+         "entrypoints": {
+            "switch-windows": {
+               "shortcut": "control+alt+shift+W"
             }
          }
       }

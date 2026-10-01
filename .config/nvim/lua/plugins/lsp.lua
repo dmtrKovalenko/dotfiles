@@ -139,16 +139,6 @@ return {
         end,
       },
       {
-        "aznhe21/actions-preview.nvim",
-        event = "LspAttach",
-        opts = {
-          diff = {
-            algorithm = "patience",
-            ignore_whitespace = true,
-          },
-        },
-      },
-      {
         "brenoprata10/nvim-highlight-colors",
         event = { "BufReadPre", "BufNewFile" },
         opts = {
