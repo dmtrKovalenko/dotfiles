@@ -16,7 +16,7 @@ equalize_nodes = true
 
 [settings.layout.stack]
 stack_offset = 30.0
-default_orientation = "perpendicular"
+default_orientation = "horizontal"   # prefix+a opens the stack horizontally (was perpendicular -> vertical)
 
 [settings.layout.gaps.outer]
 top = 0
@@ -166,7 +166,7 @@ mcas = "Meta + Ctrl + Alt + Shift"
 # Select the app display/workspace explicitly before focusing its window.
 # Launch the app only when Rift has no matching window.
 "F8" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/focus-app.py", "net.kovidgoyal.kitty"] }
-"F9" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/focus-app.py", "com.google.Chrome"] }
+"F9" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/focus-app.py", "com.brave.Browser"] }
 "F10" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/focus-app.py", "com.tinyspeck.slackmacgap"] }
 
 # scratchpad (workspace S) and window switcher
