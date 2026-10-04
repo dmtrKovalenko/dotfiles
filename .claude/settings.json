@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "env": {},
-  "model": "opus",
+  "model": "claude-fable-5-1",
   "hooks": {
     "SessionStart": [
       {
@@ -35,6 +35,10 @@
   },
   "effortLevel": "high",
   "tui": "fullscreen",
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
   "editorMode": "normal",
@@ -66,12 +70,8 @@
       "**Org-specific CLIs**: None configured"
     ]
   },
+  "voiceEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754079277917
-  },
-  "voiceEnabled": true,
-  "voice": {
-    "enabled": true,
-    "mode": "hold"
   }
 }
