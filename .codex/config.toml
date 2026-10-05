@@ -154,7 +154,7 @@ enabled = false
 NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "87e84e5b4db45250b323ac54ab2f33585d867d0d13abc198e73a4e28420b657b"
 
 [desktop]
-conversationDetailMode = "STEPS_COMMANDS"
+conversationDetailMode = "STEPS_PROSE"
 followUpQueueMode = "queue"
 avatar-overlay-pet-visible = false
 
