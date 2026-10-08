@@ -7,3 +7,4 @@
 Library/LaunchAgents/ai.typesafe.jevlight.plist filter=dotfiles-home
 Library/LaunchAgents/git.acsandmann.rift.plist filter=dotfiles-home
 Library/LaunchAgents/rift-unlock-nudge.plist filter=dotfiles-home
+.local/share/vicinae/shortcuts/shortcuts.json filter=dotfiles-home

@@ -39,6 +39,13 @@
       "shortcuts:sct-21caaaa037d4"
    ],
    "providers": {
+      "applications": {
+         "entrypoints": {
+            "com.openai.codex.nightly": {
+               "alias": "chat"
+            }
+         }
+      },
       "clipboard": {
          "entrypoints": {
             "history": {
