@@ -73,5 +73,10 @@
   "voiceEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754079277917
+  },
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "xhigh"
+    }
   }
 }
