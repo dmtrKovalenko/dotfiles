@@ -9,28 +9,17 @@ auto_switch = false
 
 [keys]
 prefix = "ctrl+space"
+help = "prefix+f1"
+# Native tab bindings: !/@/# select tabs 1/2/3 locally and remotely.
+switch_tab = ["prefix+1..9", "prefix+shift+1", "prefix+shift+2", "prefix+shift+3"]
 # Prefix bindings also apply after prefix+w enters workspace navigation.
 open_worktree = "prefix+g"
-goto = "prefix+alt+g"
+goto = "prefix+/"
 # moved off prefix+minus so prefix+- is free for tab 4
 split_horizontal = "prefix+shift+v"
 
-# Tab switching on prefix + ! @ # - =  (tabs 1-5 by POSITION, matching prefix+1..9).
-
-[[keys.command]]
-key = "prefix+!"
-type = "shell"
-command = 't=$("$HOME/.local/bin/herdr" tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[0].tab_id // empty"); [ -n "$t" ] && "$HOME/.local/bin/herdr" tab focus "$t"'
-
-[[keys.command]]
-key = "prefix+@"
-type = "shell"
-command = 't=$("$HOME/.local/bin/herdr" tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[1].tab_id // empty"); [ -n "$t" ] && "$HOME/.local/bin/herdr" tab focus "$t"'
-
-[[keys.command]]
-key = "prefix+#"
-type = "shell"
-command = 't=$("$HOME/.local/bin/herdr" tab list --workspace "${HERDR_ACTIVE_WORKSPACE_ID:-$HERDR_WORKSPACE_ID}" | /usr/bin/jq -r ".result.tabs[2].tab_id // empty"); [ -n "$t" ] && "$HOME/.local/bin/herdr" tab focus "$t"'
+# Custom tab bindings: -/= select tabs 4/5 by position.
+# Remote custom commands require --remote-keybindings server.
 
 [[keys.command]]
 key = "prefix+-"
@@ -68,3 +57,7 @@ delivery = "terminal"
 
 [ui.sound]
 enabled = false
+
+[remote]
+# Use the existing SSH config, including its auth hooks and control sockets.
+manage_ssh_config = false

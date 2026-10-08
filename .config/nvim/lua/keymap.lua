@@ -153,6 +153,22 @@ vim.keymap.set("n", "<C-g>", function()
   end
 end, { silent = true, noremap = true, desc = "Show and copy relative file path" })
 
+vim.keymap.set({ "n", "x" }, "<D-C-g>", function()
+  local relative_path = vim.fn.expand "%:."
+  if relative_path ~= "" then
+    local line = vim.fn.line "."
+    local suffix = tostring(line)
+    local mode = vim.fn.mode()
+    if mode == "v" or mode == "V" or mode == "\22" then
+      local anchor = vim.fn.line "v"
+      suffix = math.min(anchor, line) .. "-" .. math.max(anchor, line)
+    end
+    local location = relative_path .. ":" .. suffix
+    vim.fn.setreg("+", location)
+    vim.notify(location, 0)
+  end
+end, { silent = true, noremap = true, desc = "Show and copy relative file path and line or range" })
+
 vim.keymap.set("n", "<C-q>", function()
   local current_win = vim.api.nvim_get_current_win()
   local current_config = vim.api.nvim_win_get_config(current_win)

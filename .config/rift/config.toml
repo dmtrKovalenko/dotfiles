@@ -49,7 +49,9 @@ app_rules = [
   { app_id = "com.google.Chrome",         workspace = 0, focus = true },
   { app_id = "com.mitchellh.ghostty",     workspace = 0, focus = true },
   { app_id = "com.github.wez.wezterm",    workspace = 0, focus = true },
-  # 2: editors
+  # 2: ChatGPT + editors
+  { app_id = "com.openai.codex.alpha",    workspace = 1, focus = true },
+  { app_id = "com.openai.codex.nightly",  workspace = 1, focus = true },
   { app_id = "dev.zed.Zed",               workspace = 1, focus = true },
   { app_id = "com.microsoft.VSCode",      workspace = 1, focus = true },
   { app_id = "com.apple.dt.Xcode",        workspace = 1, focus = true },
@@ -157,7 +159,7 @@ mcas = "Meta + Ctrl + Alt + Shift"
 "ma + Q" = { join_window = "left" }
 "mas + Q" = { join_window = "right" }
 "ma + U" = "unjoin_windows"
-"mas + D" = { exec = ["/bin/sh", "-c", "~/.config/rift/dev-layout.sh"] }   # kitty stack | browser, 50/50
+"mas + D" = { exec = ["/bin/sh", "-c", "~/.config/rift/dev-layout.sh"] }   # [ChatGPT+kitty stack] | Brave, 50/50
 
 # new windows
 "mas + Enter" = { exec = ["open", "-na", "kitty.app"] }
@@ -168,6 +170,7 @@ mcas = "Meta + Ctrl + Alt + Shift"
 "F8" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/focus-app.py", "net.kovidgoyal.kitty"] }
 "F9" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/focus-app.py", "com.brave.Browser"] }
 "F10" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/focus-app.py", "com.tinyspeck.slackmacgap"] }
+"F11" = { exec = ["/opt/homebrew/bin/python3", "@@DOTFILES_HOME@@/.config/rift/focus-app.py", "com.openai.codex.nightly"] }
 
 # scratchpad (workspace S) and window switcher
 "mas + S" = { exec = ["/bin/sh", "-c", "~/.config/rift/scratchpad.sh stash"] }

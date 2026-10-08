@@ -69,6 +69,7 @@ return {
       max_threads = 16,
       grep = {
         trim_whitespace = true,
+        classify_definitions = true,
       },
       debug = {
         -- enabled = true,
