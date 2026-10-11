@@ -70,7 +70,7 @@ screen_reader_detection_done = true
 "gpt-5.5" = 3
 "gpt-5.6-sol" = 4
 gpt-6-astra = 1
-"gpt-6.1-sol" = 2
+"gpt-6.1-sol" = 4
 
 [features]
 hooks = true
@@ -139,8 +139,8 @@ NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = ""
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = ""
 NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = ""
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.930.51102"
-NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/neogoose/.codex/plugins/cache/openai-bundled/browser/26.930.51102/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
+BROWSER_USE_CODEX_APP_VERSION = "26.1002.52244"
+NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/neogoose/.codex/plugins/cache/openai-bundled/browser/26.1002.52244/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
 SKY_CUA_SERVICE_PATH = "/Users/neogoose/.codex/computer-use/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex"
 
@@ -154,7 +154,7 @@ enabled = false
 NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "87e84e5b4db45250b323ac54ab2f33585d867d0d13abc198e73a4e28420b657b"
 
 [desktop]
-conversationDetailMode = "STEPS_PROSE"
+conversationDetailMode = "STEPS_COMMANDS"
 followUpQueueMode = "queue"
 avatar-overlay-pet-visible = false
 
