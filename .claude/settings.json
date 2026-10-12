@@ -3,18 +3,7 @@
   "env": {},
   "model": "opus",
   "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash '/Users/neogoose/.claude/hooks/herdr-agent-state.sh' session",
-            "timeout": 10
-          }
-        ]
-      }
-    ]
+    "SessionStart": [{"matcher":"^(startup|resume|clear|compact|fork)$","hooks":[{"type":"command","command":"bash '/Users/neogoose/.claude/hooks/herdr-agent-state.sh' session","timeout":10}]}]
   },
   "enabledPlugins": {
     "frontend-design@claude-code-plugins": true,
