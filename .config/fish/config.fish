@@ -122,3 +122,4 @@ fish_add_path $HOME/.grok/bin
 
 # Bedrock model override leaks in via the herdr daemon env; never let it pick the Claude Code model
 set -e ANTHROPIC_MODEL
+set -e ANTHROPIC_SMALL_FAST_MODEL
