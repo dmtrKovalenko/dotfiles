@@ -3,6 +3,7 @@
 	editor = nvim --cmd 'let g:unception_block_while_host_edits=1'
 	excludesfile = ~/.gitignore_global
 	commentChar = ";"
+	hooksPath = ~/.config/git/hooks
 [user]
 	name = Dmitriy Kovalenko
 	email = dmtr.kovalenko@outlook.com

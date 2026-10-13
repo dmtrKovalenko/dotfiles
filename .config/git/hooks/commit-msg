@@ -1,0 +1,8 @@
+#!/bin/sh
+# Reject commit messages carrying a Co-Authored-By trailer.
+if grep -v '^#' "$1" | grep -qi '^[[:space:]]*co-authored-by:'; then
+  echo "commit-msg: Co-Authored-By trailer is not allowed, remove it:" >&2
+  grep -v '^#' "$1" | grep -i '^[[:space:]]*co-authored-by:' >&2
+  exit 1
+fi
+exec "$(dirname "$0")/_chain" commit-msg "$@"
