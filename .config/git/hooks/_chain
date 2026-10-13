@@ -1,0 +1,8 @@
+#!/bin/sh
+# Global hooks live here (core.hooksPath). Run the repo's own .git/hooks/<name>
+# too, since a global hooksPath otherwise disables them.
+hook=$1; shift
+gitdir=$(git rev-parse --git-common-dir 2>/dev/null) || exit 0
+local_hook="$gitdir/hooks/$hook"
+[ -x "$local_hook" ] && exec "$local_hook" "$@"
+exit 0
