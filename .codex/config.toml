@@ -4,7 +4,7 @@ log_dir = "/Users/neogoose/.codex/log"
 approvals_reviewer = "user"
 
 notify = ["/Users/neogoose/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
-service_tier = "default"
+service_tier = "fast"
 
 [projects."/Users/neogoose"]
 trust_level = "trusted"
