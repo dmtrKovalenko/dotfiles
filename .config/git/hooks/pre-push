@@ -1,5 +1,5 @@
 #!/bin/sh
-# Refuse to push commits carrying a Co-Authored-By trailer (catches commits
+# Refuse to push commits carrying a Co-Authored-By trailer other than gustav-fff (catches commits
 # made via cherry-pick, rebase, --no-verify or other machines).
 zero=$(git hash-object --stdin </dev/null | tr '0-9a-f' '0')
 input=$(cat)
@@ -12,8 +12,8 @@ while read -r local_ref local_sha remote_ref remote_sha; do
     range="$remote_sha..$local_sha"
   fi
   for c in $(git rev-list $range); do
-    if git log -1 --format=%B "$c" | grep -qi '^[[:space:]]*co-authored-by:'; then
-      echo "pre-push: $(git log -1 --format='%h %s' "$c") has a Co-Authored-By trailer" >&2
+    if git log -1 --format=%B "$c" | "$(dirname "$0")/_blocked-coauthors"; then
+      echo "pre-push: $(git log -1 --format='%h %s' "$c") has a disallowed Co-Authored-By trailer (only gustav-fff is allowed)" >&2
       bad=1
     fi
   done
