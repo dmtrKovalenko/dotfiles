@@ -34,6 +34,7 @@
    "keybinds": {
       "action.edit-secondary": "super+control+shift+E"
    },
+   "favorites": [],
    "fallbacks": [
       "shortcuts:sct-d667908a2633",
       "shortcuts:sct-21caaaa037d4"
