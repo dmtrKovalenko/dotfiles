@@ -1,0 +1,9 @@
+# Optional developer commands; installation only needs Python and Cargo.
+gate:
+    cargo fmt --check
+    cargo clippy --locked --all-targets -- -D warnings
+    cargo test --locked
+    cargo build --release --locked
+
+install:
+    python3 install.py

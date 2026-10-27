@@ -1,0 +1,8 @@
+# Generated, machine-specific plugin configuration and installations.
+/plugins/*
+!/plugins/config/
+/plugins/config/*
+!/plugins/config/copy-search/
+/plugins/config/copy-search/*
+!/plugins/config/copy-search/config.toml
+/local-plugins/herdr-fingers/

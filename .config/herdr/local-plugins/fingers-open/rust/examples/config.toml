@@ -1,0 +1,71 @@
+# herdr-fingers configuration.
+#
+# Lives at $HERDR_PLUGIN_CONFIG_DIR/config.toml; print that directory with
+#   herdr plugin config-dir nathan-poncet.herdr-fingers
+# Every key is optional. The values below are the defaults.
+
+# Keys hints are built from, best keys first. One of:
+#   qwerty, qwerty-homerow, qwerty-left-hand, qwerty-right-hand,
+#   azerty, azerty-homerow, azerty-left-hand, azerty-right-hand,
+#   qwertz, qwertz-homerow, qwertz-left-hand, qwertz-right-hand,
+#   dvorak, dvorak-homerow, dvorak-left-hand, dvorak-right-hand,
+#   colemak, colemak-homerow, colemak-left-hand, colemak-right-hand
+keyboard_layout = "qwerty"
+
+# Or spell the keys out yourself (overrides keyboard_layout): lowercase
+# letters and digits. c, i, m, n and q are reserved for the overlay's own
+# controls and silently skipped.
+# alphabet = "asdfghjkl"
+
+# Where the hint sits over its match: "left" or "right".
+hint_position = "left"
+
+# What happens to the picked text, per key held while typing the hint.
+#   ":copy:"  copy it (see `clipboard` below)
+#   ":paste:" type it into the pane the hints came from
+#   ":open:"  open URLs and files with the system opener
+#   ""        nothing
+# Anything else is a command line, run with the text on its stdin and
+# MODIFIER / HINT in its environment, from the pane's working directory.
+main_action = ":copy:"
+ctrl_action = ":open:"
+shift_action = ":paste:"
+alt_action = ""
+
+# Built-in patterns to look for; omit to enable them all. Known names:
+#   ip, uuid, sha, digit, url, path, hex, kubernetes, kubernetes-pod,
+#   git-status, git-status-branch, diff
+# enabled_builtin_patterns = ["url", "path", "sha"]
+
+# Your own patterns, in Rust regex syntax. A group named `match` narrows the
+# copied text to that group. When a custom pattern and a built-in start at
+# the same column, the custom one wins.
+# [[patterns]]
+# name = "ticket"
+# regex = "PROJ-[0-9]+"
+
+# How ":copy:" reaches the clipboard.
+#   "osc52"  through Herdr to the terminal you are looking at (works over SSH)
+#   "system" a local command: pbcopy, wl-copy, xclip or xsel, whichever exists
+#   "both"   the two above
+clipboard = "osc52"
+# Force a specific command for "system"/"both" instead of auto-detecting one.
+# clipboard_command = ["pbcopy"]
+
+# Show a Herdr toast with the copied text. Herdr itself must have toasts on
+# ([ui.toast] delivery = "herdr" in ~/.config/herdr/config.toml).
+show_copied_notification = false
+
+# Joins the texts picked in multi-select mode (Tab).
+multi_separator = " "
+
+# Colors: names (black, red, green, yellow, blue, magenta, cyan, white, gray,
+# light-red … bright-white), palette indexes (0-255) or "#RRGGBB".
+# Attributes: bold, dim, italic, underline, reverse, strikethrough.
+[style]
+hint = { fg = "black", bg = "yellow", bold = true }
+highlight = { fg = "yellow" }
+selected_hint = { fg = "black", bg = "light-blue", bold = true }
+selected_highlight = { fg = "light-blue" }
+# Restyle everything that is not a match, for instance dim it:
+# backdrop = { dim = true }

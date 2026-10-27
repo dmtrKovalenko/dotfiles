@@ -9,6 +9,8 @@ auto_switch = false
 
 [keys]
 prefix = "ctrl+space"
+# The copy-search plugin owns prefix+[.
+copy_mode = []
 help = "prefix+f1"
 # Native tab bindings: !/@/# select tabs 1/2/3 locally and remotely.
 switch_tab = ["prefix+1..9", "prefix+shift+1", "prefix+shift+2", "prefix+shift+3"]
@@ -48,6 +50,13 @@ key = "prefix+alt+w"
 type = "plugin_action"
 command = "workspace-save.open"
 description = "restore saved workspace"
+
+# Vim-style copy mode with Fingers gx on the cursor token.
+[[keys.command]]
+key = ["prefix+[", "prefix+shift+c"]
+type = "plugin_action"
+command = "copy-search.copy"
+description = "select colored output with Vim motions"
 
 [experimental]
 kitty_graphics = true
