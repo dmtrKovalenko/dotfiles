@@ -1,0 +1,51 @@
+id = "copy-search"
+name = "Copy Search"
+version = "0.1.5"
+min_herdr_version = "0.7.0"
+description = "regex and copycat pattern search with extrakto token extraction for pane scrollback, landing in a tmux-style copy mode, copying via OSC 52"
+platforms = ["linux", "macos"]
+
+[[build]]
+command = ["cargo", "build", "--release", "--locked"]
+
+# herdr resolves pane commands via PATH, not the working directory, so
+# the built binary is addressed through HERDR_PLUGIN_ROOT.
+
+[[panes]]
+id = "copy"
+title = "copy mode"
+placement = "overlay"
+command = ["sh", "-c", "exec \"$HERDR_PLUGIN_ROOT/target/release/herdr-copy-search\" --mode copy"]
+
+[[panes]]
+id = "search"
+title = "scrollback search"
+placement = "overlay"
+command = ["sh", "-c", "exec \"$HERDR_PLUGIN_ROOT/target/release/herdr-copy-search\" --mode search"]
+
+[[panes]]
+id = "extract"
+title = "extract"
+placement = "overlay"
+command = ["sh", "-c", "exec \"$HERDR_PLUGIN_ROOT/target/release/herdr-copy-search\" --mode extract"]
+
+# Optional plugin_action entrypoints for keybindings that prefer
+# type = "plugin_action" over a raw shell command.
+
+[[actions]]
+id = "copy"
+title = "Open copy mode"
+contexts = ["pane"]
+command = ["sh", "-c", "exec \"$HERDR_BIN_PATH\" plugin pane open --plugin copy-search --entrypoint copy"]
+
+[[actions]]
+id = "search"
+title = "Search scrollback"
+contexts = ["pane"]
+command = ["sh", "-c", "exec \"$HERDR_BIN_PATH\" plugin pane open --plugin copy-search --entrypoint search"]
+
+[[actions]]
+id = "extract"
+title = "Extract tokens"
+contexts = ["pane"]
+command = ["sh", "-c", "exec \"$HERDR_BIN_PATH\" plugin pane open --plugin copy-search --entrypoint extract"]

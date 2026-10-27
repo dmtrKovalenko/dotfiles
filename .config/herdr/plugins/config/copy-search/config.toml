@@ -1,0 +1,3 @@
+# Orange copy-mode cursor with dark text for contrast.
+cursor_bg = "#ff9e64"
+cursor_fg = "#161819"
