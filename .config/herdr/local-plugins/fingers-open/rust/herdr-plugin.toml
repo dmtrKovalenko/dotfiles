@@ -1,0 +1,24 @@
+id = "nathan-poncet.herdr-fingers"
+name = "Herdr Fingers"
+version = "0.2.0"
+min_herdr_version = "0.9.1"
+description = "tmux-fingers for Herdr: type a short hint to copy, paste or open any path, URL, hash or number visible in the pane."
+platforms = ["linux", "macos"]
+
+[[build]]
+command = ["cargo", "build", "--release", "--locked"]
+
+[[actions]]
+id = "start"
+title = "Fingers: show hints"
+description = "Label visible text; type a hint to open files in Neovim or URLs in your Mac browser. Ctrl copies and Shift pastes."
+contexts = ["pane", "workspace", "global"]
+command = ["./target/release/herdr-fingers", "start"]
+
+# The overlay itself. Opened by the `start` action, never bind it directly:
+# the action records where the focused pane sits first, so the hints land on it.
+[[panes]]
+id = "overlay"
+title = "Fingers"
+placement = "overlay"
+command = ["./target/release/herdr-fingers", "ui"]

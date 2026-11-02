@@ -1,0 +1,4 @@
+plain line
+[31mred[0m [1;32mbold-green[0m [38;5;215morange256[0m
+[38;2;100;150;200mrgb-blue[0m and [4munderline[0m
+[44mblue-bg[0m 中文寬字元

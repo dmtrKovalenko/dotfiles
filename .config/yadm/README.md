@@ -73,3 +73,37 @@ secret scrubber.
 OpenAI/work configs, credentials, Herdr sessions and plugin registries, logs,
 backups, and experimental Rift builds are outside this change. Herdr's custom
 plugin bindings require those optional plugins to be installed separately.
+
+# Optional Herdr Fingers plugin
+
+The custom Fingers plugin is a single Rust binary; its source and embedded Neovim
+module are tracked in `~/.config/herdr/local-plugins/fingers-open`. Follow its
+[README](../herdr/local-plugins/fingers-open/README.md) to build or install it on a Mac
+or a devbox. Setup is opt-in on each machine; clone/pull and the general bootstrap
+do not build the plugin or start its browser service. Browser roles/host lists,
+plugin registries, compiled binaries, and runtime state stay local. SSH alone
+does not copy these files or change a remote machine.
+
+# Optional Herdr copy mode
+
+The custom Rust selector is tracked in
+`~/.config/herdr/local-plugins/copy-search`. After applying the dotfiles and
+installing Herdr, run this once on the Mac and on each SSH machine:
+
+```sh
+python3 ~/.config/herdr/local-plugins/copy-search/install.py
+```
+
+The installer builds a release binary, stores it outside the build cache,
+links the plugin and reloads Herdr config without restarting sessions. The
+tracked bindings use Ctrl+Space, then `[` (or Shift+C); the cursor is orange.
+It preserves terminal colors, supports Vim motions, and uses passive snapshots
+so opening copy mode does not scroll full-screen agents. `gx` uses the optional
+custom Fingers router on the machine hosting the pane.
+
+See the [copy-mode README](../herdr/local-plugins/copy-search/README.md) for
+prebuilt binaries, remote setup, verification and removal. Runtime selection
+needs no compiler, Python or Neovim. Clone/pull and general bootstrap do not
+install this optional plugin; install it before using its tracked bindings.
+Only its cursor config is tracked under `herdr/plugins`; registries, runtime
+state and binaries stay local.

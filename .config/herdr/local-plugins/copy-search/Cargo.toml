@@ -1,0 +1,32 @@
+[package]
+name = "herdr-copy-search"
+version = "0.1.5"
+edition = "2021"
+description = "regex and pattern search over herdr scrollback with token extraction and a tmux-style copy mode"
+license = "MIT"
+# MSRV floor. Verified 2026-07-07: the source and locked deps build on
+# 1.74.0, which is also the minimum for the [lints] table below.
+# Cargo.lock is v4 (needs cargo >= 1.78 to parse), so a 1.74 build must
+# regenerate it first. CI msrv-job enforcement is still pending the
+# GitHub pipeline (roadmap P1.1); keep the ci.yml msrv job in sync.
+rust-version = "1.74"
+
+# Lint policy lives here, not in source attributes; tighten only via
+# docs/checklists/CL-05-lints-and-msrv.md.
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+dbg_macro = "warn"
+todo = "warn"
+unimplemented = "warn"
+
+[dependencies]
+base64 = "0.22"
+crossterm = "0.28"
+regex = "1"
+unicode-width = "0.2"
+
+[profile.release]
+lto = true
+strip = true

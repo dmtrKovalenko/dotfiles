@@ -1,0 +1,12 @@
+Repository: https://github.com/qq88976321/herdr-copy-search
+Base commit: 15e9752e05d982230944b2549a62dc7ab309a30c
+Base version: 0.1.5
+License: MIT (see LICENSE)
+
+Local changes: preserve foreground colors and attributes during selection;
+ignore passive mouse movement; synchronize redraws; support gg; route gx
+through the custom Fingers binary; use passive ANSI snapshots to avoid
+scrolling full-screen applications on startup.
+
+This is a vendored source snapshot with local modifications, not an unmodified
+upstream release. The Rust source and lockfile are tracked in dotfiles.

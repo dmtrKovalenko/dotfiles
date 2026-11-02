@@ -1,0 +1,33 @@
+herdr-copy-search manual test fixture
+
+urls:     https://herdr.dev/docs/plugins/ and git://github.com/user/repo.git
+files:    src/app.rs:12:5 built from /var/log/build.log and ~/downloads/report.txt
+shas:     commit 0a3773dbe9f21c44 and short deadbeef0
+ips:      listening on 192.168.0.1:8080 and 10.0.0.254
+numbers:  took 42 ms over 1337 requests
+quoted:   "double quoted value" and 'single quoted'
+
+wide:     中文寬字元測試行 CJK width test 混合 ascii 與寬字元
+long:     this is a deliberately long line to exercise horizontal scrolling which keeps going and going and going until it is well past a typical eighty column terminal width limit for testing
+
+repeated token alpha
+repeated token alpha
+unique tail omega
+
+--- realistic session output below (used by demo/*.tape; append only,
+--- do not rewrite existing lines: tapes and manual tests match them)
+$ cargo build
+   Compiling herdr-copy-search v0.1.1 (/home/user/dev/herdr-copy-search)
+error[E0308]: mismatched types
+  --> src/extract.rs:212:18
+   |
+   = help: see https://doc.rust-lang.org/error_codes/E0308.html
+error: could not compile `herdr-copy-search` (lib) due to 1 previous error
+$ git log --oneline -3
+252566c docs: add CLAUDE.md repo constitution for agents
+702ec7f feat(extract): scrollable backdrop (wheel regions, PgUp/PgDn)
+804a666 feat(app): align opening view to the source pane visible screen
+$ curl -sS https://api.example.com/v1/items?page=2 -o /tmp/items.json
+$ tail -2 /var/log/app/server.log
+2026-07-07T10:12:03Z INFO  GET /health 200 from 10.1.2.3 in 2 ms
+2026-07-07T10:12:41Z ERROR upload failed: token "expired" for user 'demo' https://status.example.com/incidents/4217
