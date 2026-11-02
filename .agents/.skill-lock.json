@@ -6,27 +6,27 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/vercel-labs/agent-browser.git",
       "skillPath": "skills/agent-browser/SKILL.md",
-      "skillFolderHash": "068bc465a3f22625f98a7996817feefcd18d772f",
+      "skillFolderHash": "aee3afd3dd9c879a14816dd6dca77c938f8c9c10",
       "installedAt": "2026-04-05T22:01:31.541Z",
-      "updatedAt": "2026-04-06T03:10:03.506Z"
+      "updatedAt": "2026-11-02T01:14:32.605Z"
     },
     "deslop": {
       "source": "stephenturner/skill-deslop",
       "sourceType": "github",
       "sourceUrl": "https://github.com/stephenturner/skill-deslop.git",
       "skillPath": "SKILL.md",
-      "skillFolderHash": "f16e875794ebde934b8d95403790b6a7f8981665",
+      "skillFolderHash": "a906154bef375d9d49ed2ad7da13b2db16f0d3d2",
       "installedAt": "2026-09-15T21:29:11.327Z",
-      "updatedAt": "2026-09-15T21:29:11.327Z"
+      "updatedAt": "2026-11-02T01:14:34.121Z"
     },
     "find-skills": {
       "source": "vercel-labs/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/vercel-labs/skills.git",
       "skillPath": "skills/find-skills/SKILL.md",
-      "skillFolderHash": "3013fdeb8a11b10b1eb795ec3ae8bfca38f7c26d",
+      "skillFolderHash": "76a98a285cb0434f3d39e1a873823556330e398b",
       "installedAt": "2026-04-05T22:01:39.337Z",
-      "updatedAt": "2026-04-05T22:01:39.337Z"
+      "updatedAt": "2026-11-02T01:14:35.451Z"
     },
     "asd-ste100": {
       "source": "danyuchn/asd-ste100-skill",
@@ -34,9 +34,28 @@
       "sourceUrl": "https://github.com/danyuchn/asd-ste100-skill.git",
       "ref": "master",
       "skillPath": "SKILL.md",
-      "skillFolderHash": "32511c6992ecb5f1971e46a2943f2e6adceedafe",
+      "skillFolderHash": "833810d3866645f579085aa76803541892bde692",
       "installedAt": "2026-10-08T17:46:09.987Z",
-      "updatedAt": "2026-10-08T17:46:09.987Z"
+      "updatedAt": "2026-11-02T01:14:37.179Z"
+    },
+    "stageshow": {
+      "source": "benjitaylor/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/benjitaylor/skills.git",
+      "skillPath": "stageshow/SKILL.md",
+      "skillFolderHash": "5f24a58c1b28ba9d208e576e3c6267ccd1fc1769",
+      "installedAt": "2026-11-02T01:14:25.105Z",
+      "updatedAt": "2026-11-02T01:14:25.105Z"
+    },
+    "fframes-video": {
+      "source": "fframes.studio",
+      "sourceType": "well-known",
+      "sourceUrl": "https://fframes.studio/.well-known/agent-skills/fframes-video/SKILL.md",
+      "skillFolderHash": "",
+      "sourceBaseUrl": "https://fframes.studio",
+      "wellKnownDigest": "sha256:0027dd4d953e87f49396ca0eae6c2ac9d93ab0afb1a2d7588a5cb11185b477da",
+      "installedAt": "2026-11-02T01:14:52.400Z",
+      "updatedAt": "2026-11-02T01:14:52.400Z"
     }
   },
   "dismissed": {
@@ -48,12 +67,15 @@
     "codex",
     "cursor",
     "droid",
+    "fx",
     "gemini-cli",
     "github-copilot",
     "kilo",
     "kimi-code-cli",
     "opencode",
+    "pi",
     "warp",
-    "zed"
+    "zed",
+    "claude-code"
   ]
 }

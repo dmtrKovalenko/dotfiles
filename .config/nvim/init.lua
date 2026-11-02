@@ -180,3 +180,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 
 require "keymap"
 require("language-specific-macro").setupMacro()
+
+-- Register this editor for Herdr file hints.
+require("herdr_fingers").setup()
