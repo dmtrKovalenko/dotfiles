@@ -437,7 +437,10 @@ pub fn register_existing() -> Result<()> {
     let mut updated = BTreeSet::new();
     for pane in panes["panes"].as_array().ok_or("Missing panes")? {
         let pane_id = field(pane, "pane_id")?;
-        let info = host.call("pane.process_info", json!({"pane_id":pane_id}))?;
+        // Remote or already-closed panes are refused by the server; skip them.
+        let Ok(info) = host.call("pane.process_info", json!({"pane_id":pane_id})) else {
+            continue;
+        };
         for process in info["process_info"]["foreground_processes"]
             .as_array()
             .into_iter()
