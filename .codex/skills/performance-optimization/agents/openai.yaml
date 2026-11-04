@@ -1,0 +1,4 @@
+interface:
+  display_name: "Performance Optimization"
+  short_description: "Benchmark, profile, inspect assembly, and prove gains"
+  default_prompt: "Use $performance-optimization to improve this code with a correct benchmark, CPU and memory profiles, assembly inspection, and reproducible before-and-after results."
