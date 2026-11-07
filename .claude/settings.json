@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "env": {},
-  "model": "fable",
+  "model": "opus",
   "hooks": {
     "SessionStart": [
       {
@@ -36,7 +36,7 @@
   "effortLevel": "high",
   "modelSettings": {
     "claude-opus-5-5": {
-      "effortLevel": "xhigh"
+      "effortLevel": "medium"
     }
   },
   "tui": "fullscreen",

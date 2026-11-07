@@ -35,6 +35,9 @@ mode = "all"
 active_label = "name"
 display_style = "label"
 
+[settings.ui.stack_line]
+enabled = false                # no tab bar beside stacked windows
+
 [virtual_workspaces]
 default_workspace_count = 5    # 1 2 3 4 + S (scratchpad)
 default_workspace = 0
