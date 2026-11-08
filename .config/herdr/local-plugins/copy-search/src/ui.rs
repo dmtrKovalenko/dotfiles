@@ -196,9 +196,10 @@ pub fn mode_hint(app: &App) -> Option<String> {
         return None;
     }
     Some(if app.sel.is_some() {
-        "y copy  Enter copy+exit  gx open  Esc clear".to_string()
+        "y copy  Enter copy+exit  o swap end  i(/i\"/iw object  gx open  Esc clear".to_string()
     } else {
-        "/ search  n/N next  v select  gx open  p patterns  y copy  q quit".to_string()
+        "/ search  n/N next  v select  i( i\" iw objects  f % motions  gx open  p patterns  y copy  q quit"
+            .to_string()
     })
 }
 

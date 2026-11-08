@@ -6,7 +6,9 @@ License: MIT (see LICENSE)
 Local changes: preserve foreground colors and attributes during selection;
 ignore passive mouse movement; synchronize redraws; support gg; route gx
 through the custom Fingers binary; use passive ANSI snapshots to avoid
-scrolling full-screen applications on startup.
+scrolling full-screen applications on startup; Vim motions and text
+objects (counts, W/B/E, ge, f/t/;/,, %, H/M/L, zz, */#, o, Y, bracket,
+quote, paragraph, line and entire objects, personal Neovim key maps).
 
 This is a vendored source snapshot with local modifications, not an unmodified
 upstream release. The Rust source and lockfile are tracked in dotfiles.

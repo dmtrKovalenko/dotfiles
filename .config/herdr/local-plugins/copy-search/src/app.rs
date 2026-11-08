@@ -28,10 +28,16 @@ pub enum SelKind {
 /// A key waiting for its completion key (vi-style multi-key command).
 #[derive(Debug, Clone, Copy)]
 enum Pending {
-    /// `i`/`a` pressed; the next `w`/`W` selects a word/WORD text object.
+    /// `i`/`a` pressed; the next key names the text object (`w W ( [ {
+    /// < b B " ' ` q p l e`).
     TextObject { around: bool },
-    /// `g` pressed; `gg` goes to the top and `gx` opens the current token.
+    /// `g` pressed; `gg` top, `ge`/`gE` previous word end, `g_` last
+    /// non-blank, `gx` opens the current token.
     Goto,
+    /// `f`/`F`/`t`/`T` pressed; the next key is the char to find.
+    Find { forward: bool, till: bool },
+    /// `z` pressed; `zz`/`zt`/`zb` scroll the cursor row into place.
+    Scroll,
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -62,6 +68,10 @@ pub struct App {
     mouse_sel: bool,
     saved_pattern: String,
     pending: Option<Pending>,
+    /// Count prefix typed so far (0 = none).
+    count: usize,
+    /// Last `f`/`F`/`t`/`T` (target, forward, till) for `;` and `,`.
+    last_find: Option<(char, bool, bool)>,
     pending_bottom: bool,
     /// Rows the source pane was showing when captured. The bottom-most
     /// view keeps exactly this many tail rows on screen, so opening
@@ -106,6 +116,8 @@ impl App {
             mouse_sel: false,
             saved_pattern: String::new(),
             pending: None,
+            count: 0,
+            last_find: None,
             pending_bottom: true,
             screen_rows,
         }
@@ -355,14 +367,226 @@ impl App {
         }
     }
 
-    /// Select the word/WORD text object around the cursor as a charwise
-    /// selection. `around` = aw/aW (includes adjacent whitespace).
-    fn apply_text_object(&mut self, around: bool, big: bool) {
-        let (start, end) = motion::word_object(&self.buf, self.cursor, around, big);
+    /// Charwise selection from `start` to `end`, cursor on `end`.
+    fn select_chars(&mut self, start: Pos, end: Pos) {
         self.sel = Some((SelKind::Char, start));
         self.cursor = end;
         self.want_col = end.col;
         self.ensure_visible();
+    }
+
+    /// Linewise selection of rows `r0..=r1`, cursor on the last row.
+    fn select_rows(&mut self, r0: usize, r1: usize) {
+        self.sel = Some((SelKind::Line, Pos { row: r0, col: 0 }));
+        self.cursor = Pos {
+            row: r1,
+            col: self.buf.max_col(r1),
+        };
+        self.want_col = self.cursor.col;
+        self.ensure_visible();
+    }
+
+    /// Select the word/WORD text object around the cursor as a charwise
+    /// selection. `around` = aw/aW (includes adjacent whitespace).
+    fn apply_text_object(&mut self, around: bool, big: bool) {
+        let (start, end) = motion::word_object(&self.buf, self.cursor, around, big);
+        self.select_chars(start, end);
+    }
+
+    /// Ordered (start, end) of the current charwise selection, if any.
+    fn char_sel_bounds(&self) -> Option<(Pos, Pos)> {
+        match self.sel {
+            Some((SelKind::Char, anchor)) => Some(if anchor <= self.cursor {
+                (anchor, self.cursor)
+            } else {
+                (self.cursor, anchor)
+            }),
+            _ => None,
+        }
+    }
+
+    /// Bracket objects `i( a( i[ a[ i{ a{ i< a< ib ab iB aB`. `levels`
+    /// (the count) picks an enclosing pair further out; repeating the
+    /// object while it is already selected expands outward one level,
+    /// as in vi visual mode.
+    fn apply_pair_object(&mut self, pair: Option<(char, char)>, around: bool, levels: usize) {
+        let compute = |app: &Self, lv: usize| -> Option<(Pos, Pos)> {
+            let bounds = match pair {
+                Some((o, c)) => motion::pair_object(&app.buf, app.cursor, o, c, lv),
+                None => motion::any_bracket_object(&app.buf, app.cursor, lv),
+            }?;
+            if around {
+                Some(bounds)
+            } else {
+                motion::inner_of(&app.buf, bounds)
+            }
+        };
+        let current = self.char_sel_bounds();
+        let mut lv = levels.max(1);
+        let mut result = compute(self, lv);
+        // Expand outward while the object does not grow the selection.
+        while let (Some((s, e)), Some((cs, ce))) = (result, current) {
+            if s < cs || e > ce {
+                break;
+            }
+            lv += 1;
+            match compute(self, lv) {
+                Some(next) => result = Some(next),
+                None => break,
+            }
+        }
+        match result {
+            Some((s, e)) => self.select_chars(s, e),
+            None => self.message = Some("no bracket object".into()),
+        }
+    }
+
+    /// Quote objects `i" a" i' a' i` a` iq aq`.
+    fn apply_quote_object(&mut self, quote: Option<char>, around: bool) {
+        let bounds = match quote {
+            Some(q) => motion::quote_bounds(&self.buf, self.cursor, q),
+            None => motion::any_quote_bounds(&self.buf, self.cursor),
+        };
+        let result = bounds.and_then(|b| {
+            if around {
+                Some(motion::with_surrounding_space(&self.buf, b))
+            } else {
+                motion::inner_of(&self.buf, b)
+            }
+        });
+        match result {
+            Some((s, e)) => self.select_chars(s, e),
+            None => self.message = Some("no quote object".into()),
+        }
+    }
+
+    /// Complete an `i`/`a` text object with its object key.
+    fn complete_text_object(&mut self, around: bool, key: char, count: usize) {
+        match key {
+            'w' => self.apply_text_object(around, false),
+            'W' => self.apply_text_object(around, true),
+            'b' => self.apply_pair_object(None, around, count),
+            '(' | ')' | '[' | ']' | '{' | '}' | 'B' | '<' | '>' => {
+                self.apply_pair_object(motion::pair_for(key), around, count)
+            }
+            '"' | '\'' | '`' => self.apply_quote_object(Some(key), around),
+            'q' => self.apply_quote_object(None, around),
+            'p' => {
+                let (r0, r1) = motion::paragraph_rows(&self.buf, self.cursor.row, around);
+                self.select_rows(r0, r1);
+            }
+            'l' => match motion::line_object(&self.buf, self.cursor.row, around) {
+                Some((s, e)) => self.select_chars(s, e),
+                None => self.message = Some("blank line".into()),
+            },
+            'e' => {
+                let (r0, r1) = motion::entire_rows(&self.buf, around);
+                self.select_rows(r0, r1);
+            }
+            _ => {}
+        }
+    }
+
+    fn find(&mut self, target: char, forward: bool, till: bool, count: usize, repeat: bool) {
+        let mut p = self.cursor;
+        for i in 0..count.max(1) {
+            match motion::find_char(&self.buf, p, target, forward, till, repeat || i > 0) {
+                Some(n) => p = n,
+                None => {
+                    self.message = Some(format!("not found: {target}"));
+                    return;
+                }
+            }
+        }
+        self.goto(p);
+    }
+
+    fn repeat_find(&mut self, reverse: bool, count: usize) {
+        match self.last_find {
+            Some((target, forward, till)) => {
+                self.find(target, forward != reverse, till, count, true)
+            }
+            None => self.message = Some("no previous f/t".into()),
+        }
+    }
+
+    fn match_bracket(&mut self) {
+        match motion::match_bracket(&self.buf, self.cursor) {
+            Some(p) => self.goto(p),
+            None => self.message = Some("no matching bracket".into()),
+        }
+    }
+
+    /// `*` / `#`: search for the word under (or after) the cursor.
+    fn search_word_under_cursor(&mut self, forward: bool) {
+        let row = self.cursor.row;
+        let line = self.buf.line(row);
+        let start = (self.cursor.col..line.len()).find(|&c| !line.chars[c].is_whitespace());
+        let Some(col) = start else {
+            self.message = Some("no word under cursor".into());
+            return;
+        };
+        let at = Pos { row, col };
+        let (s, e) = motion::word_object(&self.buf, at, false, false);
+        let word = self.buf.slice_inclusive(s, e);
+        let keyword = word.chars().all(|c| c.is_alphanumeric() || c == '_');
+        let pattern = if keyword {
+            format!(r"\b{}\b", regex::escape(&word))
+        } else {
+            regex::escape(&word)
+        };
+        let dir = if forward {
+            Direction::Forward
+        } else {
+            Direction::Backward
+        };
+        self.search.run(&self.buf, &pattern, dir);
+        match self.search.seek(at, dir, false) {
+            Some(m) => self.goto(m.start),
+            None => self.message = Some(format!("no match: {word}")),
+        }
+    }
+
+    /// Row for H/M/L: top, middle or bottom of the visible content.
+    fn screen_row(&self, which: char, count: usize) -> usize {
+        let rows = self.content_rows();
+        let last_visible = (self.top + rows - 1).min(self.buf.last_row());
+        let offset = count.saturating_sub(1);
+        match which {
+            'H' => (self.top + offset).min(last_visible),
+            'L' => last_visible.saturating_sub(offset).max(self.top),
+            _ => self.top + (last_visible - self.top) / 2,
+        }
+    }
+
+    /// zz / zt / zb: scroll so the cursor row sits mid-screen, on top or
+    /// at the bottom, without moving the cursor.
+    fn scroll_cursor_to(&mut self, where_: char) {
+        let rows = self.content_rows();
+        let row = self.cursor.row;
+        let top = match where_ {
+            't' => row,
+            'b' => (row + 1).saturating_sub(rows),
+            _ => row.saturating_sub(rows / 2),
+        };
+        self.top = top.min(self.max_top());
+        self.ensure_visible();
+    }
+
+    /// Y: copy the current logical line (or the selected rows) without
+    /// leaving copy mode.
+    fn yank_lines(&mut self) -> Option<Effect> {
+        let (r0, r1) = match self.sel {
+            Some((_, anchor)) => (
+                self.buf.logical_span(anchor.row.min(self.cursor.row)).0,
+                self.buf.logical_span(anchor.row.max(self.cursor.row)).1,
+            ),
+            None => self.buf.logical_span(self.cursor.row),
+        };
+        let text = self.buf.slice_lines(r0, r1);
+        self.message = Some(format!("copied {} chars", text.chars().count()));
+        self.sel = None;
+        Some(Effect::Copy(text))
     }
 
     fn handle_normal(&mut self, key: KeyEvent) -> Option<Effect> {
@@ -372,25 +596,67 @@ impl App {
         let page = self.content_rows() as isize;
         if ctrl && key.code == Char('c') {
             self.pending = None;
+            self.count = 0;
             self.quit = true;
             return None;
         }
+        // The count typed so far applies to this command; `n` is the
+        // effective repeat (1 when none was typed).
+        let count = self.count;
+        let n = count.max(1);
+        let repeat = n as isize;
         if let Some(pending) = self.pending.take() {
+            self.count = 0;
             if ctrl || key.modifiers.contains(KeyModifiers::ALT) {
                 return None;
             }
             match (pending, key.code) {
-                (Pending::TextObject { around }, Char('w')) => {
-                    self.apply_text_object(around, false)
+                (Pending::TextObject { around }, Char(c)) => {
+                    self.complete_text_object(around, c, count)
                 }
-                (Pending::TextObject { around }, Char('W')) => self.apply_text_object(around, true),
-                (Pending::Goto, Char('g')) => self.goto(Pos { row: 0, col: 0 }),
+                (Pending::Goto, Char('g')) => {
+                    let row = if count > 0 {
+                        (count - 1).min(self.buf.last_row())
+                    } else {
+                        0
+                    };
+                    self.goto(Pos { row, col: 0 })
+                }
                 (Pending::Goto, Char('x')) => {
                     if let Some(text) = self.buf.token_at(self.cursor) {
                         return Some(Effect::Open(text));
                     }
                     self.message = Some("no word under cursor".into());
                 }
+                (Pending::Goto, Char('e')) => {
+                    for _ in 0..n {
+                        let p = motion::word_end_backward(&self.buf, self.cursor, false);
+                        self.goto(p);
+                    }
+                }
+                (Pending::Goto, Char('E')) => {
+                    for _ in 0..n {
+                        let p = motion::word_end_backward(&self.buf, self.cursor, true);
+                        self.goto(p);
+                    }
+                }
+                (Pending::Goto, Char('_')) => {
+                    let line = self.buf.line(self.cursor.row);
+                    let col = line
+                        .chars
+                        .iter()
+                        .rposition(|c| !c.is_whitespace())
+                        .unwrap_or(0);
+                    self.goto(Pos {
+                        row: self.cursor.row,
+                        col,
+                    });
+                }
+                (Pending::Find { forward, till }, Char(c)) => {
+                    self.last_find = Some((c, forward, till));
+                    self.find(c, forward, till, n, false);
+                }
+                (Pending::Scroll, Char(c @ ('z' | 't' | 'b'))) => self.scroll_cursor_to(c),
                 _ => {}
             }
             return None;
@@ -400,17 +666,53 @@ impl App {
                 if let Some(def) = self.patterns.by_key(c).cloned() {
                     self.activate_pattern(&def);
                 }
+                self.count = 0;
                 return None;
             }
         }
+        // Count prefix: 1-9 start one, 0 continues one (else `0` is a motion).
+        if let Char(d @ '0'..='9') = key.code {
+            if !ctrl && (d != '0' || self.count > 0) {
+                let digit = d.to_digit(10).unwrap_or(0) as usize;
+                self.count = self
+                    .count
+                    .saturating_mul(10)
+                    .saturating_add(digit)
+                    .min(1_000_000);
+                return None;
+            }
+        }
+        self.count = 0;
         match key.code {
-            Char('i') if !ctrl => self.pending = Some(Pending::TextObject { around: false }),
-            Char('a') if !ctrl => self.pending = Some(Pending::TextObject { around: true }),
+            Char('i') if !ctrl => {
+                self.pending = Some(Pending::TextObject { around: false });
+                self.count = count;
+            }
+            Char('a') if !ctrl => {
+                self.pending = Some(Pending::TextObject { around: true });
+                self.count = count;
+            }
+            Char('g') if !ctrl => {
+                self.pending = Some(Pending::Goto);
+                self.count = count;
+            }
+            Char('z') if !ctrl => self.pending = Some(Pending::Scroll),
+            Char(c @ ('f' | 'F' | 't' | 'T')) if !ctrl => {
+                self.pending = Some(Pending::Find {
+                    forward: c == 'f' || c == 't',
+                    till: c == 't' || c == 'T',
+                });
+                self.count = count;
+            }
+            Char(';') => self.repeat_find(false, n),
+            Char(',') => self.repeat_find(true, n),
             Char('p') if !ctrl => self.mode = Mode::PatternMenu,
             Char('q') if !ctrl => self.quit = true,
             Char('c') if ctrl => self.quit = true,
             Esc => {
-                if self.sel.is_some() {
+                // A typed count is cancelled by Esc (already cleared above).
+                if count > 0 {
+                } else if self.sel.is_some() {
                     self.sel = None;
                 } else {
                     self.quit = true;
@@ -419,16 +721,25 @@ impl App {
             Char('v') if !ctrl => {
                 self.sel = match self.sel {
                     Some((SelKind::Char, _)) => None,
-                    _ => Some((SelKind::Char, self.cursor)),
+                    Some((SelKind::Line, anchor)) => Some((SelKind::Char, anchor)),
+                    None => Some((SelKind::Char, self.cursor)),
                 };
             }
             Char('V') => {
                 self.sel = match self.sel {
                     Some((SelKind::Line, _)) => None,
-                    _ => Some((SelKind::Line, self.cursor)),
+                    Some((SelKind::Char, anchor)) => Some((SelKind::Line, anchor)),
+                    None => Some((SelKind::Line, self.cursor)),
                 };
             }
+            Char('o') if !ctrl => {
+                if let Some((kind, anchor)) = self.sel {
+                    self.sel = Some((kind, self.cursor));
+                    self.goto(anchor);
+                }
+            }
             Char('y') if !ctrl => return self.yank(false),
+            Char('Y') => return self.yank_lines(),
             Enter => {
                 // Copy the selection or the match under the cursor and
                 // exit; with nothing to copy, Enter still exits copy mode.
@@ -440,8 +751,18 @@ impl App {
             }
             Char('/') => self.open_prompt(Direction::Forward),
             Char('?') => self.open_prompt(Direction::Backward),
-            Char('n') => self.jump_match(true),
-            Char('N') => self.jump_match(false),
+            Char('n') if !ctrl => {
+                for _ in 0..n {
+                    self.jump_match(true);
+                }
+            }
+            Char('N') => {
+                for _ in 0..n {
+                    self.jump_match(false);
+                }
+            }
+            Char('*') => self.search_word_under_cursor(true),
+            Char('#') => self.search_word_under_cursor(false),
             Char('S') => {
                 self.search.smartcase = !self.search.smartcase;
                 let pattern = self.search.pattern.clone();
@@ -454,21 +775,21 @@ impl App {
                     if self.search.smartcase { "on" } else { "off" }
                 ));
             }
-            Char('h') | Left => {
-                let col = self.cursor.col.saturating_sub(1);
+            Char('h') | Left if !ctrl => {
+                let col = self.cursor.col.saturating_sub(n);
                 self.goto(Pos {
                     row: self.cursor.row,
                     col,
                 });
             }
-            Char('l') | Right => {
+            Char('l') | Right if !ctrl => {
                 self.goto(Pos {
                     row: self.cursor.row,
-                    col: self.cursor.col + 1,
+                    col: self.cursor.col + n,
                 });
             }
-            Char('j') | Down => self.move_vertical(1),
-            Char('k') | Up => self.move_vertical(-1),
+            Char('j') | Down if !ctrl => self.move_vertical(repeat),
+            Char('k') | Up if !ctrl => self.move_vertical(-repeat),
             Char('0') | Home => self.goto(Pos {
                 row: self.cursor.row,
                 col: 0,
@@ -480,47 +801,85 @@ impl App {
                     col,
                 });
             }
-            Char('$') | End => {
+            Char('$') | Char('-') | End => {
+                // `-` mirrors the user's Neovim map of `-` to `$`.
+                if count > 1 {
+                    self.move_vertical(repeat - 1);
+                }
                 self.goto(Pos {
                     row: self.cursor.row,
                     col: self.buf.max_col(self.cursor.row),
                 });
                 self.want_col = usize::MAX;
             }
-            Char('w') if !ctrl => {
-                let p = motion::word_forward(&self.buf, self.cursor);
-                self.goto(p);
-            }
-            Char('b') if !ctrl => {
-                let p = motion::word_backward(&self.buf, self.cursor);
-                self.goto(p);
-            }
-            Char('e') if !ctrl => {
-                let p = motion::word_end(&self.buf, self.cursor);
-                self.goto(p);
-            }
+            Char('w') if !ctrl => self.repeat_motion(n, |b, p| motion::word_forward(b, p, false)),
+            Char('W') => self.repeat_motion(n, |b, p| motion::word_forward(b, p, true)),
+            Char('b') if !ctrl => self.repeat_motion(n, |b, p| motion::word_backward(b, p, false)),
+            Char('B') => self.repeat_motion(n, |b, p| motion::word_backward(b, p, true)),
+            Char('e') if !ctrl => self.repeat_motion(n, |b, p| motion::word_end(b, p, false)),
+            Char('E') => self.repeat_motion(n, |b, p| motion::word_end(b, p, true)),
+            // Ctrl-h / Ctrl-l (and Backspace, which many terminals send
+            // for Ctrl-h) mirror the user's Neovim word maps.
+            Char('l') if ctrl => self.repeat_motion(n, |b, p| motion::word_forward(b, p, false)),
+            Char('h') if ctrl => self.repeat_motion(n, |b, p| motion::word_backward(b, p, false)),
+            Backspace => self.repeat_motion(n, |b, p| motion::word_backward(b, p, false)),
             Char('{') => {
-                let row = motion::para_backward(&self.buf, self.cursor.row);
-                self.goto(Pos { row, col: 0 });
+                for _ in 0..n {
+                    let row = motion::para_backward(&self.buf, self.cursor.row);
+                    self.goto(Pos { row, col: 0 });
+                }
             }
             Char('}') => {
-                let row = motion::para_forward(&self.buf, self.cursor.row);
+                for _ in 0..n {
+                    let row = motion::para_forward(&self.buf, self.cursor.row);
+                    self.goto(Pos { row, col: 0 });
+                }
+            }
+            // Ctrl-j / Ctrl-k mirror the user's Neovim paragraph maps.
+            Char('j') if ctrl => {
+                for _ in 0..n {
+                    let row = motion::para_forward(&self.buf, self.cursor.row);
+                    self.goto(Pos { row, col: 0 });
+                }
+            }
+            Char('k') if ctrl => {
+                for _ in 0..n {
+                    let row = motion::para_backward(&self.buf, self.cursor.row);
+                    self.goto(Pos { row, col: 0 });
+                }
+            }
+            Char('%') => self.match_bracket(),
+            Char('t') if ctrl => self.match_bracket(),
+            Char('G') => {
+                let row = if count > 0 {
+                    (count - 1).min(self.buf.last_row())
+                } else {
+                    self.buf.last_row()
+                };
                 self.goto(Pos { row, col: 0 });
             }
-            Char('g') if !ctrl => self.pending = Some(Pending::Goto),
-            Char('G') => self.goto(Pos {
-                row: self.buf.last_row(),
-                col: 0,
-            }),
-            Char('f') if ctrl => self.move_vertical(page),
-            Char('b') if ctrl => self.move_vertical(-page),
-            Char('d') if ctrl => self.move_vertical(half),
-            Char('u') if ctrl => self.move_vertical(-half),
-            PageDown => self.move_vertical(page),
-            PageUp => self.move_vertical(-page),
+            Char(c @ ('H' | 'M' | 'L')) => {
+                let row = self.screen_row(c, n);
+                let col = self.buf.first_non_blank(row);
+                self.goto(Pos { row, col });
+            }
+            Char('f') if ctrl => self.move_vertical(page * repeat),
+            Char('b') if ctrl => self.move_vertical(-page * repeat),
+            Char('d') if ctrl => self.move_vertical(if count > 0 { repeat } else { half }),
+            Char('u') if ctrl => self.move_vertical(if count > 0 { -repeat } else { -half }),
+            PageDown => self.move_vertical(page * repeat),
+            PageUp => self.move_vertical(-page * repeat),
             _ => {}
         }
         None
+    }
+
+    /// Apply a cursor motion `n` times.
+    fn repeat_motion(&mut self, n: usize, step: impl Fn(&Buffer, Pos) -> Pos) {
+        for _ in 0..n.max(1) {
+            let p = step(&self.buf, self.cursor);
+            self.goto(p);
+        }
     }
 
     fn handle_prompt(&mut self, key: KeyEvent) {
@@ -1331,6 +1690,312 @@ mod tests {
         a.handle_key(key('$'));
         // The cursor char occupies display cells [98, 100).
         assert_eq!(a.hoff, 20);
+    }
+
+    fn esc() -> KeyEvent {
+        KeyEvent::new(KeyCode::Esc, KeyModifiers::NONE)
+    }
+
+    fn keys(a: &mut App, s: &str) {
+        for c in s.chars() {
+            a.handle_key(key(c));
+        }
+    }
+
+    #[test]
+    fn inner_paren_object_selects_contents_and_count_expands() {
+        //          0123456789012345
+        let mut a = app("f(a, g(b, c), d)");
+        keys(&mut a, "gg");
+        keys(&mut a, "8l"); // on 'b'
+        assert_eq!(a.cursor, Pos { row: 0, col: 8 });
+        keys(&mut a, "i(");
+        assert_eq!(a.selection_text().as_deref(), Some("b, c"));
+        // Repeating the object expands to the enclosing pair.
+        keys(&mut a, "i(");
+        assert_eq!(a.selection_text().as_deref(), Some("a, g(b, c), d"));
+        // Nothing further out: the selection stays.
+        keys(&mut a, "i(");
+        assert_eq!(a.selection_text().as_deref(), Some("a, g(b, c), d"));
+        a.handle_key(esc());
+        // A count picks the level directly; `a(` includes the delimiters.
+        keys(&mut a, "08l2a(");
+        assert_eq!(a.selection_text().as_deref(), Some("(a, g(b, c), d)"));
+        // The i) spelling works too, as do b (any bracket) and B.
+        a.handle_key(esc());
+        keys(&mut a, "08li)");
+        assert_eq!(a.selection_text().as_deref(), Some("b, c"));
+        a.handle_key(esc());
+        keys(&mut a, "08lab");
+        assert_eq!(a.selection_text().as_deref(), Some("(b, c)"));
+    }
+
+    #[test]
+    fn bracket_objects_span_lines_and_look_ahead() {
+        let mut a = app("x = [\n  1,\n  2\n] end {k}");
+        a.goto(Pos { row: 1, col: 3 });
+        keys(&mut a, "i[");
+        assert_eq!(a.selection_text().as_deref(), Some("  1,\n  2"));
+        a.handle_key(esc());
+        keys(&mut a, "a[");
+        assert_eq!(a.selection_text().as_deref(), Some("[\n  1,\n  2\n]"));
+        a.handle_key(esc());
+        // Outside any brace on the last row: lookahead finds {k}.
+        a.goto(Pos { row: 3, col: 2 });
+        keys(&mut a, "i{");
+        assert_eq!(a.selection_text().as_deref(), Some("k"));
+        a.handle_key(esc());
+        keys(&mut a, "iB");
+        assert_eq!(a.selection_text().as_deref(), Some("k"));
+        a.handle_key(esc());
+        keys(&mut a, "i<");
+        assert!(a.sel.is_none());
+        assert_eq!(a.message.as_deref(), Some("no bracket object"));
+    }
+
+    #[test]
+    fn quote_objects_inner_around_and_any() {
+        //          01234567890123456789
+        let mut a = app("run \"a b\" then 'c'");
+        keys(&mut a, "gg");
+        keys(&mut a, "6l");
+        keys(&mut a, "i\"");
+        assert_eq!(a.selection_text().as_deref(), Some("a b"));
+        a.handle_key(esc());
+        keys(&mut a, "a\"");
+        assert_eq!(a.selection_text().as_deref(), Some("\"a b\" "));
+        a.handle_key(esc());
+        // iq picks the nearest quoted string ahead when none covers.
+        keys(&mut a, "0iq");
+        assert_eq!(a.selection_text().as_deref(), Some("a b"));
+        a.handle_key(esc());
+        keys(&mut a, "$iq");
+        assert_eq!(a.selection_text().as_deref(), Some("c"));
+        a.handle_key(esc());
+        keys(&mut a, "i'");
+        assert_eq!(a.selection_text().as_deref(), Some("c"));
+        a.handle_key(esc());
+        keys(&mut a, "0i`");
+        assert!(a.sel.is_none());
+        assert_eq!(a.message.as_deref(), Some("no quote object"));
+    }
+
+    #[test]
+    fn paragraph_line_and_entire_objects() {
+        let mut a = app("a\nb\n\nc\n  d  \n\ne");
+        a.goto(Pos { row: 0, col: 0 });
+        keys(&mut a, "ip");
+        assert_eq!(a.selection_text().as_deref(), Some("a\nb\n"));
+        keys(&mut a, "ap");
+        assert_eq!(a.selection_text().as_deref(), Some("a\nb\n\n"));
+        a.handle_key(esc());
+        a.goto(Pos { row: 4, col: 3 });
+        keys(&mut a, "il");
+        assert_eq!(a.selection_text().as_deref(), Some("d"));
+        keys(&mut a, "al");
+        assert_eq!(a.selection_text().as_deref(), Some("  d  "));
+        keys(&mut a, "ie");
+        assert_eq!(
+            a.selection_text().as_deref(),
+            Some("a\nb\n\nc\n  d  \n\ne\n")
+        );
+        a.handle_key(esc());
+        a.goto(Pos { row: 2, col: 0 });
+        keys(&mut a, "il");
+        assert!(a.sel.is_none());
+        assert_eq!(a.message.as_deref(), Some("blank line"));
+    }
+
+    #[test]
+    fn counts_apply_to_motions_and_zero_is_still_line_start() {
+        let mut a = app("one two three four\nx\ny\nz");
+        keys(&mut a, "gg");
+        keys(&mut a, "3w");
+        assert_eq!(a.cursor, Pos { row: 0, col: 14 });
+        keys(&mut a, "2b");
+        assert_eq!(a.cursor, Pos { row: 0, col: 4 });
+        keys(&mut a, "10l");
+        assert_eq!(a.cursor, Pos { row: 0, col: 14 });
+        keys(&mut a, "0");
+        assert_eq!(a.cursor, Pos { row: 0, col: 0 });
+        keys(&mut a, "2j");
+        assert_eq!(a.cursor.row, 2);
+        keys(&mut a, "4G");
+        assert_eq!(a.cursor.row, 3);
+        keys(&mut a, "2gg");
+        assert_eq!(a.cursor.row, 1);
+        keys(&mut a, "G");
+        assert_eq!(a.cursor.row, 3);
+        // Esc with only a count typed clears it without quitting.
+        keys(&mut a, "3");
+        a.handle_key(esc());
+        assert!(!a.quit);
+        keys(&mut a, "gg");
+        assert_eq!(a.cursor.row, 0);
+    }
+
+    #[test]
+    fn big_word_motions_and_ge() {
+        let mut a = app("foo bar.baz qux");
+        keys(&mut a, "gg");
+        keys(&mut a, "W");
+        assert_eq!(a.cursor.col, 4);
+        keys(&mut a, "E");
+        assert_eq!(a.cursor.col, 10);
+        keys(&mut a, "W");
+        assert_eq!(a.cursor.col, 12);
+        keys(&mut a, "B");
+        assert_eq!(a.cursor.col, 4);
+        keys(&mut a, "ge");
+        assert_eq!(a.cursor.col, 2);
+        keys(&mut a, "$gE");
+        assert_eq!(a.cursor.col, 10);
+        keys(&mut a, "g_");
+        assert_eq!(a.cursor.col, 14);
+    }
+
+    #[test]
+    fn find_till_and_repeat() {
+        //          0123456789
+        let mut a = app("a,b,c,d");
+        keys(&mut a, "gg");
+        keys(&mut a, "f,");
+        assert_eq!(a.cursor.col, 1);
+        keys(&mut a, ";");
+        assert_eq!(a.cursor.col, 3);
+        keys(&mut a, ",");
+        assert_eq!(a.cursor.col, 1);
+        keys(&mut a, "2;");
+        assert_eq!(a.cursor.col, 5);
+        keys(&mut a, "0t,");
+        assert_eq!(a.cursor.col, 0);
+        keys(&mut a, ";");
+        assert_eq!(a.cursor.col, 2, "repeated till skips the adjacent hit");
+        keys(&mut a, "$Fa");
+        assert_eq!(a.cursor.col, 0);
+        keys(&mut a, "fz");
+        assert_eq!(a.message.as_deref(), Some("not found: z"));
+        // v f, selects through the comma.
+        keys(&mut a, "0vf,");
+        assert_eq!(a.selection_text().as_deref(), Some("a,"));
+    }
+
+    #[test]
+    fn percent_and_ctrl_t_match_brackets() {
+        let mut a = app("if (a[0] == b) {\n  x\n}");
+        keys(&mut a, "gg");
+        keys(&mut a, "%");
+        assert_eq!(a.cursor, Pos { row: 0, col: 13 });
+        keys(&mut a, "%");
+        assert_eq!(a.cursor, Pos { row: 0, col: 3 });
+        keys(&mut a, "$");
+        a.handle_key(ctrl('t'));
+        assert_eq!(a.cursor, Pos { row: 2, col: 0 });
+        keys(&mut a, "v%");
+        assert_eq!(a.selection_text().as_deref(), Some("{\n  x\n}"));
+    }
+
+    #[test]
+    fn o_swaps_selection_ends_and_v_big_v_switch_kinds_keeping_anchor() {
+        let mut a = app("one two\nthree");
+        keys(&mut a, "gg");
+        keys(&mut a, "wve");
+        assert_eq!(a.selection_text().as_deref(), Some("two"));
+        keys(&mut a, "o");
+        assert_eq!(a.cursor, Pos { row: 0, col: 4 });
+        assert_eq!(a.sel, Some((SelKind::Char, Pos { row: 0, col: 6 })));
+        keys(&mut a, "V");
+        assert_eq!(a.sel, Some((SelKind::Line, Pos { row: 0, col: 6 })));
+        assert_eq!(a.selection_text().as_deref(), Some("one two\n"));
+        keys(&mut a, "v");
+        assert_eq!(a.sel, Some((SelKind::Char, Pos { row: 0, col: 6 })));
+        keys(&mut a, "v");
+        assert!(a.sel.is_none());
+        keys(&mut a, "o");
+        assert!(!a.quit);
+    }
+
+    #[test]
+    fn capital_y_copies_the_line_or_selected_rows() {
+        let mut a = App::new(
+            Buffer::from_reads("abcdefgh\nok\nend", "abcd\nefgh\nok\nend"),
+            false,
+            None,
+        );
+        a.set_size(80, 11);
+        a.goto(Pos { row: 1, col: 1 });
+        assert_eq!(
+            a.handle_key(key('Y')),
+            Some(Effect::Copy("abcdefgh\n".into()))
+        );
+        assert!(!a.quit);
+        keys(&mut a, "vj");
+        assert_eq!(
+            a.handle_key(key('Y')),
+            Some(Effect::Copy("abcdefgh\nok\n".into()))
+        );
+        assert!(a.sel.is_none());
+    }
+
+    #[test]
+    fn star_and_hash_search_the_word_under_cursor() {
+        let mut a = app("foo foobar foo\nfoo");
+        keys(&mut a, "gg");
+        keys(&mut a, "*");
+        // Whole-word: skips "foobar".
+        assert_eq!(a.cursor, Pos { row: 0, col: 11 });
+        keys(&mut a, "n");
+        assert_eq!(a.cursor, Pos { row: 1, col: 0 });
+        keys(&mut a, "#");
+        assert_eq!(a.cursor, Pos { row: 0, col: 11 });
+        keys(&mut a, "n");
+        assert_eq!(a.cursor, Pos { row: 0, col: 0 });
+        // Yank without a selection copies the match under the cursor.
+        assert_eq!(a.handle_key(key('y')), Some(Effect::Copy("foo".into())));
+    }
+
+    #[test]
+    fn hml_and_z_scrolling() {
+        let text = (0..30).map(|i| format!("l{i}\n")).collect::<String>();
+        let mut a = App::new(Buffer::from_text(&text), false, None);
+        a.set_size(80, 11); // 10 content rows: top is 20, rows 20..=29
+        keys(&mut a, "H");
+        assert_eq!(a.cursor.row, 20);
+        keys(&mut a, "L");
+        assert_eq!(a.cursor.row, 29);
+        keys(&mut a, "M");
+        assert_eq!(a.cursor.row, 24);
+        keys(&mut a, "3H");
+        assert_eq!(a.cursor.row, 22);
+        keys(&mut a, "2L");
+        assert_eq!(a.cursor.row, 28);
+        keys(&mut a, "15Gzt");
+        assert_eq!(a.top, 14);
+        keys(&mut a, "zb");
+        assert_eq!(a.top, 5);
+        keys(&mut a, "zz");
+        assert_eq!(a.top, 9);
+        // zt near the bottom cannot scroll past the bottom-most view.
+        keys(&mut a, "Gzt");
+        assert_eq!(a.top, 20);
+    }
+
+    #[test]
+    fn personal_neovim_maps_dash_ctrl_hjkl() {
+        let mut a = app("one two\n\nthree four");
+        keys(&mut a, "gg");
+        keys(&mut a, "-");
+        assert_eq!(a.cursor.col, 6);
+        a.handle_key(ctrl('h'));
+        assert_eq!(a.cursor.col, 4);
+        a.handle_key(ctrl('l'));
+        assert_eq!(a.cursor, Pos { row: 2, col: 0 });
+        a.handle_key(ctrl('k'));
+        assert_eq!(a.cursor.row, 1);
+        a.handle_key(ctrl('j'));
+        assert_eq!(a.cursor.row, 2);
+        a.handle_key(KeyEvent::new(KeyCode::Backspace, KeyModifiers::NONE));
+        assert_eq!(a.cursor, Pos { row: 0, col: 4 });
     }
 
     #[test]

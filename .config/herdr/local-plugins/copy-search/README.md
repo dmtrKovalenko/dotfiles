@@ -49,11 +49,28 @@ The tracked [plugin config](../../plugins/config/copy-search/config.toml) makes
 the cursor orange (`#ff9e64`) with dark text (`#161819`). Registries, other plugin
 state and compiled binaries stay untracked.
 
-- `h j k l`, `w b e`, `0 ^ $`, `gg G`: move.
-- `v` / `V`: character / line selection; `iw` / `aw`, `iW` / `aW`: text objects.
-- `/` / `?`: search; `n` / `N`: next / previous match.
-- `y`: copy; Enter: copy and close; `q`: close.
-- Escape: clear selection, then close.
+Keys follow Vim. A count prefix repeats a motion or picks an object level
+(`3w`, `5j`, `2i(`, `4G`); `0` without a count is still line start.
+
+- `h j k l`, `w b e`, `W B E`, `ge gE`: move by char / word / WORD.
+- `0 ^ $ g_`, `-` (= `$`, as in the Neovim config), `gg G`, `{ }`.
+- `f F t T` + char, `;` / `,` repeat: find on the logical line.
+- `%`: jump to the matching `( ) [ ] { }`; off a bracket, the next one on the row.
+- `H M L`: screen top / middle / bottom; `zz zt zb`: scroll cursor row.
+- `* #`: search the word under the cursor forward / backward.
+- `Ctrl-h` / `Ctrl-l` (= `b` / `w`), `Ctrl-j` / `Ctrl-k` (= `}` / `{`), `Ctrl-t`
+  (= `%`): the personal Neovim maps. Backspace also acts as `b`.
+- `Ctrl-d Ctrl-u Ctrl-f Ctrl-b`, PageUp / PageDown: scroll.
+- `v` / `V`: character / line selection; `o`: swap selection ends.
+- Text objects (`i` inner / `a` around): `w W` word, `( ) [ ] { } < >`
+  brackets, `b` any bracket, `B` braces, `" ' \`` quotes, `q` any quote, `p`
+  paragraph, `l` line, `e` entire buffer. Bracket and quote objects look ahead
+  on the line when the cursor is outside one; repeating a bracket object
+  expands to the enclosing pair.
+- `/` / `?`: search; `n` / `N`: next / previous match; `S`: toggle smartcase.
+- `y`: copy; `Y`: copy the current line (or selected lines); Enter: copy and
+  close; `q`: close.
+- Escape: cancel count, clear selection, then close.
 - `gx`: open the token under the cursor using the custom Fingers router.
 
 `gx` needs the optional [Fingers setup](../fingers-open/README.md) on the source
