@@ -1292,7 +1292,7 @@ impl Video for CodexLoopVideo<'_> {
                     // model
                     {request_note}
                     {self.press(t)}
-                    {note(&self.model_notes, t.min(RESET), MODEL.0, 446.0, 20.0, "middle")}
+                    {note(&self.model_notes, if live < 0.5 { 0.0 } else { t }, MODEL.0, 446.0, 20.0, "middle")}
 
                     // events
                     <text x="1230" y="262" font-size="22" font-weight="600" fill={INK}>"events"</text>
