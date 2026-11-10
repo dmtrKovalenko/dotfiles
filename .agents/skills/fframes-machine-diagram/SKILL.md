@@ -150,8 +150,9 @@ One loop is one concrete turn, chosen so that every mechanism is used. It is the
 After 27.0 s: 2 s hold, everything the turn drew leaves in 0.5 s from 29.0 s, the loop point is
 at 29.9 s. `references/timeline.md` has every event with its second.
 
-Every loop needs these six things; when writing a story for another system, name which
-request shows each: a failure, a success, a wait, a parallel moment, a queue, an ending.
+Each beat explains a real change of state. The sampling-loop example uses failure, success,
+waiting, parallel work and a queue. For a comparison, use the same input and find the first
+step that behaves differently; see [Before and after comparisons](#before-and-after-comparisons).
 
 ## The procedure for a new diagram
 
@@ -226,6 +227,9 @@ Change in this order and render the five reference frames after each of the thre
    through it and one of the mechanisms below. A third parallel lane is a third entry in
    `LANES_Y` and a taller tools box.
 
+The sampling-loop template uses the band below `y = 790` for work between cycles. Keep it
+only if that work matters to the story. Leave whitespace instead of filling it with controls.
+
 Every station must have a mechanism. A box with only a label is not allowed.
 
 | mechanism | code | when to use it | strip |
@@ -237,6 +241,26 @@ Every station must have a mechanism. A box with only a label is not allowed.
 | event rail | `Dot` | a log of what happened | `strip-ending.png` |
 | queue | a `Card` with two legs and a `tag` | waiting outside a gate | `strip-queue-drains.png` |
 | status line | `Notes`, `fn note` | the name of the current stage | `strip-press-close.png` (under the machine) |
+
+### Before and after comparisons
+
+Show the shared preparation once. Use one source and one set of machines until the first step
+that behaves differently. Show when preparation finishes, then reveal both paths together on
+the same clock. For example, show turn items appended and flushed to JSONL before splitting
+into the two paths that update SQLite.
+
+- Label the paths **Before the change** and **After the change** where they start. Under each
+  title, say when the work happens: e.g. "write preview and index on append" versus "preview
+  at persist, index on read". Keep the titles visible while the paths run.
+- Keep the same machine and output positions for both paths where the roles match. Use separate
+  lanes with room for machine bodies, travelling labels and status text. At 1080p, start with
+  roughly 250–340 px between full-size comparison rails, then check the frames.
+- Show waits on the affected lane, with a parked card and a short status. Skip tabs, a separate
+  queue machine or a timing chart unless they explain something the lanes cannot. Label timing
+  as illustrative unless it comes from measurements.
+
+Review three stills: shared preparation, the first difference, and both paths complete. The
+difference should be clear from the lane titles and captions without following every card.
 
 ### 4. Time it
 
